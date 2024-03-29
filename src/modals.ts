@@ -55,9 +55,15 @@ export class Suggester {
 		this.app = app;
 	}
 
-	suggest(items: string[]): Promise<string | null> {
+	suggestString(items: string[]): Promise<string | null> {
 		return new Promise((resolve, reject) => {
 			new FuzzySuggester<string>(this.app, items, (x) => x, resolve).open();
+		});
+	}
+
+	suggest<T>(items: T[], getText: (x: T) => string): Promise<T | null> {
+		return new Promise<T | null>((resolve, reject) => {
+			new FuzzySuggester<T>(this.app, items, getText, (x) => resolve(x)).open();
 		});
 	}
 }
