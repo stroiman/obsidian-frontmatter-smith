@@ -1,10 +1,11 @@
 import { Editor, MarkdownView, Plugin, PluginManifest, App } from "obsidian";
+import { Forge } from "./src/Forge";
 
 interface PluginConstructor {
 	new (app: App, manifest: PluginManifest): Plugin;
 }
 
-declare module "obsidian" {
+module Obsidian {
 	declare var Plugin: PluginConstructor;
 }
 
@@ -15,9 +16,12 @@ const createPluginClass = (baseClass: PluginConstructor) => {
 			this.addCommand({
 				id: "forge-frontmatter",
 				name: "Forge frontmatter",
-				editorCallback: (editor: Editor, view: MarkdownView) => {
-					console.log(editor.getSelection());
-					editor.replaceSelection("Sample Editor Command");
+				editorCallback: async (editor: Editor, view: MarkdownView) => {
+					const file = view.file;
+					if (file) {
+						const worker = new Forge(this.app.fileManager);
+						await worker.run(file);
+					}
 				},
 			});
 			// This adds a complex command that can check whether the current state of the app allows execution of the command
@@ -55,4 +59,4 @@ const createPluginClass = (baseClass: PluginConstructor) => {
 	};
 };
 
-export default createPluginClass(Plugin);
+export default createPluginClass(Plugin as PluginConstructor);
