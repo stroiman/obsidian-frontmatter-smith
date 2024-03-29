@@ -68,6 +68,7 @@ describe("'Add medicine' case", () => {
 					text: "Paracetamol",
 				}),
 			]),
+			"Choose type",
 		);
 	});
 

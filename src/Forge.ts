@@ -36,7 +36,7 @@ const getOperations = async (input: {
 			value: "[[Paracetamol]]",
 		},
 	];
-	const option = await input.suggester.suggest(items, (x) => x.text);
+	const option = await input.suggester.suggest(items, "Choose type");
 	if (!option) {
 		return [];
 	}

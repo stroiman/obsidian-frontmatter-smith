@@ -1,5 +1,7 @@
 import { Editor, MarkdownView, Plugin, PluginManifest, App } from "obsidian";
-import { Forge } from "./src/Forge";
+import { FuzzySuggester } from "src/FuzzySuggester";
+import { Suggester } from "src/modals";
+import { Forge, ForgeConfiguration } from "./src/Forge";
 
 interface PluginConstructor {
 	new (app: App, manifest: PluginManifest): Plugin;
@@ -19,7 +21,11 @@ const createPluginClass = (baseClass: PluginConstructor) => {
 				editorCallback: async (editor: Editor, view: MarkdownView) => {
 					const file = view.file;
 					if (file) {
-						const worker = new Forge(this.app.fileManager);
+						const worker = new Forge({
+							fileManager: this.app.fileManager,
+							configuration: new ForgeConfiguration(),
+							suggester: new Suggester(this.app, FuzzySuggester),
+						});
 						await worker.run(file);
 					}
 				},

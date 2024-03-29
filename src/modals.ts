@@ -15,19 +15,24 @@ export class Suggester {
 	#FuzzySuggester: FuzzySuggesterConstructor;
 	constructor(app: App, FuzzySuggester: FuzzySuggesterConstructor) {
 		this.#app = app;
+		this.#FuzzySuggester = FuzzySuggester;
 	}
 
-	// suggestString(items: string[]): Promise<string | null> {
-	// 	return new Promise((resolve, reject) => {
-	// 		new FuzzySuggester<string>(this.app, items, (x) => x, resolve).open();
-	// 	});
-	// }
-
-	suggest<T>(items: T[], getText: (x: T) => string): Promise<T | null> {
+	suggest<T extends { text: string }>(
+		items: T[],
+		placeholder?: string,
+	): Promise<T | null> {
 		return new Promise<T | null>((resolve, reject) => {
-			new this.#FuzzySuggester<T>(this.#app, items, getText, (x) =>
-				resolve(x),
-			).open();
+			const suggester = new this.#FuzzySuggester<T>(
+				this.#app,
+				items,
+				(x) => x.text,
+				(x) => resolve(x),
+			);
+			if (placeholder) {
+				suggester.setPlaceholder(placeholder);
+			}
+			suggester.open();
 		});
 	}
 }
