@@ -3,7 +3,7 @@ import * as sinon from "sinon";
 import * as chai from "chai";
 import sinonChai from "sinon-chai";
 import { expect } from "chai";
-import * as modals from "../src/modals";
+import { Modals } from "../src/modals";
 import {
 	FrontMatter,
 	TestFileManager,
@@ -42,14 +42,14 @@ type TFile = GetTFile<FakeMetadataFileManager>;
 describe("'Add medicine' case", () => {
 	let fileManager: FakeMetadataFileManager;
 	let forge: Forge<TFile, FakeMetadataFileManager>;
-	let suggester: sinon.SinonStubbedInstance<modals.Suggester>;
+	let modals: sinon.SinonStubbedInstance<Modals>;
 
 	beforeEach(() => {
 		const configuration = new ForgeConfiguration();
 		fileManager = new FakeMetadataFileManager();
-		suggester = sinon.createStubInstance(modals.Suggester);
-		forge = new Forge({ fileManager, configuration, suggester });
-		suggester.suggest.selectsOption("Aspirin");
+		modals = sinon.createStubInstance(Modals);
+		forge = new Forge({ fileManager, configuration, suggester: modals });
+		modals.suggest.selectsOption("Aspirin");
 	});
 
 	afterEach(() => {
@@ -59,7 +59,7 @@ describe("'Add medicine' case", () => {
 	it("Should suggest the right options", async () => {
 		const file = fileManager.createFile();
 		await forge.run(file);
-		expect(suggester.suggest).to.have.been.calledWith(
+		expect(modals.suggest).to.have.been.calledWith(
 			match([
 				match({
 					text: "Aspirin",

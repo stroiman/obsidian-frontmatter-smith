@@ -9,13 +9,28 @@ import type {
 	PromptOptions,
 } from "./ObsidianPromptModal";
 
-export class Suggester {
-	#app: App;
-	#FuzzySuggester: FuzzySuggesterConstructor;
+type Constructors = {
+	ObsidianPromptModal: ObsidianPromptModalConstructor;
+	FuzzySuggester: FuzzySuggesterConstructor;
+};
 
-	constructor(app: App, FuzzySuggester: FuzzySuggesterConstructor) {
+export class Modals {
+	#app: App;
+	#constructors: Constructors;
+	constructor(app: App, constructors: Constructors) {
 		this.#app = app;
-		this.#FuzzySuggester = FuzzySuggester;
+		this.#constructors = constructors;
+	}
+
+	prompt(options: PromptOptions): Promise<string | null> {
+		return new Promise<string | null>((resolve, reject) => {
+			const suggester = new this.#constructors.ObsidianPromptModal(
+				this.#app,
+				options,
+				resolve,
+			);
+			suggester.open();
+		});
 	}
 
 	suggest<T extends { text: string }>(
@@ -23,7 +38,7 @@ export class Suggester {
 		placeholder?: string,
 	): Promise<T | null> {
 		return new Promise<T | null>((resolve, reject) => {
-			const suggester = new this.#FuzzySuggester<T>(
+			const suggester = new this.#constructors.FuzzySuggester<T>(
 				this.#app,
 				items,
 				(x) => x.text,
@@ -37,22 +52,5 @@ export class Suggester {
 	}
 }
 
-export class PromtModal {
-	#app: App;
-	#PromptConstructor: ObsidianPromptModalConstructor;
-	constructor(app: App, PromptConstructor: ObsidianPromptModalConstructor) {
-		this.#app = app;
-		this.#PromptConstructor = PromptConstructor;
-	}
-
-	prompt(options: PromptOptions): Promise<string | null> {
-		return new Promise<string | null>((resolve, reject) => {
-			const suggester = new this.#PromptConstructor(
-				this.#app,
-				options,
-				resolve,
-			);
-			suggester.open();
-		});
-	}
-}
+export type Suggester = Pick<Modals, "suggest">;
+export type Promt = Pick<Modals, "prompt">;
