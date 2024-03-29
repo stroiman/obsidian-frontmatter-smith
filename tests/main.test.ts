@@ -37,4 +37,33 @@ describe("'Add medicine' case", () => {
 			],
 		});
 	});
+
+	it("Should add a new object to existing 'medicine' entry if it exists", async () => {
+		const file = fileManager.createFile({
+			initialFrontMatter: {
+				medicine: [
+					{
+						type: "[[Paracetamol]]",
+						dose: "1000mg",
+						time: "08:00",
+					},
+				],
+			},
+		});
+		await forge.run(file);
+		expect(fileManager.getFrontmatter(file)).to.deep.equal({
+			medicine: [
+				{
+					type: "[[Paracetamol]]",
+					dose: "1000mg",
+					time: "08:00",
+				},
+				{
+					type: "[[Aspirin]]",
+					dose: "500mg",
+					time: "12:00",
+				},
+			],
+		});
+	});
 });

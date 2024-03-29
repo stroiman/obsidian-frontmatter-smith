@@ -16,7 +16,10 @@ export class Forge<TFile, TFileManager extends TestFileManager<TFile>> {
 
 	async run(file: TFile) {
 		this.fileManager.processFrontMatter(file, (metadata) => {
+			const existing = metadata.medicine;
+			const medicine = Array.isArray(existing) ? existing : [];
 			metadata.medicine = [
+				...(medicine || []),
 				{
 					type: "[[Aspirin]]",
 					dose: "500mg",
