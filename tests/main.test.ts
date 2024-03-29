@@ -1,6 +1,11 @@
 import FrontmatterSmithPlugin from "../main";
 import { expect } from "chai";
-import { FrontMatter, TestFileManager, Forge } from "../src/Forge";
+import {
+	FrontMatter,
+	TestFileManager,
+	Forge,
+	ForgeConfiguration,
+} from "../src/Forge";
 import { randomUUID } from "crypto";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
 
@@ -12,18 +17,24 @@ type TFile = GetTFile<FakeMetadataFileManager>;
 describe("'Add medicine' case", () => {
 	let fileManager: FakeMetadataFileManager;
 	let forge: Forge<TFile, FakeMetadataFileManager>;
-	let file: TFile;
 
 	beforeEach(() => {
+		const configuration = new ForgeConfiguration();
 		fileManager = new FakeMetadataFileManager();
-		forge = new Forge(fileManager);
-		file = fileManager.createFile();
+		forge = new Forge(fileManager, configuration);
 	});
 
-	it("Should work", async () => {
+	it("Should add a 'medicine' entry if none exists", async () => {
+		const file = fileManager.createFile();
 		await forge.run(file);
 		expect(fileManager.getFrontmatter(file)).to.deep.equal({
-			foo: "bar",
+			medicine: [
+				{
+					type: "[[Aspirin]]",
+					dose: "500mg",
+					time: "12:00",
+				},
+			],
 		});
 	});
 });
