@@ -1,5 +1,9 @@
 import FrontmatterSmithPlugin from "../main";
+import * as sinon from "sinon";
+import * as chai from "chai";
+import sinonChai from "sinon-chai";
 import { expect } from "chai";
+import * as modals from "../src/modals";
 import {
 	FrontMatter,
 	TestFileManager,
@@ -9,6 +13,27 @@ import {
 import { randomUUID } from "crypto";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
 
+const { match } = sinon;
+
+sinon.addBehavior("selectsOption", function (fake, value) {
+	fake.callsFake((items: { text: string }[]) => {
+		const item = items.find((x) => x.text === value);
+		if (!item) {
+			throw new Error("Issue in test, item not selectable");
+		}
+		return Promise.resolve(item);
+	});
+});
+
+declare module "sinon" {
+	// eslint-disable-next-line
+	interface SinonStub<TArgs, TReturnValue> {
+		selectsOption: (x: string) => void;
+	}
+}
+
+chai.use(sinonChai);
+
 type GetTFile<T extends TestFileManager<any>> =
 	T extends TestFileManager<infer U> ? U : never;
 
@@ -17,11 +42,33 @@ type TFile = GetTFile<FakeMetadataFileManager>;
 describe("'Add medicine' case", () => {
 	let fileManager: FakeMetadataFileManager;
 	let forge: Forge<TFile, FakeMetadataFileManager>;
+	let suggester: sinon.SinonStubbedInstance<modals.Suggester>;
 
 	beforeEach(() => {
 		const configuration = new ForgeConfiguration();
 		fileManager = new FakeMetadataFileManager();
-		forge = new Forge(fileManager, configuration);
+		suggester = sinon.createStubInstance(modals.Suggester);
+		forge = new Forge({ fileManager, configuration, suggester });
+		suggester.suggest.selectsOption("Aspirin");
+	});
+
+	afterEach(() => {
+		sinon.reset();
+	});
+
+	it("Should suggest the right options", async () => {
+		const file = fileManager.createFile();
+		await forge.run(file);
+		expect(suggester.suggest).to.have.been.calledWith(
+			match([
+				match({
+					text: "Aspirin",
+				}),
+				match({
+					text: "Paracetamol",
+				}),
+			]),
+		);
 	});
 
 	it("Should add a 'medicine' entry if none exists", async () => {
@@ -65,5 +112,10 @@ describe("'Add medicine' case", () => {
 				},
 			],
 		});
+	});
+
+	describe("File has non-array content", () => {
+		it("Should leave it intact if configuration says so");
+		it("Should overwrite if configuration says so");
 	});
 });
