@@ -17,7 +17,6 @@ export class FuzzySuggester<T> extends FuzzySuggestModal<T> {
 		this.itemSelected = false;
 		this.items = items;
 		this.callback = callback;
-		this.setPlaceholder("PLACEHOLDER");
 	}
 
 	getItems(): T[] {
@@ -49,3 +48,5 @@ export class FuzzySuggester<T> extends FuzzySuggestModal<T> {
 		this.callback(item);
 	}
 }
+
+export type FuzzySuggesterConstructor = typeof FuzzySuggester;
