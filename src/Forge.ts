@@ -24,28 +24,33 @@ const addToArrayOperation = (input: {
 
 const getOperations = async (input: {
 	configuration: ForgeConfiguration;
-	suggester: modals.Suggester;
+	suggester: modals.Modals;
 }) => {
 	const result = await input.configuration
 		.getOptions()
 		.reduce(async (prev, curr): Promise<MetadataOperation[]> => {
 			return prev.then(async (x) => {
-				const option = await input.suggester.suggest(
-					curr.options,
-					"Choose type",
-				);
-				if (!option) {
-					return x;
-				}
+				const value = await curr.values.reduce(async (prev, curr) => {
+					const prevValue = await prev;
+					const value = curr.options
+						? (await input.suggester.suggest(curr.options, "Choose type"))
+								?.value
+						: await input.suggester.prompt({
+								label: curr.prompt,
+							});
+					if (!value) {
+						return prevValue;
+					}
+					return {
+						...prevValue,
+						[curr.key]: value,
+					};
+				}, Promise.resolve({}));
 				return [
 					...x,
 					addToArrayOperation({
 						key: curr.key,
-						value: {
-							type: option.value,
-							dose: "500mg",
-							time: "12:00",
-						},
+						value,
 					}),
 				];
 			});
@@ -55,13 +60,13 @@ const getOperations = async (input: {
 
 export class Forge<TFile, TFileManager extends TestFileManager<TFile>> {
 	fileManager: TFileManager;
-	suggester: modals.Suggester;
+	suggester: modals.Modals;
 	configuration: ForgeConfiguration;
 
 	constructor(deps: {
 		fileManager: TFileManager;
 		configuration: ForgeConfiguration;
-		suggester: modals.Suggester;
+		suggester: modals.Modals;
 	}) {
 		this.fileManager = deps.fileManager;
 		this.configuration = deps.configuration;
@@ -81,15 +86,28 @@ export class ForgeConfiguration {
 		return [
 			{
 				key: "medicine",
-				prompt: "Choose type",
-				options: [
+				values: [
 					{
-						text: "Aspirin",
-						value: "[[Aspirin]]",
+						key: "type",
+						prompt: "Choose type",
+						options: [
+							{
+								text: "Aspirin",
+								value: "[[Aspirin]]",
+							},
+							{
+								text: "Paracetamol",
+								value: "[[Paracetamol]]",
+							},
+						],
 					},
 					{
-						text: "Paracetamol",
-						value: "[[Paracetamol]]",
+						key: "dose",
+						prompt: "Dose",
+					},
+					{
+						key: "time",
+						prompt: "Time",
 					},
 				],
 			},

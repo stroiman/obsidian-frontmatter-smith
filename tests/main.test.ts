@@ -50,6 +50,8 @@ describe("'Add medicine' case", () => {
 		modals = sinon.createStubInstance(Modals);
 		forge = new Forge({ fileManager, configuration, suggester: modals });
 		modals.suggest.selectsOption("Aspirin");
+		modals.prompt.onFirstCall().resolves("500mg");
+		modals.prompt.onSecondCall().resolves("12:00");
 	});
 
 	afterEach(() => {
