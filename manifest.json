@@ -1,0 +1,11 @@
+{
+	"id": "frontmatter-smith",
+	"name": "Frontmatter Smith",
+	"version": "0.0.1",
+	"minAppVersion": "0.15.0",
+	"description": "Help more easily add metadata to front matter",
+	"author": "Peter Strøiman",
+	"authorUrl": "https://stroiman.com",
+	"fundingUrl": "https://www.buymeacoffee.com/stroiman",
+	"isDesktopOnly": false
+}
