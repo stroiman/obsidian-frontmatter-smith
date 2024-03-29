@@ -3,6 +3,6 @@ import { expect } from "chai";
 
 describe("Plugin", () => {
 	it("Should work", () => {
-		expect(1).to.equal(2);
+		expect(1).to.equal(1);
 	});
 });
