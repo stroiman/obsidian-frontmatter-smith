@@ -26,30 +26,31 @@ const getOperations = async (input: {
 	configuration: ForgeConfiguration;
 	suggester: modals.Suggester;
 }) => {
-	const items = [
-		{
-			text: "Aspirin",
-			value: "[[Aspirin]]",
-		},
-		{
-			text: "Paracetamol",
-			value: "[[Paracetamol]]",
-		},
-	];
-	const option = await input.suggester.suggest(items, "Choose type");
-	if (!option) {
-		return [];
-	}
-	return [
-		addToArrayOperation({
-			key: "medicine",
-			value: {
-				type: option.value,
-				dose: "500mg",
-				time: "12:00",
-			},
-		}),
-	];
+	const result = await input.configuration
+		.getOptions()
+		.reduce(async (prev, curr): Promise<MetadataOperation[]> => {
+			return prev.then(async (x) => {
+				const option = await input.suggester.suggest(
+					curr.options,
+					"Choose type",
+				);
+				if (!option) {
+					return x;
+				}
+				return [
+					...x,
+					addToArrayOperation({
+						key: curr.key,
+						value: {
+							type: option.value,
+							dose: "500mg",
+							time: "12:00",
+						},
+					}),
+				];
+			});
+		}, Promise.resolve([]));
+	return result;
 };
 
 export class Forge<TFile, TFileManager extends TestFileManager<TFile>> {
@@ -75,4 +76,23 @@ export class Forge<TFile, TFileManager extends TestFileManager<TFile>> {
 	}
 }
 
-export class ForgeConfiguration {}
+export class ForgeConfiguration {
+	getOptions() {
+		return [
+			{
+				key: "medicine",
+				prompt: "Choose type",
+				options: [
+					{
+						text: "Aspirin",
+						value: "[[Aspirin]]",
+					},
+					{
+						text: "Paracetamol",
+						value: "[[Paracetamol]]",
+					},
+				],
+			},
+		];
+	}
+}
