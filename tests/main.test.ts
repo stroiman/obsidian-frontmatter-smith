@@ -4,17 +4,24 @@ import { FrontMatter, TestFileManager, Forge } from "../src/Forge";
 import { randomUUID } from "crypto";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
 
-describe("Plugin", () => {
+type GetTFile<T extends TestFileManager<any>> =
+	T extends TestFileManager<infer U> ? U : never;
+
+type TFile = GetTFile<FakeMetadataFileManager>;
+
+describe("'Add medicine' case", () => {
 	let fileManager: FakeMetadataFileManager;
+	let forge: Forge<TFile, FakeMetadataFileManager>;
+	let file: TFile;
 
 	beforeEach(() => {
 		fileManager = new FakeMetadataFileManager();
+		forge = new Forge(fileManager);
+		file = fileManager.createFile();
 	});
 
 	it("Should work", async () => {
-		const file = fileManager.createFile();
-		const worker = new Forge(fileManager);
-		await worker.run(file);
+		await forge.run(file);
 		expect(fileManager.getFrontmatter(file)).to.deep.equal({
 			foo: "bar",
 		});
