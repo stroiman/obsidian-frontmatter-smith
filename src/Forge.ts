@@ -1,3 +1,4 @@
+import { ForgeConfiguration, ValueOption } from "./ForgeConfiguration";
 import { Modals } from "./modals";
 
 export type FrontMatter = { [key: string]: unknown };
@@ -96,75 +97,5 @@ export class Forge<TFile, TFileManager extends TestFileManager<TFile>> {
 		this.fileManager.processFrontMatter(file, (metadata) => {
 			operations.forEach((x) => x(metadata));
 		});
-	}
-}
-
-type ArrayConfigurationOption = {
-	$type: "addToArray";
-	key: string;
-	element: ValueOption;
-};
-
-type StringInput = {
-	$value: "stringInput";
-	prompt: string;
-};
-
-type ChoiceInput = {
-	$value: "choice";
-	prompt: string;
-	options: {
-		text: string;
-		value: string;
-	}[];
-};
-
-type ObjectInput = {
-	$value: "object";
-	values: { key: string; value: ValueOption }[];
-};
-
-type ValueOption = ObjectInput | ChoiceInput | StringInput;
-
-type ConfigurationOption = ArrayConfigurationOption;
-
-export class ForgeConfiguration {
-	getOptions(): ConfigurationOption[] {
-		return [
-			{
-				$type: "addToArray",
-				key: "medicine",
-				element: {
-					$value: "object",
-					values: [
-						{
-							key: "type",
-							value: {
-								$value: "choice",
-								prompt: "Choose type",
-								options: [
-									{
-										text: "Aspirin",
-										value: "[[Aspirin]]",
-									},
-									{
-										text: "Paracetamol",
-										value: "[[Paracetamol]]",
-									},
-								],
-							},
-						},
-						{
-							key: "dose",
-							value: { $value: "stringInput", prompt: "Dose" },
-						},
-						{
-							key: "time",
-							value: { $value: "stringInput", prompt: "Time" },
-						},
-					],
-				},
-			},
-		];
 	}
 }

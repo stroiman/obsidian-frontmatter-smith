@@ -4,14 +4,10 @@ import * as chai from "chai";
 import sinonChai from "sinon-chai";
 import { expect } from "chai";
 import { Modals } from "../src/modals";
-import {
-	FrontMatter,
-	TestFileManager,
-	Forge,
-	ForgeConfiguration,
-} from "../src/Forge";
+import { FrontMatter, TestFileManager, Forge } from "../src/Forge";
 import { randomUUID } from "crypto";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
+import { ForgeConfiguration } from "src/ForgeConfiguration";
 
 const { match } = sinon;
 
