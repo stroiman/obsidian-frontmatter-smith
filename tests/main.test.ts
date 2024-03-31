@@ -4,10 +4,14 @@ import * as chai from "chai";
 import sinonChai from "sinon-chai";
 import { expect } from "chai";
 import { Modals } from "../src/modals";
-import { FrontMatter, TestFileManager, Forge } from "../src/Forge";
+import { TestFileManager, Forge } from "../src/Forge";
 import { randomUUID } from "crypto";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
-import { ForgeConfiguration } from "src/ForgeConfiguration";
+import {
+	ConfigurationOption,
+	ForgeConfiguration,
+} from "src/ForgeConfiguration";
+import { configurationFromJson } from "src/ConfigurationFactory";
 
 const { match } = sinon;
 
@@ -41,7 +45,8 @@ describe("'Add medicine' case", () => {
 	let modals: sinon.SinonStubbedInstance<Modals>;
 
 	beforeEach(() => {
-		const configuration = new ForgeConfiguration();
+		const configuration = configurationFromJson(medConfig);
+
 		fileManager = new FakeMetadataFileManager();
 		modals = sinon.createStubInstance(Modals);
 		forge = new Forge({ fileManager, configuration, suggester: modals });
@@ -118,3 +123,40 @@ describe("'Add medicine' case", () => {
 		it("Should overwrite if configuration says so");
 	});
 });
+
+const medConfig: ConfigurationOption[] = [
+	{
+		$type: "addToArray",
+		key: "medicine",
+		element: {
+			$value: "object",
+			values: [
+				{
+					key: "type",
+					value: {
+						$value: "choice",
+						prompt: "Choose type",
+						options: [
+							{
+								text: "Aspirin",
+								value: "[[Aspirin]]",
+							},
+							{
+								text: "Paracetamol",
+								value: "[[Paracetamol]]",
+							},
+						],
+					},
+				},
+				{
+					key: "dose",
+					value: { $value: "stringInput", label: "Dose" },
+				},
+				{
+					key: "time",
+					value: { $value: "stringInput", label: "Time" },
+				},
+			],
+		},
+	},
+];

@@ -36,7 +36,7 @@ export type ConfigurationOption = ArrayConfigurationOption;
 export type Data = string | null | { [key: string]: Data };
 export type ValueResolverResult<T> = { value: T };
 
-interface ValueResolver<T, TDeps> {
+export interface ValueResolver<T, TDeps> {
 	run(): (deps: TDeps) => Promise<ValueResolverResult<T>>;
 }
 
@@ -47,7 +47,7 @@ const resolveResult = {
 type Prompt = Pick<Modals, "prompt">;
 type Suggest = Pick<Modals, "suggest">;
 
-class PromtResolver implements ValueResolver<string | null, Prompt> {
+export class PromtResolver implements ValueResolver<string | null, Prompt> {
 	constructor(private options: { label: string }) {}
 
 	run() {
@@ -57,7 +57,7 @@ class PromtResolver implements ValueResolver<string | null, Prompt> {
 	}
 }
 
-class ChoiceResolver implements ValueResolver<string | null, Suggest> {
+export class ChoiceResolver implements ValueResolver<string | null, Suggest> {
 	constructor(private options: ChoiceInput) {}
 
 	run() {
@@ -69,7 +69,7 @@ class ChoiceResolver implements ValueResolver<string | null, Suggest> {
 	}
 }
 
-class ObjectResolver implements ValueResolver<Data, Modals> {
+export class ObjectResolver implements ValueResolver<Data, Modals> {
 	constructor(
 		private options: { key: string; resolver: ValueResolver<Data, Modals> }[],
 	) {}
@@ -93,29 +93,13 @@ class ObjectResolver implements ValueResolver<Data, Modals> {
 	}
 }
 
-const getResolver = (option: ValueOption): ValueResolver<Data, Modals> => {
-	switch (option.$value) {
-		case "stringInput":
-			return new PromtResolver(option);
-		case "choice":
-			return new ChoiceResolver(option);
-		case "object":
-			return new ObjectResolver(
-				option.values.map(({ key, value }) => ({
-					key,
-					resolver: getResolver(value),
-				})),
-			);
-	}
-};
-
 export type MetadataOperation = (input: FrontMatter) => void;
 
 interface MetadataCommand<TDeps> {
 	run(deps: TDeps): Promise<MetadataOperation[]>;
 }
 
-class AddToArray<TDeps> implements MetadataCommand<TDeps> {
+export class AddToArray<TDeps> implements MetadataCommand<TDeps> {
 	constructor(
 		private key: string,
 		private option: ValueResolver<Data, TDeps>,
@@ -136,52 +120,10 @@ class AddToArray<TDeps> implements MetadataCommand<TDeps> {
 	}
 }
 
-export const createOperations = (options: ConfigurationOption[]) => {
-	return options.map((option) => {
-		switch (option.$type) {
-			case "addToArray":
-				return new AddToArray(option.key, getResolver(option.element));
-		}
-	});
-};
-
 export class ForgeConfiguration {
-	getOptions(): MetadataCommand<Modals>[] {
-		return createOperations([
-			{
-				$type: "addToArray",
-				key: "medicine",
-				element: {
-					$value: "object",
-					values: [
-						{
-							key: "type",
-							value: {
-								$value: "choice",
-								prompt: "Choose type",
-								options: [
-									{
-										text: "Aspirin",
-										value: "[[Aspirin]]",
-									},
-									{
-										text: "Paracetamol",
-										value: "[[Paracetamol]]",
-									},
-								],
-							},
-						},
-						{
-							key: "dose",
-							value: { $value: "stringInput", label: "Dose" },
-						},
-						{
-							key: "time",
-							value: { $value: "stringInput", label: "Time" },
-						},
-					],
-				},
-			},
-		]);
+	constructor(private commands: MetadataCommand<Modals>[]) {}
+
+	getOptions() {
+		return this.commands;
 	}
 }
