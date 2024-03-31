@@ -1,17 +1,15 @@
 import {
 	ChoiceInput,
-	choiceValueResolver,
+	createOperations,
 	Data,
 	ForgeConfiguration,
-	getValue,
+	FrontMatter,
+	MetadataOperation,
 	ObjectValueInput,
-	stringValueResulter,
 	ValueOption,
 	ValueResolverResult,
 } from "./ForgeConfiguration";
 import { Modals } from "./modals";
-
-export type FrontMatter = { [key: string]: unknown };
 
 export interface TestFileManager<TFile> {
 	processFrontMatter(
@@ -19,8 +17,6 @@ export interface TestFileManager<TFile> {
 		fn: (frontMatter: FrontMatter) => void,
 	): Promise<void>;
 }
-
-type MetadataOperation = (input: FrontMatter) => void;
 
 const addToArrayOperation = (input: {
 	key: string;
@@ -36,29 +32,19 @@ const addToArrayOperation = (input: {
 const getOperations = async (input: {
 	configuration: ForgeConfiguration;
 	suggester: Modals;
-}) => {
-	const result = await input.configuration
-		.getOptions()
-		.reduce(async (prev, curr): Promise<MetadataOperation[]> => {
-			return prev.then(async (x) => {
-				switch (curr.$type) {
-					case "addToArray":
-						const value = await getValue(curr.element, input.suggester);
-						if (!value) {
-							return x;
-						}
-						return [
-							...x,
-							addToArrayOperation({
-								key: curr.key,
-								value,
-							}),
-						];
-				}
-			});
-		}, Promise.resolve([]));
-	return result;
+}): Promise<MetadataOperation[]> => {
+	const ops = createOperations(input.configuration.getOptions());
+	const x = await ops.reduce(async (prevP, curr) => {
+		const prev = await prevP;
+		const newElement = await curr.run(input.suggester);
+		return [...prev, newElement];
+		return prev;
+	}, Promise.resolve([]));
+
+	return x.flat();
 };
+
+type Operation = (deps: Modals) => Promise<MetadataOperation[]>;
 
 export class Forge<TFile, TFileManager extends TestFileManager<TFile>> {
 	fileManager: TFileManager;

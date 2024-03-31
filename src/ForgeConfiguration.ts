@@ -1,5 +1,7 @@
 import { Modals } from "./modals";
 
+export type FrontMatter = { [key: string]: unknown };
+
 export type ArrayConfigurationOption = {
 	$type: "addToArray";
 	key: string;
@@ -148,11 +150,38 @@ const getResolver = (option: ValueOption): ValueResolver<Data, Modals> => {
 	}
 };
 
-export const getValue = async (
-	option: ValueOption,
-	modals: Modals,
-): Promise<Data> => {
-	return getResolver(option)
-		.run()(modals)
-		.then(({ value }) => value);
+export type MetadataOperation = (input: FrontMatter) => void;
+
+interface MetadataCommand<TDeps> {
+	run(deps: TDeps): Promise<MetadataOperation[]>;
+}
+
+class AddToArray<TDeps> implements MetadataCommand<TDeps> {
+	constructor(
+		private key: string,
+		private option: ValueResolver<Data, TDeps>,
+	) {}
+
+	async run(deps: TDeps): Promise<MetadataOperation[]> {
+		const { value } = await this.option.run()(deps);
+		if (!value) {
+			return [];
+		}
+		return [
+			(metadata) => {
+				const existing = metadata[this.key];
+				const medicine = Array.isArray(existing) ? existing : [];
+				metadata[this.key] = [...(medicine || []), value];
+			},
+		];
+	}
+}
+
+export const createOperations = (options: ConfigurationOption[]) => {
+	return options.map((option) => {
+		switch (option.$type) {
+			case "addToArray":
+				return new AddToArray(option.key, getResolver(option.element));
+		}
+	});
 };
