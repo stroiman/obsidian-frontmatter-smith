@@ -1,7 +1,6 @@
 import FrontmatterSmithPlugin from "../main";
 import * as sinon from "sinon";
 import * as chai from "chai";
-import sinonChai from "sinon-chai";
 import { expect } from "chai";
 import { Modals } from "../src/modals";
 import { TestFileManager, Forge } from "../src/Forge";
@@ -14,25 +13,6 @@ import {
 import { configurationFromJson } from "src/ConfigurationFactory";
 
 const { match } = sinon;
-
-sinon.addBehavior("selectsOption", function (fake, value) {
-	fake.callsFake((items: { text: string }[]) => {
-		const item = items.find((x) => x.text === value);
-		if (!item) {
-			throw new Error("Issue in test, item not selectable");
-		}
-		return Promise.resolve(item);
-	});
-});
-
-declare module "sinon" {
-	// eslint-disable-next-line
-	interface SinonStub<TArgs, TReturnValue> {
-		selectsOption: (x: string) => void;
-	}
-}
-
-chai.use(sinonChai);
 
 type GetTFile<T extends TestFileManager<any>> =
 	T extends TestFileManager<infer U> ? U : never;
@@ -53,10 +33,6 @@ describe("'Add medicine' case", () => {
 		modals.suggest.selectsOption("Aspirin");
 		modals.prompt.onFirstCall().resolves("500mg");
 		modals.prompt.onSecondCall().resolves("12:00");
-	});
-
-	afterEach(() => {
-		sinon.reset();
 	});
 
 	it("Should suggest the right options", async () => {
