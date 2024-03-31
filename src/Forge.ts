@@ -1,6 +1,5 @@
 import {
 	ChoiceInput,
-	createOperations,
 	Data,
 	ForgeConfiguration,
 	FrontMatter,
@@ -18,14 +17,14 @@ export interface TestFileManager<TFile> {
 	): Promise<void>;
 }
 
+const asArrayOrEmpty = (input: unknown) => (Array.isArray(input) ? input : []);
+
 const addToArrayOperation = (input: {
 	key: string;
 	value: Data;
 }): MetadataOperation => {
 	return (metadata) => {
-		const existing = metadata[input.key];
-		const medicine = Array.isArray(existing) ? existing : [];
-		metadata.medicine = [...(medicine || []), input.value];
+		metadata[input.key] = [...asArrayOrEmpty(metadata[input.key]), input.value];
 	};
 };
 
