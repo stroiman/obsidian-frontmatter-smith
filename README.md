@@ -46,3 +46,10 @@ import { Plugin } from "obsidian";
 import { createPluginClass, PluginConstructor } from "./main-impl.ts"
 export default createPluginClass(Plugin as PluginConstructor);
 ```
+
+
+Mocha in watch mode is launched by [nodemon](https://github.com/remy/nodemon).
+This is becuase the watcher with the tsx module loader will crash on syntactic
+errors, such as mismatched braces.
+
+Without a tool like nodemon, you'd have to manually relaunch.
