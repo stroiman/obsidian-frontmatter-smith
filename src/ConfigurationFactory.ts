@@ -34,6 +34,7 @@ export type ChoiceInput = {
 	options: {
 		text: string;
 		value: string;
+		commands?: ConfigurationOption[];
 	}[];
 };
 
@@ -53,7 +54,11 @@ const getResolver = (option: ValueOption): ValueResolver<Data, Modals> => {
 		case "stringInput":
 			return new PromtResolver(option);
 		case "choice":
-			return new ChoiceResolver(option);
+			const options = option.options.map(({ commands, ...rest }) => ({
+				...rest,
+				commands: createOperations(commands || []),
+			}));
+			return new ChoiceResolver({ ...option, options });
 		case "object":
 			return new ObjectResolver(
 				option.values.map(({ key, value }) => ({

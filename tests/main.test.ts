@@ -6,18 +6,11 @@ import { Modals } from "../src/modals";
 import { TestFileManager, Forge } from "../src/Forge";
 import { randomUUID } from "crypto";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
-import {
-	ConfigurationOption,
-	ForgeConfiguration,
-} from "src/ForgeConfiguration";
-import { configurationFromJson } from "src/ConfigurationFactory";
+import { ForgeConfiguration } from "src/ForgeConfiguration";
+import { configurationFromJson, ConfigurationOption } from "src/ConfigurationFactory";
+import { TFile } from "./types";
 
 const { match } = sinon;
-
-type GetTFile<T extends TestFileManager<any>> =
-	T extends TestFileManager<infer U> ? U : never;
-
-type TFile = GetTFile<FakeMetadataFileManager>;
 
 describe("'Add medicine' case", () => {
 	let fileManager: FakeMetadataFileManager;

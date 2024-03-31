@@ -12,7 +12,9 @@ export type ValueResolverResult<T> = {
 };
 
 export const andThen =
-	<T, U>(fn: (x: T) => Promise<ValueResolverResult<U>>) =>
+	<T, U>(
+		fn: (x: T) => ValueResolverResult<U> | Promise<ValueResolverResult<U>>,
+	) =>
 	async (
 		x: ValueResolverResult<T> | Promise<ValueResolverResult<T>>,
 	): Promise<ValueResolverResult<U>> => {
@@ -29,6 +31,16 @@ export const map =
 		const prev = await x;
 		return { value: await fn(prev.value), commands: prev.commands };
 	};
+
+export const addCommands =
+	(commands: MetadataCommand<Modals>[]) =>
+	<T>(
+		x: ValueResolverResult<T> | Promise<ValueResolverResult<T>>,
+	): Promise<ValueResolverResult<T>> =>
+		pipe(
+			x,
+			andThen((value) => ({ value, commands })),
+		);
 
 export interface ValueResolver<T, TDeps> {
 	run(deps: TDeps): Promise<ValueResolverResult<T>>;
@@ -55,6 +67,7 @@ type ChoiceOptions = {
 	options: {
 		text: string;
 		value: string;
+		commands: MetadataCommand<Modals>[];
 	}[];
 };
 
@@ -64,7 +77,12 @@ export class ChoiceResolver implements ValueResolver<string | null, Suggest> {
 	run(deps: Suggest) {
 		return deps
 			.suggest(this.options.options, this.options.prompt)
-			.then((x) => resolveResult.ret(x?.value || null));
+			.then((result): Promise<ValueResolverResult<string | null>> => {
+				return result
+					? pipe(resolveResult.ret(result.value), addCommands(result.commands))
+					: resolveResult.ret(null);
+			});
+		// pipe(resolveResult.ret(result?.value || null)));
 	}
 }
 

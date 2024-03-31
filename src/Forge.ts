@@ -2,13 +2,10 @@ import { pipe } from "fp-ts/lib/function";
 import {
 	andThen,
 	map,
-	ChoiceInput,
 	Data,
 	ForgeConfiguration,
 	FrontMatter,
 	MetadataOperation,
-	ObjectValueInput,
-	ValueOption,
 	ValueResolverResult,
 } from "./ForgeConfiguration";
 import { Modals } from "./modals";
@@ -38,13 +35,15 @@ const getOperations = async (input: {
 	const ops = input.configuration.getOptions();
 	const initial: MetadataOperation[] = [];
 	const initialValue = { value: initial, commands: ops };
-	const iter = (x: typeof initialValue) => {
+	const iter = (
+		x: typeof initialValue,
+	): Promise<ValueResolverResult<MetadataOperation[]>> => {
 		const { value, commands } = x;
 		if (commands.length === 0) {
-			return x;
+			return Promise.resolve(x);
 		}
 		const [command, ...rest] = commands;
-		return pipe(
+		const r = pipe(
 			{ value, commands: rest },
 			andThen((value) => {
 				return pipe(
@@ -53,6 +52,7 @@ const getOperations = async (input: {
 				);
 			}),
 		);
+		return r.then(iter);
 	};
 	return (await iter(initialValue)).value;
 };
