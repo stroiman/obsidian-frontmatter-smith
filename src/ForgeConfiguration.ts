@@ -1,4 +1,5 @@
 import { Modals } from "./modals";
+import { pipe } from "fp-ts/function";
 
 export type FrontMatter = { [key: string]: unknown };
 
@@ -33,15 +34,40 @@ export type ValueOption = ObjectInput | ChoiceInput | StringInput;
 
 export type ConfigurationOption = ArrayConfigurationOption;
 
-export type Data = string | null | { [key: string]: Data };
-export type ValueResolverResult<T> = { value: T };
+type ObjectData = { [key: string]: Data };
+export type Data = string | null | ObjectData;
+
+export type ValueResolverResult<T> = {
+	value: T;
+	commands: MetadataCommand<Modals>[];
+};
+
+export const andThen =
+	<T, U>(fn: (x: T) => Promise<ValueResolverResult<U>>) =>
+	async (
+		x: ValueResolverResult<T> | Promise<ValueResolverResult<T>>,
+	): Promise<ValueResolverResult<U>> => {
+		const prev = await x;
+		const { value, commands } = await fn(prev.value);
+		return { value, commands: [prev.commands, commands].flat() };
+	};
+
+export const map =
+	<T, U>(fn: (x: T) => U | Promise<U>) =>
+	async (
+		x: ValueResolverResult<T> | Promise<ValueResolverResult<T>>,
+	): Promise<ValueResolverResult<U>> => {
+		const prev = await x;
+		return { value: await fn(prev.value), commands: prev.commands };
+	};
 
 export interface ValueResolver<T, TDeps> {
 	run(deps: TDeps): Promise<ValueResolverResult<T>>;
 }
 
 const resolveResult = {
-	ret: <T>(value: T): ValueResolverResult<T> => ({ value }),
+	ret: <T>(value: T): Promise<ValueResolverResult<T>> =>
+		Promise.resolve({ value, commands: [] }),
 };
 
 type Prompt = Pick<Modals, "prompt">;
@@ -71,26 +97,34 @@ export class ObjectResolver implements ValueResolver<Data, Modals> {
 	) {}
 
 	run(deps: Modals) {
-		return this.options
-			.reduce(async (prev, curr): Promise<Data> => {
-				const prevValue = await prev;
-				const { value } = await curr.resolver.run(deps);
-				if (!value) {
-					return prevValue;
-				}
-				return {
-					...prevValue,
-					[curr.key]: value,
-				};
-			}, Promise.resolve({}))
-			.then(resolveResult.ret);
+		return this.options.reduce(
+			async (prevP, curr) =>
+				pipe(
+					prevP,
+					andThen((prev) =>
+						pipe(
+							curr.resolver.run(deps),
+							andThen((value) => {
+								if (!value) {
+									return resolveResult.ret(prev);
+								}
+								return resolveResult.ret({
+									...prev,
+									[curr.key]: value,
+								});
+							}),
+						),
+					),
+				),
+			resolveResult.ret({}),
+		);
 	}
 }
 
 export type MetadataOperation = (input: FrontMatter) => void;
 
 interface MetadataCommand<TDeps> {
-	run(deps: TDeps): Promise<MetadataOperation[]>;
+	run(deps: TDeps): Promise<ValueResolverResult<MetadataOperation[]>>;
 }
 
 export class AddToArray<TDeps> implements MetadataCommand<TDeps> {
@@ -99,18 +133,51 @@ export class AddToArray<TDeps> implements MetadataCommand<TDeps> {
 		private option: ValueResolver<Data, TDeps>,
 	) {}
 
-	async run(deps: TDeps): Promise<MetadataOperation[]> {
-		const { value } = await this.option.run(deps);
-		if (!value) {
-			return [];
-		}
-		return [
-			(metadata) => {
-				const existing = metadata[this.key];
-				const medicine = Array.isArray(existing) ? existing : [];
-				metadata[this.key] = [...(medicine || []), value];
-			},
-		];
+	async run(deps: TDeps): Promise<ValueResolverResult<MetadataOperation[]>> {
+		// pipe(
+		// 	this.option.run(deps),
+		// 	andThen((value) => {
+		// 		if (!value) {
+		// 			return [];
+		// 		}
+		// 		return [
+		// 			(metadata) => {
+		// 				const existing = metadata[this.key];
+		// 				const medicine = Array.isArray(existing) ? existing : [];
+		// 				metadata[this.key] = [...(medicine || []), value];
+		// 			},
+		// 		];
+		// 	}),
+		// );
+
+		return pipe(
+			this.option.run(deps),
+			map((value) => {
+				if (!value) {
+					return [];
+				}
+				return [
+					(metadata: FrontMatter) => {
+						const existing = metadata[this.key];
+						const medicine = Array.isArray(existing) ? existing : [];
+						metadata[this.key] = [...(medicine || []), value];
+					},
+				];
+			}),
+		);
+		//
+		//
+		// const { value } = await this.option.run(deps);
+		// if (!value) {
+		// 	return [];
+		// }
+		// return [
+		// 	(metadata) => {
+		// 		const existing = metadata[this.key];
+		// 		const medicine = Array.isArray(existing) ? existing : [];
+		// 		metadata[this.key] = [...(medicine || []), value];
+		// 	},
+		// ];
 	}
 }
 

@@ -1,4 +1,7 @@
+import { pipe } from "fp-ts/lib/function";
 import {
+	andThen,
+	map,
 	ChoiceInput,
 	Data,
 	ForgeConfiguration,
@@ -33,14 +36,25 @@ const getOperations = async (input: {
 	suggester: Modals;
 }): Promise<MetadataOperation[]> => {
 	const ops = input.configuration.getOptions();
-	const x = await ops.reduce(async (prevP, curr) => {
-		const prev = await prevP;
-		const newElement = await curr.run(input.suggester);
-		return [...prev, newElement];
-		return prev;
-	}, Promise.resolve([]));
-
-	return x.flat();
+	const initial: MetadataOperation[] = [];
+	const initialValue = { value: initial, commands: ops };
+	const iter = (x: typeof initialValue) => {
+		const { value, commands } = x;
+		if (commands.length === 0) {
+			return x;
+		}
+		const [command, ...rest] = commands;
+		return pipe(
+			{ value, commands: rest },
+			andThen((value) => {
+				return pipe(
+					command.run(input.suggester),
+					map((result) => [...value, ...result]),
+				);
+			}),
+		);
+	};
+	return (await iter(initialValue)).value;
 };
 
 type Operation = (deps: Modals) => Promise<MetadataOperation[]>;
