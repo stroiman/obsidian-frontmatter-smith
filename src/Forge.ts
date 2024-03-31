@@ -1,4 +1,14 @@
-import { ForgeConfiguration, ValueOption } from "./ForgeConfiguration";
+import {
+	ChoiceInput,
+	choiceValueResolver,
+	Data,
+	ForgeConfiguration,
+	getValue,
+	ObjectValueInput,
+	stringValueResulter,
+	ValueOption,
+	ValueResolverResult,
+} from "./ForgeConfiguration";
 import { Modals } from "./modals";
 
 export type FrontMatter = { [key: string]: unknown };
@@ -21,33 +31,6 @@ const addToArrayOperation = (input: {
 		const medicine = Array.isArray(existing) ? existing : [];
 		metadata.medicine = [...(medicine || []), input.value];
 	};
-};
-
-type Data = string | null | { [key: string]: Data };
-
-const getValue = async (option: ValueOption, modals: Modals): Promise<Data> => {
-	switch (option.$value) {
-		case "stringInput":
-			return await modals.prompt({
-				label: option.prompt,
-			});
-		case "choice":
-			return modals
-				.suggest(option.options, option.prompt)
-				.then((x) => x?.value || null);
-		case "object":
-			return await option.values.reduce(async (prev, curr): Promise<Data> => {
-				const prevValue = await prev;
-				const value = await getValue(curr.value, modals);
-				if (!value) {
-					return prevValue;
-				}
-				return {
-					...prevValue,
-					[curr.key]: value,
-				};
-			}, Promise.resolve({}));
-	}
 };
 
 const getOperations = async (input: {

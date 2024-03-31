@@ -1,3 +1,5 @@
+import { Modals } from "./modals";
+
 export type ArrayConfigurationOption = {
 	$type: "addToArray";
 	key: string;
@@ -6,7 +8,7 @@ export type ArrayConfigurationOption = {
 
 export type StringInput = {
 	$value: "stringInput";
-	prompt: string;
+	label: string;
 };
 
 export type ChoiceInput = {
@@ -18,9 +20,11 @@ export type ChoiceInput = {
 	}[];
 };
 
+export type ObjectValueInput = { key: string; value: ValueOption }[];
+
 export type ObjectInput = {
 	$value: "object";
-	values: { key: string; value: ValueOption }[];
+	values: ObjectValueInput;
 };
 
 export type ValueOption = ObjectInput | ChoiceInput | StringInput;
@@ -55,11 +59,11 @@ export class ForgeConfiguration {
 						},
 						{
 							key: "dose",
-							value: { $value: "stringInput", prompt: "Dose" },
+							value: { $value: "stringInput", label: "Dose" },
 						},
 						{
 							key: "time",
-							value: { $value: "stringInput", prompt: "Time" },
+							value: { $value: "stringInput", label: "Time" },
 						},
 					],
 				},
@@ -67,3 +71,88 @@ export class ForgeConfiguration {
 		];
 	}
 }
+
+export type Data = string | null | { [key: string]: Data };
+export type ValueResolverResult<T> = { value: T };
+
+interface ValueResolver<T, TDeps> {
+	run(): (deps: TDeps) => Promise<ValueResolverResult<T>>;
+}
+
+const resolveResult = {
+	ret: <T>(value: T): ValueResolverResult<T> => ({ value }),
+};
+
+type Prompt = Pick<Modals, "prompt">;
+type Suggest = Pick<Modals, "suggest">;
+
+class PromtResolver implements ValueResolver<string | null, Prompt> {
+	constructor(private options: { label: string }) {}
+
+	run() {
+		return (deps: Prompt) => {
+			return deps.prompt(this.options).then((x) => resolveResult.ret(x));
+		};
+	}
+}
+
+class ChoiceResolver implements ValueResolver<string | null, Suggest> {
+	constructor(private options: ChoiceInput) {}
+
+	run() {
+		return (deps: Suggest) => {
+			return deps
+				.suggest(this.options.options, this.options.prompt)
+				.then((x) => resolveResult.ret(x?.value || null));
+		};
+	}
+}
+
+class ObjectResolver implements ValueResolver<Data, Modals> {
+	constructor(
+		private options: { key: string; resolver: ValueResolver<Data, Modals> }[],
+	) {}
+
+	run() {
+		return (deps: Modals) => {
+			return this.options
+				.reduce(async (prev, curr): Promise<Data> => {
+					const prevValue = await prev;
+					const { value } = await curr.resolver.run()(deps);
+					if (!value) {
+						return prevValue;
+					}
+					return {
+						...prevValue,
+						[curr.key]: value,
+					};
+				}, Promise.resolve({}))
+				.then(resolveResult.ret);
+		};
+	}
+}
+
+const getResolver = (option: ValueOption): ValueResolver<Data, Modals> => {
+	switch (option.$value) {
+		case "stringInput":
+			return new PromtResolver(option);
+		case "choice":
+			return new ChoiceResolver(option);
+		case "object":
+			return new ObjectResolver(
+				option.values.map(({ key, value }) => ({
+					key,
+					resolver: getResolver(value),
+				})),
+			);
+	}
+};
+
+export const getValue = async (
+	option: ValueOption,
+	modals: Modals,
+): Promise<Data> => {
+	return getResolver(option)
+		.run()(modals)
+		.then(({ value }) => value);
+};
