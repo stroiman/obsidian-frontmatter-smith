@@ -33,7 +33,7 @@ const getOperations = async (input: {
 	configuration: ForgeConfiguration;
 	suggester: Modals;
 }): Promise<MetadataOperation[]> => {
-	const ops = createOperations(input.configuration.getOptions());
+	const ops = input.configuration.getOptions();
 	const x = await ops.reduce(async (prevP, curr) => {
 		const prev = await prevP;
 		const newElement = await curr.run(input.suggester);

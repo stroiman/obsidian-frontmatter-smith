@@ -33,47 +33,6 @@ export type ValueOption = ObjectInput | ChoiceInput | StringInput;
 
 export type ConfigurationOption = ArrayConfigurationOption;
 
-export class ForgeConfiguration {
-	getOptions(): ConfigurationOption[] {
-		return [
-			{
-				$type: "addToArray",
-				key: "medicine",
-				element: {
-					$value: "object",
-					values: [
-						{
-							key: "type",
-							value: {
-								$value: "choice",
-								prompt: "Choose type",
-								options: [
-									{
-										text: "Aspirin",
-										value: "[[Aspirin]]",
-									},
-									{
-										text: "Paracetamol",
-										value: "[[Paracetamol]]",
-									},
-								],
-							},
-						},
-						{
-							key: "dose",
-							value: { $value: "stringInput", label: "Dose" },
-						},
-						{
-							key: "time",
-							value: { $value: "stringInput", label: "Time" },
-						},
-					],
-				},
-			},
-		];
-	}
-}
-
 export type Data = string | null | { [key: string]: Data };
 export type ValueResolverResult<T> = { value: T };
 
@@ -185,3 +144,44 @@ export const createOperations = (options: ConfigurationOption[]) => {
 		}
 	});
 };
+
+export class ForgeConfiguration {
+	getOptions(): MetadataCommand<Modals>[] {
+		return createOperations([
+			{
+				$type: "addToArray",
+				key: "medicine",
+				element: {
+					$value: "object",
+					values: [
+						{
+							key: "type",
+							value: {
+								$value: "choice",
+								prompt: "Choose type",
+								options: [
+									{
+										text: "Aspirin",
+										value: "[[Aspirin]]",
+									},
+									{
+										text: "Paracetamol",
+										value: "[[Paracetamol]]",
+									},
+								],
+							},
+						},
+						{
+							key: "dose",
+							value: { $value: "stringInput", label: "Dose" },
+						},
+						{
+							key: "time",
+							value: { $value: "stringInput", label: "Time" },
+						},
+					],
+				},
+			},
+		]);
+	}
+}
