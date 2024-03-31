@@ -5,6 +5,7 @@ import {
 	ForgeConfiguration,
 	ObjectResolver,
 	PromtResolver,
+	SetValue,
 	ValueResolver,
 	ValueResolverResult,
 } from "./ForgeConfiguration";
@@ -14,6 +15,12 @@ export type ArrayConfigurationOption = {
 	$type: "addToArray";
 	key: string;
 	element: ValueOption;
+};
+
+type SetValueOption = {
+	$type: "setValue";
+	key: string;
+	value: ValueOption;
 };
 
 export type StringInput = {
@@ -39,7 +46,7 @@ export type ObjectInput = {
 
 export type ValueOption = ObjectInput | ChoiceInput | StringInput;
 
-export type ConfigurationOption = ArrayConfigurationOption;
+export type ConfigurationOption = ArrayConfigurationOption | SetValueOption;
 
 const getResolver = (option: ValueOption): ValueResolver<Data, Modals> => {
 	switch (option.$value) {
@@ -62,6 +69,8 @@ export const createOperations = (options: ConfigurationOption[]) => {
 		switch (option.$type) {
 			case "addToArray":
 				return new AddToArray(option.key, getResolver(option.element));
+			case "setValue":
+				return new SetValue(option.key, getResolver(option.value));
 		}
 	});
 };

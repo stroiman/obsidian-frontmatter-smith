@@ -9,6 +9,12 @@ export type ArrayConfigurationOption = {
 	element: ValueOption;
 };
 
+export type SetValueConfigurationOption = {
+	$type: "setValue";
+	key: string;
+	value: ValueOption;
+};
+
 export type StringInput = {
 	$value: "stringInput";
 	label: string;
@@ -32,7 +38,9 @@ export type ObjectInput = {
 
 export type ValueOption = ObjectInput | ChoiceInput | StringInput;
 
-export type ConfigurationOption = ArrayConfigurationOption;
+export type ConfigurationOption =
+	| ArrayConfigurationOption
+	| SetValueConfigurationOption;
 
 type ObjectData = { [key: string]: Data };
 export type Data = string | null | ObjectData;
@@ -127,6 +135,28 @@ interface MetadataCommand<TDeps> {
 	run(deps: TDeps): Promise<ValueResolverResult<MetadataOperation[]>>;
 }
 
+export class SetValue<TDeps> implements MetadataCommand<TDeps> {
+	constructor(
+		private key: string,
+		private option: ValueResolver<Data, TDeps>,
+	) {}
+
+	run(deps: TDeps): Promise<ValueResolverResult<MetadataOperation[]>> {
+		return pipe(
+			this.option.run(deps),
+			map((value) =>
+				!value
+					? []
+					: [
+							(metadata) => {
+								metadata[this.key] = value;
+							},
+						],
+			),
+		);
+	}
+}
+
 export class AddToArray<TDeps> implements MetadataCommand<TDeps> {
 	constructor(
 		private key: string,
@@ -134,22 +164,6 @@ export class AddToArray<TDeps> implements MetadataCommand<TDeps> {
 	) {}
 
 	async run(deps: TDeps): Promise<ValueResolverResult<MetadataOperation[]>> {
-		// pipe(
-		// 	this.option.run(deps),
-		// 	andThen((value) => {
-		// 		if (!value) {
-		// 			return [];
-		// 		}
-		// 		return [
-		// 			(metadata) => {
-		// 				const existing = metadata[this.key];
-		// 				const medicine = Array.isArray(existing) ? existing : [];
-		// 				metadata[this.key] = [...(medicine || []), value];
-		// 			},
-		// 		];
-		// 	}),
-		// );
-
 		return pipe(
 			this.option.run(deps),
 			map((value) => {
