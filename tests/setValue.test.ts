@@ -19,7 +19,7 @@ type GetTFile<T extends TestFileManager<any>> =
 
 type TFile = GetTFile<FakeMetadataFileManager>;
 
-describe.only("'Add value' case", () => {
+describe("'Add value' case", () => {
 	let fileManager: FakeMetadataFileManager;
 	let forge: Forge<TFile, FakeMetadataFileManager>;
 	let modals: sinon.SinonStubbedInstance<Modals>;
