@@ -3,45 +3,6 @@ import { pipe } from "fp-ts/function";
 
 export type FrontMatter = { [key: string]: unknown };
 
-export type ArrayConfigurationOption = {
-	$type: "addToArray";
-	key: string;
-	element: ValueOption;
-};
-
-export type SetValueConfigurationOption = {
-	$type: "setValue";
-	key: string;
-	value: ValueOption;
-};
-
-export type StringInput = {
-	$value: "stringInput";
-	label: string;
-};
-
-export type ChoiceInput = {
-	$value: "choice";
-	prompt: string;
-	options: {
-		text: string;
-		value: string;
-	}[];
-};
-
-export type ObjectValueInput = { key: string; value: ValueOption }[];
-
-export type ObjectInput = {
-	$value: "object";
-	values: ObjectValueInput;
-};
-
-export type ValueOption = ObjectInput | ChoiceInput | StringInput;
-
-export type ConfigurationOption =
-	| ArrayConfigurationOption
-	| SetValueConfigurationOption;
-
 type ObjectData = { [key: string]: Data };
 export type Data = string | null | ObjectData;
 
@@ -89,8 +50,16 @@ export class PromtResolver implements ValueResolver<string | null, Prompt> {
 	}
 }
 
+type ChoiceOptions = {
+	prompt: string;
+	options: {
+		text: string;
+		value: string;
+	}[];
+};
+
 export class ChoiceResolver implements ValueResolver<string | null, Suggest> {
-	constructor(private options: ChoiceInput) {}
+	constructor(private options: ChoiceOptions) {}
 
 	run(deps: Suggest) {
 		return deps
