@@ -37,7 +37,7 @@ export type Data = string | null | { [key: string]: Data };
 export type ValueResolverResult<T> = { value: T };
 
 export interface ValueResolver<T, TDeps> {
-	run(): (deps: TDeps) => Promise<ValueResolverResult<T>>;
+	run(deps: TDeps): Promise<ValueResolverResult<T>>;
 }
 
 const resolveResult = {
@@ -50,22 +50,18 @@ type Suggest = Pick<Modals, "suggest">;
 export class PromtResolver implements ValueResolver<string | null, Prompt> {
 	constructor(private options: { label: string }) {}
 
-	run() {
-		return (deps: Prompt) => {
-			return deps.prompt(this.options).then((x) => resolveResult.ret(x));
-		};
+	run(deps: Prompt) {
+		return deps.prompt(this.options).then((x) => resolveResult.ret(x));
 	}
 }
 
 export class ChoiceResolver implements ValueResolver<string | null, Suggest> {
 	constructor(private options: ChoiceInput) {}
 
-	run() {
-		return (deps: Suggest) => {
-			return deps
-				.suggest(this.options.options, this.options.prompt)
-				.then((x) => resolveResult.ret(x?.value || null));
-		};
+	run(deps: Suggest) {
+		return deps
+			.suggest(this.options.options, this.options.prompt)
+			.then((x) => resolveResult.ret(x?.value || null));
 	}
 }
 
@@ -74,22 +70,20 @@ export class ObjectResolver implements ValueResolver<Data, Modals> {
 		private options: { key: string; resolver: ValueResolver<Data, Modals> }[],
 	) {}
 
-	run() {
-		return (deps: Modals) => {
-			return this.options
-				.reduce(async (prev, curr): Promise<Data> => {
-					const prevValue = await prev;
-					const { value } = await curr.resolver.run()(deps);
-					if (!value) {
-						return prevValue;
-					}
-					return {
-						...prevValue,
-						[curr.key]: value,
-					};
-				}, Promise.resolve({}))
-				.then(resolveResult.ret);
-		};
+	run(deps: Modals) {
+		return this.options
+			.reduce(async (prev, curr): Promise<Data> => {
+				const prevValue = await prev;
+				const { value } = await curr.resolver.run(deps);
+				if (!value) {
+					return prevValue;
+				}
+				return {
+					...prevValue,
+					[curr.key]: value,
+				};
+			}, Promise.resolve({}))
+			.then(resolveResult.ret);
 	}
 }
 
@@ -106,7 +100,7 @@ export class AddToArray<TDeps> implements MetadataCommand<TDeps> {
 	) {}
 
 	async run(deps: TDeps): Promise<MetadataOperation[]> {
-		const { value } = await this.option.run()(deps);
+		const { value } = await this.option.run(deps);
 		if (!value) {
 			return [];
 		}
