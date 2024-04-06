@@ -40,7 +40,8 @@ The configuration consists of
   - Add an element to a frontmatter array
 - _Value_ Contains instructions for evaluating a command. Possible options are
   - _Object_ - Generates key/value pairs, recursively evaluating values.
-	- _TextInput_ - Prompt the user for text input.
+	- _String input_ - Prompt the user for text input.
+	- _Number input_ - Prompt the user for number input.
 	- _Choice_ - Prompts the user for a choice from a set of options.
 	- _Constant_ - Provides a constant value
 
@@ -224,6 +225,8 @@ the `author` metadta.
 
 ### String input
 
+Presents a simple input field for the user to choose a text.
+
 ```json
 {
 	"$type": "string-input",
@@ -231,9 +234,12 @@ the `author` metadta.
 };
 ```
 
-Presents a simple input field for the user to choose a text.
-
 ### Number input
+
+Like string input, but places the value as a number, rather than a string in
+the frontmatter.
+
+NOTE: Invalid numbers are silently ignored.
 
 ```json
 {
@@ -262,4 +268,5 @@ etc.
 - Add tags
 - Allow forge to run automatically on file creation
 - Allow folder specific forges
-- Handle error bad user input, or escape more sensibly.
+- Handle error bad user input, or escape key more sensibly.
+
