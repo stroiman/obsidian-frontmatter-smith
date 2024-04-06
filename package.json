@@ -1,7 +1,7 @@
 {
   "name": "frontmatter-smith",
   "version": "0.1.0",
-  "description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+  "description": "Frontmatter smith plugin for Obsidian",
   "main": "main.js",
   "scripts": {
     "dev": "node esbuild.config.mjs",
@@ -17,7 +17,7 @@
     "spec": "tests/**/*.ts"
   },
   "keywords": [],
-  "author": "",
+  "author": "Peter Strøiman",
   "license": "MIT",
   "devDependencies": {
     "@rtvision/mocha-esbuild": "^0.1.8",
