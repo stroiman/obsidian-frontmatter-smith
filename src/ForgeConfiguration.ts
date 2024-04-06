@@ -4,7 +4,7 @@ import { pipe } from "fp-ts/function";
 export type FrontMatter = { [key: string]: unknown };
 
 type ObjectData = { [key: string]: Data };
-export type Data = string | null | ObjectData;
+export type Data = string | number | boolean | null | Array<Data> | ObjectData;
 
 export type ValueResolverResult<T> = {
 	value: T;
@@ -46,7 +46,7 @@ export interface ValueResolver<T, TDeps> {
 	run(deps: TDeps): Promise<ValueResolverResult<T>>;
 }
 
-const resolveResult = {
+export const resolveResult = {
 	ret: <T>(value: T): Promise<ValueResolverResult<T>> =>
 		Promise.resolve({ value, commands: [] }),
 };
@@ -59,6 +59,14 @@ export class PromtResolver implements ValueResolver<string | null, Prompt> {
 
 	run(deps: Prompt) {
 		return deps.prompt(this.options).then((x) => resolveResult.ret(x));
+	}
+}
+
+export class ConstResolver implements ValueResolver<Data, Prompt> {
+	constructor(private value: Data) {}
+
+	run(deps: Prompt) {
+		return Promise.resolve(resolveResult.ret(this.value));
 	}
 }
 

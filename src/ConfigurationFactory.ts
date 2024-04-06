@@ -1,10 +1,12 @@
 import {
 	AddToArray,
 	ChoiceResolver,
+	ConstResolver,
 	Data,
 	ForgeConfiguration,
 	ObjectResolver,
 	PromtResolver,
+	resolveResult,
 	SetValue,
 	ValueResolver,
 	ValueResolverResult,
@@ -45,9 +47,34 @@ export type ObjectInput = {
 	values: ObjectValueInput;
 };
 
-export type ValueOption = ObjectInput | ChoiceInput | StringInput;
+export type ConstantValue = {
+	$value: "constant";
+	value: Data;
+};
+
+export type ValueOption =
+	| ObjectInput
+	| ChoiceInput
+	| StringInput
+	| ConstantValue;
 
 export type ConfigurationOption = ArrayConfigurationOption | SetValueOption;
+
+export type MoldConfiguration = {
+	name: string;
+	configuration: ConfigurationOption;
+};
+
+export type GlobalConfiguration = {
+	version: "1";
+	molds: MoldConfiguration[];
+};
+
+class ImpossibleError extends Error {
+	constructor(value: never) {
+		super("Received impossible value here: " + value);
+	}
+}
 
 const getResolver = (option: ValueOption): ValueResolver<Data, Modals> => {
 	switch (option.$value) {
@@ -66,6 +93,8 @@ const getResolver = (option: ValueOption): ValueResolver<Data, Modals> => {
 					resolver: getResolver(value),
 				})),
 			);
+		case "constant":
+			return new ConstResolver(option.value);
 	}
 };
 
