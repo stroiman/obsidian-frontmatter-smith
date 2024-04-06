@@ -26,48 +26,224 @@ medicine:
     timt: 16:00
 ```
 
-## Notes regarding tests
+## Configuration
 
-(NOTE, this was written long before the implementation of the use cases were
-added, so this description is a bit detached from the actual tests)
+Currently the configuration is very crude. You must maintain a JSON structure
+yourself.
 
-The design of an obsidian plugin has some unfortunate effects on plugin 
-development. You create a class that extends from `Plugin` in the `obsidian`
-package. But that package is not public, so you are not able to create the
-yourself. During development, the only thing you have in the `obsidian` 
-library is the TypeScript type definitions.
+The configuration consists of 
 
-So, if we want to create an instance of our class, we need to mock the base
-class. Not every programming language supports that, but you can actually do
-that in JavaScript.
+- _Forge_ A set of commands to run. When you run this plugin, you choose which
+  forge to use.
+- _Command_ A single command. Possible lists of commands are at the moment
+  - Set a specific frontmatter attribute
+  - Add an element to a frontmatter array
+- _Value_ Contains instructions for evaluating a command. Possible options are
+  - _Object_ - Generates key/value pairs, recursively evaluating values.
+	- _TextInput_ - Prompt the user for text input.
+	- _Choice_ - Prompts the user for a choice from a set of options.
+	- _Constant_ - Provides a constant value
 
-First, in TypeScript, the `Plugin` type is actually not a type for the class
-itself, it is an interface for instances of the class. This can be confusing
-because the same identifier also refers to a JavaScript value which _is_ the
-class (or the constructor to be exact). So to do this, I define an interface
-for the constructor.
+Note, that the 'choice' option has the ability to add new commands, depending on
+the choice. More on this later.
 
-```typescript
-interface PluginConstructor {
-	new (): Plugin;
+I may change the structure, but I guarantee that the plugin will migrate old
+configurations, hence the required `version`.
+
+### Top Level
+
+The top level has two keys, a `version`, which must be `"1"`, and a list of 
+"forges", each forge being a named list of commands.
+
+```json
+{
+	"version": "1",
+	"forges": []
 }
+```
 
-const createPluginClass = (baseClass: PluginConstructor) => {
-	return class MyPlugin extends baseClass {};
+The behaviour depends on the length of the array.
+- If the array is empty, the plugin will do nothing.
+- If the array contains one element, that forge will be run.
+- If the array contains multiple elements, the user will be asked which forge to run.
+
+### Forge
+
+```json
+{
+	"name": "Forge name",
+	"commands": []
+}
+```
+
+The name will be shown to the user, when choosing which forge to use.
+
+### Command
+
+### Add to array
+
+Adds a single element to an array in the frontmatter.
+
+- `key` - The metadata field to modify
+- `value` - The instructions for evaluating the value.
+
+NOTE: If the key already exists, but is not already an array, it will be
+overwritten.
+
+```json
+{
+	"$type": "addToArray",
+	"key": "string"
+	"value": {}
+}
+```
+
+### Set single value
+
+Sets a metadata value in the frontmatter.
+
+- `key` - The metadata field to modify
+- `value` - The instructions for evaluating the value.
+
+NOTE: If the key already exists, it will be overwritten.
+
+```json
+{
+	"$type": "setValue",
+	"key": "string"
+	"value": {}
+}
+```
+
+
+## Values
+
+### Object value
+
+Creates an object. Each entry in the `values` array becomes an attribute in
+the final object.
+
+```json
+{
+	"$value": "object";
+	"values": [{
+		"key": "key",
+		values: {}
+	},
+  {},
+	...
+	]
+}
+```
+
+#### Example
+
+If it is unclear, the following command/value configuration might make it 
+clearer.
+
+```json
+{
+	"$type": "setValue",
+	"key": "truth",
+	"value": {
+		"$value": "object",
+		"values": [{
+			"key": "question",
+			"value": { 
+				"$value": "constant", 
+				"value": "What is the answer to the ultimate question?"
+			}
+		},{
+			"key": "answer",
+			"value": { 
+				"$value": "stringInput",
+				"label": "Please provide an answer"
+			}
+		}]
+	}
+}
+```
+
+When that example is executed, the user will receive a prompt, "Please
+provide an answer". When the user types "42", and press enter, the resulting 
+frontmatter would become
+
+```yaml
+truth:
+  question: "What is the answer to the ultimate question?"
+	answer: "42"
+```
+
+### Choice
+
+```json
+{
+	"$value": "choice",
+	"prompt": "string"
+	"options": [{
+		"text": "string",
+		"value": "string",
+		"commands": []
+	}]
+}
+```
+
+The `commands` is optional, If specified, they will be run if that option
+is chosen.
+
+#### Example use of options
+
+This example lets the user select a `type` for the page. If the user
+selects "Book", the user will be asked for the author of the book to set as
+the `author` metadta.
+
+```json
+{
+	"$type": "setValue",
+	"key": "type",
+	"value": {
+		"$value": "choice",
+		"prompt": "What type of page it this"
+		"options": [{
+			"text": "Book"
+			"value": "Book"
+			"commands": [{
+				"$type": "setValue",
+				"key": "author",
+				"value": {
+					"$value": "stringInput",
+					"label": "Who is the author?",
+				}
+			}]
+		},{
+			"text": "Movie",
+			"value": "Movie"
+		}]
+	}
+}
+```
+
+### String input
+
+```json
+{
+	"$value": "stringInput",
+	"label": "",
 };
 ```
 
-So now, we can reduce the main.ts to this.
+Presents a simple input field for the user to choose a text.
 
-```typescript
-import { Plugin } from "obsidian";
-import { createPluginClass, PluginConstructor } from "./main-impl.ts"
-export default createPluginClass(Plugin as PluginConstructor);
+### Constant value
+
+Evaluates to a constant value.
+
+```json
+{
+	"$value": "constant",
+	"value": "value"
+}
 ```
 
-
-Mocha in watch mode is launched by [nodemon](https://github.com/remy/nodemon).
-This is becuase the watcher with the tsx module loader will crash on syntactic
-errors, such as mismatched braces.
-
-Without a tool like nodemon, you'd have to manually relaunch.
+The value can be any valid metadata value, string, number, object, array,
+etc.
