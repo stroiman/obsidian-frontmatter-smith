@@ -54,6 +54,16 @@ export const resolveResult = {
 type Prompt = Pick<Modals, "prompt">;
 type Suggest = Pick<Modals, "suggest">;
 
+export class NumberResolver implements ValueResolver<number | null, Prompt> {
+  constructor(private options: { prompt: string }) {}
+
+  async run(deps: Prompt) {
+    const valueString = await deps.prompt(this.options);
+    const value = Number(valueString);
+    return resolveResult.ret(value === NaN ? null : value);
+  }
+}
+
 export class PromtResolver implements ValueResolver<string | null, Prompt> {
   constructor(private options: { prompt: string }) {}
 

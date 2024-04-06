@@ -227,11 +227,20 @@ the `author` metadta.
 ```json
 {
 	"$type": "string-input",
-	"prompt": "Dialog prompt",
+	"prompt": "Dialog title prompt",
 };
 ```
 
 Presents a simple input field for the user to choose a text.
+
+### Number input
+
+```json
+{
+	"$type": "number-input",
+	"prompt": "Dialog title prompt",
+};
+```
 
 ### Constant value
 
@@ -249,8 +258,8 @@ etc.
 
 ## Todo
 
-- [ ] Build a proper configuration UI
-- [ ] Support number input
-- [ ] Add tags
-- [ ] Allow forge to run automatically on file creation
-- [ ] Allow folder specific forges
+- Build a proper configuration UI
+- Add tags
+- Allow forge to run automatically on file creation
+- Allow folder specific forges
+- Handle error bad user input, or escape more sensibly.

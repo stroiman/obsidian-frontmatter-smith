@@ -4,6 +4,7 @@ import {
   ConstResolver,
   Data,
   ForgeConfiguration,
+  NumberResolver,
   ObjectResolver,
   PromtResolver,
   resolveResult,
@@ -20,10 +21,12 @@ class ImpossibleError extends Error {
   }
 }
 
-const getResolver = (
+export const getResolver = (
   option: schema.ValueOption,
 ): ValueResolver<Data, Modals> => {
   switch (option.$type) {
+    case "number-input":
+      return new NumberResolver(option);
     case "string-input":
       return new PromtResolver(option);
     case "choice-input":

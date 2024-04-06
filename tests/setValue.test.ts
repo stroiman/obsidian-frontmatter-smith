@@ -7,7 +7,7 @@ import { TestFileManager, Forge } from "../src/Forge";
 import { randomUUID } from "crypto";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
 import { ForgeConfiguration } from "src/ForgeConfiguration";
-import { configurationFromJson } from "src/ConfigurationFactory";
+import { configurationFromJson, getResolver } from "src/ConfigurationFactory";
 import { ConfigurationOption } from "src/configuration-schema";
 
 const { match } = sinon;
@@ -38,7 +38,7 @@ describe("'Add value' case", () => {
     );
   });
 
-  it("Should add a 'medicine' entry if none exists", async () => {
+  it("Should set the selected value", async () => {
     const file = fileManager.createFile();
     await forge.run(file);
     expect(fileManager.getFrontmatter(file)).to.deep.equal({
@@ -49,6 +49,19 @@ describe("'Add value' case", () => {
   describe("File has metadata already", () => {
     it("Should leave it intact if configuration says so");
     it("Should overwrite if configuration says so");
+  });
+});
+
+describe("number-input values", () => {
+  it("Should return a number, if the user typed a number", async () => {
+    const modals = sinon.createStubInstance(Modals);
+    modals.prompt.resolves("42");
+    const resolver = getResolver({
+      $type: "number-input",
+      prompt: "Type a value",
+    });
+    const result = await resolver.run(modals);
+    expect(result.value).to.equal(42);
   });
 });
 
