@@ -197,7 +197,7 @@ is chosen.
 
 This example lets the user select a `type` for the page. If the user
 selects "Book", the user will be asked for the author of the book to set as
-the `author` metadta.
+the `author` metadata.
 
 ```json
 {
