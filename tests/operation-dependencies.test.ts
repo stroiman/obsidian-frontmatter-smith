@@ -48,7 +48,7 @@ describe("'dependent choices' case", () => {
 
 const medConfig: ConfigurationOption[] = [
 	{
-		$command: "setValue",
+		$command: "set-value",
 		key: "type",
 		value: {
 			$value: "choice",
@@ -63,7 +63,7 @@ const medConfig: ConfigurationOption[] = [
 					value: "[[Choice 2]]",
 					commands: [
 						{
-							$command: "setValue",
+							$command: "set-value",
 							key: "sub-type",
 							value: { $value: "stringInput", label: "Type something" },
 						},

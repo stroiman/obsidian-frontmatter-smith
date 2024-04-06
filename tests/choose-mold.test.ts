@@ -74,12 +74,12 @@ describe("Choosing a mold", () => {
 });
 
 const addFoo: ConfigurationOption = {
-	$command: "setValue",
+	$command: "set-value",
 	key: "foo",
 	value: { $value: "constant", value: "foo value" },
 };
 const addBar: ConfigurationOption = {
-	$command: "setValue",
+	$command: "set-value",
 	key: "bar",
 	value: { $value: "constant", value: "bar value" },
 };

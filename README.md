@@ -92,8 +92,8 @@ overwritten.
 
 ```json
 {
-	"$command": "addToArray",
-	"key": "string"
+	"$command": "set-array-element",
+	"key": "string",
 	"value": {}
 }
 ```
@@ -109,8 +109,8 @@ NOTE: If the key already exists, it will be overwritten.
 
 ```json
 {
-	"$command": "setValue",
-	"key": "string"
+	"$command": "set-value",
+	"key": "string",
 	"value": {}
 }
 ```
@@ -128,10 +128,9 @@ the final object.
 	"$value": "object";
 	"values": [{
 		"key": "key",
-		values: {}
+		"value": {}
 	},
-  {},
-	...
+  {}
 	]
 }
 ```
@@ -143,7 +142,7 @@ clearer.
 
 ```json
 {
-	"$command": "setValue",
+	"$command": "set-value",
 	"key": "truth",
 	"value": {
 		"$value": "object",
@@ -179,7 +178,7 @@ truth:
 ```json
 {
 	"$value": "choice",
-	"prompt": "string"
+	"prompt": "string",
 	"options": [{
 		"text": "string",
 		"value": "string",
@@ -199,20 +198,20 @@ the `author` metadta.
 
 ```json
 {
-	"$command": "setValue",
+	"$command": "set-value",
 	"key": "type",
 	"value": {
 		"$value": "choice",
-		"prompt": "What type of page it this"
+		"prompt": "What type of page it this",
 		"options": [{
-			"text": "Book"
-			"value": "Book"
+			"text": "Book",
+			"value": "Book",
 			"commands": [{
 				"$command": "setValue",
 				"key": "author",
 				"value": {
 					"$value": "stringInput",
-					"label": "Who is the author?",
+					"label": "Who is the author?"
 				}
 			}]
 		},{
