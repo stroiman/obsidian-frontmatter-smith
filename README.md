@@ -125,7 +125,7 @@ the final object.
 
 ```json
 {
-	"$value": "object";
+	"$type": "object";
 	"values": [{
 		"key": "key",
 		"value": {}
@@ -145,17 +145,17 @@ clearer.
 	"$command": "set-value",
 	"key": "truth",
 	"value": {
-		"$value": "object",
+		"$type": "object",
 		"values": [{
 			"key": "question",
 			"value": { 
-				"$value": "constant", 
+				"$type": "constant", 
 				"value": "What is the answer to the ultimate question?"
 			}
 		},{
 			"key": "answer",
 			"value": { 
-				"$value": "stringInput",
+				"$type": "string-input",
 				"prompt": "Please provide an answer"
 			}
 		}]
@@ -177,7 +177,7 @@ truth:
 
 ```json
 {
-	"$value": "choice",
+	"$type": "choice-input",
 	"prompt": "string",
 	"options": [{
 		"text": "string",
@@ -201,7 +201,7 @@ the `author` metadta.
 	"$command": "set-value",
 	"key": "type",
 	"value": {
-		"$value": "choice",
+		"$type": "choice-input",
 		"prompt": "What type of page it this",
 		"options": [{
 			"text": "Book",
@@ -210,7 +210,7 @@ the `author` metadta.
 				"$command": "setValue",
 				"key": "author",
 				"value": {
-					"$value": "stringInput",
+					"$type": "string-input",
 					"prompt": "Who is the author?"
 				}
 			}]
@@ -226,8 +226,8 @@ the `author` metadta.
 
 ```json
 {
-	"$value": "stringInput",
-	"prompt": "",
+	"$type": "string-input",
+	"prompt": "Dialog prompt",
 };
 ```
 
@@ -239,10 +239,18 @@ Evaluates to a constant value.
 
 ```json
 {
-	"$value": "constant",
+	"$type": "constant",
 	"value": "value"
 }
 ```
 
 The value can be any valid metadata value, string, number, object, array,
 etc.
+
+## Todo
+
+- [ ] Build a proper configuration UI
+- [ ] Support number input
+- [ ] Add tags
+- [ ] Allow forge to run automatically on file creation
+- [ ] Allow folder specific forges

@@ -51,7 +51,7 @@ const medConfig: ConfigurationOption[] = [
     $command: "set-value",
     key: "type",
     value: {
-      $value: "choice",
+      $type: "choice-input",
       prompt: "Choose type",
       options: [
         {
@@ -65,7 +65,7 @@ const medConfig: ConfigurationOption[] = [
             {
               $command: "set-value",
               key: "sub-type",
-              value: { $value: "stringInput", prompt: "Type something" },
+              value: { $type: "string-input", prompt: "Type something" },
             },
           ],
         },

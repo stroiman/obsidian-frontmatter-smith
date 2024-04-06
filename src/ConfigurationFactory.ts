@@ -23,10 +23,10 @@ class ImpossibleError extends Error {
 const getResolver = (
   option: schema.ValueOption,
 ): ValueResolver<Data, Modals> => {
-  switch (option.$value) {
-    case "stringInput":
+  switch (option.$type) {
+    case "string-input":
       return new PromtResolver(option);
-    case "choice":
+    case "choice-input":
       const options = option.options.map(({ commands, ...rest }) => ({
         ...rest,
         commands: createOperations(commands || []),

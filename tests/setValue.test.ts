@@ -56,6 +56,6 @@ const config: ConfigurationOption[] = [
   {
     $command: "set-value",
     key: "type",
-    value: { $value: "stringInput", prompt: "Type something" },
+    value: { $type: "string-input", prompt: "Type something" },
   },
 ];

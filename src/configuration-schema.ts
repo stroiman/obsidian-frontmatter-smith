@@ -15,12 +15,12 @@ type SetValueOption = {
 export type ConfigurationOption = ArrayConfigurationOption | SetValueOption;
 
 export type StringInput = {
-  $value: "stringInput";
+  $type: "string-input";
   prompt: string;
 };
 
 export type ChoiceInput = {
-  $value: "choice";
+  $type: "choice-input";
   prompt: string;
   options: {
     text: string;
@@ -32,12 +32,12 @@ export type ChoiceInput = {
 export type ObjectValueInput = { key: string; value: ValueOption }[];
 
 export type ObjectInput = {
-  $value: "object";
+  $type: "object";
   values: ObjectValueInput;
 };
 
 export type ConstantValue = {
-  $value: "constant";
+  $type: "constant";
   value: any;
 };
 
@@ -49,19 +49,19 @@ export type ValueOption =
 
 const valueConfiguration: t.Type<ValueOption> = t.recursion("Value", () => {
   const stringInput = t.strict({
-    $value: t.literal("stringInput"),
+    $type: t.literal("string-input"),
     prompt: t.string,
   });
 
   const constantValue = t.strict({
-    $value: t.literal("constant"),
+    $type: t.literal("constant"),
     value: t.any,
   });
 
   const optional = <T extends t.Any>(codec: T) => t.union([t.undefined, codec]);
 
   const choiceInputValue: t.Type<ChoiceInput> = t.type({
-    $value: t.literal("choice"),
+    $type: t.literal("choice-input"),
     prompt: t.string,
     options: t.array(
       t.type({
@@ -78,7 +78,7 @@ const valueConfiguration: t.Type<ValueOption> = t.recursion("Value", () => {
   });
 
   const objectValue = t.type({
-    $value: t.literal("object"),
+    $type: t.literal("object"),
     values: t.array(objectValueItem),
   });
 

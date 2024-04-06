@@ -99,12 +99,12 @@ const medConfig: ConfigurationOption[] = [
     $command: "add-array-element",
     key: "medicine",
     value: {
-      $value: "object",
+      $type: "object",
       values: [
         {
           key: "type",
           value: {
-            $value: "choice",
+            $type: "choice-input",
             prompt: "Choose type",
             options: [
               {
@@ -120,11 +120,11 @@ const medConfig: ConfigurationOption[] = [
         },
         {
           key: "dose",
-          value: { $value: "stringInput", prompt: "Dose" },
+          value: { $type: "string-input", prompt: "Dose" },
         },
         {
           key: "time",
-          value: { $value: "stringInput", prompt: "Time" },
+          value: { $type: "string-input", prompt: "Time" },
         },
       ],
     },
