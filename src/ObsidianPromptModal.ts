@@ -8,7 +8,7 @@ import {
 } from "obsidian";
 
 export type PromptOptions = {
-	label: string;
+	prompt: string;
 	defaultValue?: string;
 	multiLine?: boolean;
 };
@@ -16,7 +16,7 @@ export type PromptOptions = {
 export class ObsidianPromptModal extends Modal {
 	private submitted = false;
 	private value: string;
-	private label: string;
+	private prompt: string;
 	private defaultValue?: string;
 	private cb: (value: string | null) => void;
 
@@ -26,13 +26,13 @@ export class ObsidianPromptModal extends Modal {
 		cb: (value: string | null) => void,
 	) {
 		super(app);
-		this.label = options.label;
+		this.prompt = options.prompt;
 		this.defaultValue = options.defaultValue;
 		this.cb = cb;
 	}
 
 	onOpen(): void {
-		this.titleEl.setText(this.label);
+		this.titleEl.setText(this.prompt);
 		this.titleEl.id = "frontmatter-forge-prompt-label";
 		this.createForm();
 	}

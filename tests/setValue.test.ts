@@ -34,7 +34,7 @@ describe("'Add value' case", () => {
     const file = fileManager.createFile();
     await forge.run(file);
     expect(modals.prompt).to.have.been.calledOnceWith(
-      match({ label: "Type something" }),
+      match({ prompt: "Type something" }),
     );
   });
 
@@ -56,6 +56,6 @@ const config: ConfigurationOption[] = [
   {
     $command: "set-value",
     key: "type",
-    value: { $value: "stringInput", label: "Type something" },
+    value: { $value: "stringInput", prompt: "Type something" },
   },
 ];

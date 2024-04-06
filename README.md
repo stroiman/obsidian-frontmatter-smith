@@ -156,7 +156,7 @@ clearer.
 			"key": "answer",
 			"value": { 
 				"$value": "stringInput",
-				"label": "Please provide an answer"
+				"prompt": "Please provide an answer"
 			}
 		}]
 	}
@@ -211,7 +211,7 @@ the `author` metadta.
 				"key": "author",
 				"value": {
 					"$value": "stringInput",
-					"label": "Who is the author?"
+					"prompt": "Who is the author?"
 				}
 			}]
 		},{
@@ -227,7 +227,7 @@ the `author` metadta.
 ```json
 {
 	"$value": "stringInput",
-	"label": "",
+	"prompt": "",
 };
 ```
 

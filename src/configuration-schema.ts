@@ -16,7 +16,7 @@ export type ConfigurationOption = ArrayConfigurationOption | SetValueOption;
 
 export type StringInput = {
   $value: "stringInput";
-  label: string;
+  prompt: string;
 };
 
 export type ChoiceInput = {
@@ -50,7 +50,7 @@ export type ValueOption =
 const valueConfiguration: t.Type<ValueOption> = t.recursion("Value", () => {
   const stringInput = t.strict({
     $value: t.literal("stringInput"),
-    label: t.string,
+    prompt: t.string,
   });
 
   const constantValue = t.strict({

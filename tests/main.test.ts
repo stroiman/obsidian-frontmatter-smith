@@ -120,11 +120,11 @@ const medConfig: ConfigurationOption[] = [
         },
         {
           key: "dose",
-          value: { $value: "stringInput", label: "Dose" },
+          value: { $value: "stringInput", prompt: "Dose" },
         },
         {
           key: "time",
-          value: { $value: "stringInput", label: "Time" },
+          value: { $value: "stringInput", prompt: "Time" },
         },
       ],
     },
