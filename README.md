@@ -40,10 +40,10 @@ The configuration consists of
   - Add an element to a frontmatter array
 - _Value_ Contains instructions for evaluating a command. Possible options are
   - _Object_ - Generates key/value pairs, recursively evaluating values.
-	- _String input_ - Prompt the user for text input.
-	- _Number input_ - Prompt the user for number input.
-	- _Choice_ - Prompts the user for a choice from a set of options.
-	- _Constant_ - Provides a constant value
+  - _String input_ - Prompt the user for text input.
+  - _Number input_ - Prompt the user for number input.
+  - _Choice_ - Prompts the user for a choice from a set of options.
+  - _Constant_ - Provides a constant value
 
 Note, that the 'choice' option has the ability to add new commands, depending on
 the choice. More on this later.
@@ -58,8 +58,8 @@ The top level has two keys, a `version`, which must be `"1"`, and a list of
 
 ```json
 {
-	"version": "1",
-	"forges": []
+  "version": "1",
+  "forges": []
 }
 ```
 
@@ -72,8 +72,8 @@ The behaviour depends on the length of the array.
 
 ```json
 {
-	"name": "Forge name",
-	"commands": []
+  "name": "Forge name",
+  "commands": []
 }
 ```
 
@@ -93,9 +93,9 @@ overwritten.
 
 ```json
 {
-	"$command": "set-array-element",
-	"key": "string",
-	"value": {}
+  "$command": "set-array-element",
+  "key": "string",
+  "value": {}
 }
 ```
 
@@ -110,9 +110,9 @@ NOTE: If the key already exists, it will be overwritten.
 
 ```json
 {
-	"$command": "set-value",
-	"key": "string",
-	"value": {}
+  "$command": "set-value",
+  "key": "string",
+  "value": {}
 }
 ```
 
@@ -126,13 +126,15 @@ the final object.
 
 ```json
 {
-	"$type": "object";
-	"values": [{
-		"key": "key",
-		"value": {}
-	},
-  {}
-	]
+  "$type": "object",
+  "values": [{
+    "key": "key1",
+    "value": {}
+  },
+  {
+    "key": "key2",
+    "value": {}
+  }]
 }
 ```
 
@@ -143,24 +145,24 @@ clearer.
 
 ```json
 {
-	"$command": "set-value",
-	"key": "truth",
-	"value": {
-		"$type": "object",
-		"values": [{
-			"key": "question",
-			"value": { 
-				"$type": "constant", 
-				"value": "What is the answer to the ultimate question?"
-			}
-		},{
-			"key": "answer",
-			"value": { 
-				"$type": "string-input",
-				"prompt": "Please provide an answer"
-			}
-		}]
-	}
+  "$command": "set-value",
+  "key": "truth",
+  "value": {
+    "$type": "object",
+    "values": [{
+      "key": "question",
+      "value": { 
+        "$type": "constant", 
+        "value": "What is the answer to the ultimate question?"
+      }
+    },{
+      "key": "answer",
+      "value": { 
+        "$type": "string-input",
+        "prompt": "Please provide an answer"
+      }
+    }]
+  }
 }
 ```
 
@@ -171,20 +173,20 @@ frontmatter would become
 ```yaml
 truth:
   question: "What is the answer to the ultimate question?"
-	answer: "42"
+  answer: "42"
 ```
 
 ### Choice
 
 ```json
 {
-	"$type": "choice-input",
-	"prompt": "string",
-	"options": [{
-		"text": "string",
-		"value": "string",
-		"commands": []
-	}]
+  "$type": "choice-input",
+  "prompt": "string",
+  "options": [{
+    "text": "string",
+    "value": "string",
+    "commands": []
+  }]
 }
 ```
 
@@ -199,27 +201,27 @@ the `author` metadta.
 
 ```json
 {
-	"$command": "set-value",
-	"key": "type",
-	"value": {
-		"$type": "choice-input",
-		"prompt": "What type of page it this",
-		"options": [{
-			"text": "Book",
-			"value": "Book",
-			"commands": [{
-				"$command": "setValue",
-				"key": "author",
-				"value": {
-					"$type": "string-input",
-					"prompt": "Who is the author?"
-				}
-			}]
-		},{
-			"text": "Movie",
-			"value": "Movie"
-		}]
-	}
+  "$command": "set-value",
+  "key": "type",
+  "value": {
+    "$type": "choice-input",
+    "prompt": "What type of page it this",
+    "options": [{
+      "text": "Book",
+      "value": "Book",
+      "commands": [{
+        "$command": "setValue",
+        "key": "author",
+        "value": {
+          "$type": "string-input",
+          "prompt": "Who is the author?"
+        }
+      }]
+    },{
+      "text": "Movie",
+      "value": "Movie"
+    }]
+  }
 }
 ```
 
@@ -229,9 +231,9 @@ Presents a simple input field for the user to choose a text.
 
 ```json
 {
-	"$type": "string-input",
-	"prompt": "Dialog title prompt",
-};
+  "$type": "string-input",
+  "prompt": "Dialog title prompt"
+}
 ```
 
 ### Number input
@@ -243,9 +245,9 @@ NOTE: Invalid numbers are silently ignored.
 
 ```json
 {
-	"$type": "number-input",
-	"prompt": "Dialog title prompt",
-};
+  "$type": "number-input",
+  "prompt": "Dialog title prompt",
+}
 ```
 
 ### Constant value
@@ -254,8 +256,8 @@ Evaluates to a constant value.
 
 ```json
 {
-	"$type": "constant",
-	"value": "value"
+  "$type": "constant",
+  "value": "value"
 }
 ```
 
