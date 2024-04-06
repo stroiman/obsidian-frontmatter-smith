@@ -17,9 +17,17 @@ export default class RootRunner<
 	) {}
 
 	async run(file: TFile) {
-		const mold = await this.modals.suggest(
-			this.config.molds.map((x) => ({ ...x, text: x.name })),
-		);
+		const molds = this.config.molds;
+		if (!molds.length) {
+			return;
+		}
+
+		const mold =
+			molds.length === 1
+				? molds[0]
+				: await this.modals.suggest(
+						this.config.molds.map((x) => ({ ...x, text: x.name })),
+					);
 		if (!mold) {
 			return;
 		}
