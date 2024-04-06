@@ -12,63 +12,7 @@ import {
 	ValueResolverResult,
 } from "./ForgeConfiguration";
 import { Modals } from "./modals";
-
-export type ArrayConfigurationOption = {
-	$type: "addToArray";
-	key: string;
-	element: ValueOption;
-};
-
-type SetValueOption = {
-	$type: "setValue";
-	key: string;
-	value: ValueOption;
-};
-
-export type StringInput = {
-	$value: "stringInput";
-	label: string;
-};
-
-export type ChoiceInput = {
-	$value: "choice";
-	prompt: string;
-	options: {
-		text: string;
-		value: string;
-		commands?: ConfigurationOption[];
-	}[];
-};
-
-export type ObjectValueInput = { key: string; value: ValueOption }[];
-
-export type ObjectInput = {
-	$value: "object";
-	values: ObjectValueInput;
-};
-
-export type ConstantValue = {
-	$value: "constant";
-	value: Data;
-};
-
-export type ValueOption =
-	| ObjectInput
-	| ChoiceInput
-	| StringInput
-	| ConstantValue;
-
-export type ConfigurationOption = ArrayConfigurationOption | SetValueOption;
-
-export type MoldConfiguration = {
-	name: string;
-	configuration: ConfigurationOption;
-};
-
-export type GlobalConfiguration = {
-	version: "1";
-	molds: MoldConfiguration[];
-};
+import * as schema from "./configuration-schema";
 
 class ImpossibleError extends Error {
 	constructor(value: never) {
@@ -76,7 +20,9 @@ class ImpossibleError extends Error {
 	}
 }
 
-const getResolver = (option: ValueOption): ValueResolver<Data, Modals> => {
+const getResolver = (
+	option: schema.ValueOption,
+): ValueResolver<Data, Modals> => {
 	switch (option.$value) {
 		case "stringInput":
 			return new PromtResolver(option);
@@ -98,9 +44,9 @@ const getResolver = (option: ValueOption): ValueResolver<Data, Modals> => {
 	}
 };
 
-export const createOperations = (options: ConfigurationOption[]) => {
+export const createOperations = (options: schema.ConfigurationOption[]) => {
 	return options.map((option) => {
-		switch (option.$type) {
+		switch (option.$command) {
 			case "addToArray":
 				return new AddToArray(option.key, getResolver(option.element));
 			case "setValue":
@@ -110,7 +56,7 @@ export const createOperations = (options: ConfigurationOption[]) => {
 };
 
 export const configurationFromJson = (
-	input: ConfigurationOption[],
+	input: schema.ConfigurationOption[],
 ): ForgeConfiguration => {
 	return new ForgeConfiguration(createOperations(input));
 };

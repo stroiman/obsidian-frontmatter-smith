@@ -1,10 +1,8 @@
-import {
-	configurationFromJson,
-	GlobalConfiguration,
-} from "./ConfigurationFactory";
+import { configurationFromJson } from "./ConfigurationFactory";
 import type { TestFileManager } from "./Forge";
 import { Modals } from "./modals";
 import { Forge } from "./Forge";
+import { GlobalConfiguration } from "./configuration-schema";
 
 export default class RootRunner<
 	TFile,
@@ -17,23 +15,22 @@ export default class RootRunner<
 	) {}
 
 	async run(file: TFile) {
-		const molds = this.config.molds;
-		if (!molds.length) {
+		const forges = this.config.forges;
+		if (!forges.length) {
 			return;
 		}
-
-		const mold =
-			molds.length === 1
-				? molds[0]
+		const forgeConfiguration =
+			forges.length === 1
+				? forges[0]
 				: await this.modals.suggest(
-						this.config.molds.map((x) => ({ ...x, text: x.name })),
+						this.config.forges.map((x) => ({ ...x, text: x.name })),
 					);
-		if (!mold) {
+		if (!forgeConfiguration) {
 			return;
 		}
 		const forge = new Forge({
 			fileManager: this.fileManager,
-			configuration: configurationFromJson(mold.configurations),
+			configuration: configurationFromJson(forgeConfiguration.commands),
 			suggester: this.modals,
 		});
 		await forge.run(file);

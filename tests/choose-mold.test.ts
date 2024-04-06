@@ -1,15 +1,14 @@
 import { expect } from "chai";
 import * as sinon from "sinon";
 import { TFile } from "./types";
-import {
-	configurationFromJson,
-	ConfigurationOption,
-	GlobalConfiguration,
-	MoldConfiguration,
-} from "src/ConfigurationFactory";
+import { configurationFromJson } from "src/ConfigurationFactory";
 import { Modals } from "src/modals";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
 import RootRunner from "src/RootRunner";
+import {
+	ConfigurationOption,
+	GlobalConfiguration,
+} from "src/configuration-schema";
 
 describe("Choosing a mold", () => {
 	let fileManager: FakeMetadataFileManager;
@@ -70,33 +69,33 @@ describe("Choosing a mold", () => {
 });
 
 const addFoo: ConfigurationOption = {
-	$type: "setValue",
+	$command: "setValue",
 	key: "foo",
 	value: { $value: "constant", value: "foo value" },
 };
 const addBar: ConfigurationOption = {
-	$type: "setValue",
+	$command: "setValue",
 	key: "bar",
 	value: { $value: "constant", value: "bar value" },
 };
 
 const config: GlobalConfiguration = {
 	version: "1",
-	molds: [
+	forges: [
 		{
 			name: "Add foo",
-			configurations: [addFoo],
+			commands: [addFoo],
 		},
-		{ name: "Add bar", configurations: [addBar] },
+		{ name: "Add bar", commands: [addBar] },
 	],
 };
 
 const singleMoldConfig: GlobalConfiguration = {
 	version: "1",
-	molds: [
+	forges: [
 		{
 			name: "Add foo",
-			configurations: [addFoo],
+			commands: [addFoo],
 		},
 	],
 };

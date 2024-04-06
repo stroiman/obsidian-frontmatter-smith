@@ -92,7 +92,7 @@ overwritten.
 
 ```json
 {
-	"$type": "addToArray",
+	"$command": "addToArray",
 	"key": "string"
 	"value": {}
 }
@@ -109,7 +109,7 @@ NOTE: If the key already exists, it will be overwritten.
 
 ```json
 {
-	"$type": "setValue",
+	"$command": "setValue",
 	"key": "string"
 	"value": {}
 }
@@ -143,7 +143,7 @@ clearer.
 
 ```json
 {
-	"$type": "setValue",
+	"$command": "setValue",
 	"key": "truth",
 	"value": {
 		"$value": "object",
@@ -199,7 +199,7 @@ the `author` metadta.
 
 ```json
 {
-	"$type": "setValue",
+	"$command": "setValue",
 	"key": "type",
 	"value": {
 		"$value": "choice",
@@ -208,7 +208,7 @@ the `author` metadta.
 			"text": "Book"
 			"value": "Book"
 			"commands": [{
-				"$type": "setValue",
+				"$command": "setValue",
 				"key": "author",
 				"value": {
 					"$value": "stringInput",

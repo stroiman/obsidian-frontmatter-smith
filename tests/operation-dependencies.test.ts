@@ -7,11 +7,9 @@ import { TestFileManager, Forge } from "../src/Forge";
 import { randomUUID } from "crypto";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
 import { ForgeConfiguration } from "src/ForgeConfiguration";
-import {
-	configurationFromJson,
-	ConfigurationOption,
-} from "src/ConfigurationFactory";
+import { configurationFromJson } from "src/ConfigurationFactory";
 import { TFile } from "./types";
+import { ConfigurationOption } from "src/configuration-schema";
 
 const { match } = sinon;
 
@@ -50,7 +48,7 @@ describe("'dependent choices' case", () => {
 
 const medConfig: ConfigurationOption[] = [
 	{
-		$type: "setValue",
+		$command: "setValue",
 		key: "type",
 		value: {
 			$value: "choice",
@@ -65,7 +63,7 @@ const medConfig: ConfigurationOption[] = [
 					value: "[[Choice 2]]",
 					commands: [
 						{
-							$type: "setValue",
+							$command: "setValue",
 							key: "sub-type",
 							value: { $value: "stringInput", label: "Type something" },
 						},

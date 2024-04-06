@@ -6,11 +6,9 @@ import { Modals } from "../src/modals";
 import { TestFileManager, Forge } from "../src/Forge";
 import { randomUUID } from "crypto";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
-import {
-	ConfigurationOption,
-	ForgeConfiguration,
-} from "src/ForgeConfiguration";
+import { ForgeConfiguration } from "src/ForgeConfiguration";
 import { configurationFromJson } from "src/ConfigurationFactory";
+import { ConfigurationOption } from "src/configuration-schema";
 
 const { match } = sinon;
 
@@ -56,7 +54,7 @@ describe("'Add value' case", () => {
 
 const config: ConfigurationOption[] = [
 	{
-		$type: "setValue",
+		$command: "setValue",
 		key: "type",
 		value: { $value: "stringInput", label: "Type something" },
 	},

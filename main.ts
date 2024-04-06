@@ -1,8 +1,10 @@
 import { Editor, MarkdownView, Plugin, PluginManifest, App } from "obsidian";
 import { FuzzySuggester } from "src/FuzzySuggester";
+import { ObsidianPromptModal } from "src/ObsidianPromptModal";
 import { Modals } from "src/modals";
 import { Forge } from "./src/Forge";
 import { ForgeConfiguration } from "./src/ForgeConfiguration";
+import SettingTab from "./PluginSettings";
 
 interface PluginConstructor {
 	new (app: App, manifest: PluginManifest): Plugin;
@@ -16,6 +18,10 @@ const createPluginClass = (baseClass: PluginConstructor) => {
 	return class MyPlugin extends baseClass {
 		async onload() {
 			console.log("Loaded my plugin");
+			const handleSettingChange = (newValue: string) => {};
+
+			this.addSettingTab(new SettingTab(this.app, this, handleSettingChange));
+
 			this.addCommand({
 				id: "forge-frontmatter",
 				name: "Forge frontmatter",
@@ -24,8 +30,11 @@ const createPluginClass = (baseClass: PluginConstructor) => {
 					if (file) {
 						const worker = new Forge({
 							fileManager: this.app.fileManager,
-							configuration: new ForgeConfiguration(),
-							suggester: new Modals(this.app, FuzzySuggester),
+							configuration: new ForgeConfiguration([]),
+							suggester: new Modals(this.app, {
+								FuzzySuggester,
+								ObsidianPromptModal,
+							}),
 						});
 						await worker.run(file);
 					}

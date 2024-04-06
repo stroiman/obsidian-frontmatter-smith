@@ -7,8 +7,9 @@ import { TestFileManager, Forge } from "../src/Forge";
 import { randomUUID } from "crypto";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
 import { ForgeConfiguration } from "src/ForgeConfiguration";
-import { configurationFromJson, ConfigurationOption } from "src/ConfigurationFactory";
+import { configurationFromJson } from "src/ConfigurationFactory";
 import { TFile } from "./types";
+import { ConfigurationOption } from "src/configuration-schema";
 
 const { match } = sinon;
 
@@ -95,7 +96,7 @@ describe("'Add medicine' case", () => {
 
 const medConfig: ConfigurationOption[] = [
 	{
-		$type: "addToArray",
+		$command: "addToArray",
 		key: "medicine",
 		element: {
 			$value: "object",
