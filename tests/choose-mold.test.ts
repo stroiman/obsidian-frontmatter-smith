@@ -8,6 +8,7 @@ import RootRunner from "src/RootRunner";
 import {
 	ConfigurationOption,
 	GlobalConfiguration,
+	isConfigurationValid,
 } from "src/configuration-schema";
 
 describe("Choosing a mold", () => {
@@ -18,6 +19,10 @@ describe("Choosing a mold", () => {
 	beforeEach(() => {
 		modals = sinon.createStubInstance(Modals);
 		fileManager = new FakeMetadataFileManager();
+	});
+
+	it("Validates the configuration", () => {
+		expect(isConfigurationValid(config)).to.be.true;
 	});
 
 	describe("Config has two molds", () => {

@@ -47,20 +47,20 @@ export type ValueOption =
 	| StringInput
 	| ConstantValue;
 
-const stringInput = t.strict({
-	$value: t.literal("stringInput"),
-	label: t.string,
-});
+const valueConfiguration: t.Type<ValueOption> = t.recursion("Value", () => {
+	const stringInput = t.strict({
+		$value: t.literal("stringInput"),
+		label: t.string,
+	});
 
-const constantValue = t.strict({
-	$value: t.literal("constant"),
-	value: t.any,
-});
+	const constantValue = t.strict({
+		$value: t.literal("constant"),
+		value: t.any,
+	});
 
-const optional = <T extends t.Any>(codec: T) => t.union([t.undefined, codec]);
+	const optional = <T extends t.Any>(codec: T) => t.union([t.undefined, codec]);
 
-const choiceInputValue: t.Type<ChoiceInput> = t.recursion("ChoiceInput", () =>
-	t.type({
+	const choiceInputValue: t.Type<ChoiceInput> = t.type({
 		$value: t.literal("choice"),
 		prompt: t.string,
 		options: t.array(
@@ -70,42 +70,36 @@ const choiceInputValue: t.Type<ChoiceInput> = t.recursion("ChoiceInput", () =>
 				commands: optional(t.array(command)),
 			}),
 		),
-	}),
-);
+	});
 
-const objectValueItem: t.Type<{ key: string; value: ValueOption }> =
-	t.recursion("ObjectValueItem", () =>
-		t.type({
-			key: t.string,
-			value: valueConfiguration,
-		}),
-	);
+	const objectValueItem: t.Type<{ key: string; value: ValueOption }> = t.type({
+		key: t.string,
+		value: valueConfiguration,
+	});
 
-const objectValue = t.type({
-	$value: t.literal("object"),
-	values: t.array(objectValueItem),
+	const objectValue = t.type({
+		$value: t.literal("object"),
+		values: t.array(objectValueItem),
+	});
+
+	return t.union([objectValue, stringInput, choiceInputValue, constantValue]);
 });
 
-const valueConfiguration = t.union([
-	objectValue,
-	stringInput,
-	choiceInputValue,
-	constantValue,
-]);
+const command: t.Type<ConfigurationOption> = t.recursion("Command", () => {
+	const addToArrayCommand = t.strict({
+		$command: t.literal("addToArray"),
+		key: t.string,
+		element: valueConfiguration,
+	});
 
-const addToArrayCommand = t.strict({
-	$command: t.literal("addToArray"),
-	key: t.string,
-	element: valueConfiguration,
+	const setValueCommand = t.strict({
+		$command: t.literal("setValue"),
+		key: t.string,
+		value: valueConfiguration,
+	});
+
+	return t.union([addToArrayCommand, setValueCommand]);
 });
-
-const setValueCommand = t.strict({
-	$command: t.literal("setValue"),
-	key: t.string,
-	value: valueConfiguration,
-});
-
-const command = t.union([addToArrayCommand, setValueCommand]);
 
 const forgeConfiguration = t.strict({
 	name: t.string,
@@ -118,3 +112,14 @@ export const globalConfiguration = t.strict({
 });
 
 export type GlobalConfiguration = t.TypeOf<typeof globalConfiguration>;
+
+export const isConfigurationValid = (x: unknown): x is GlobalConfiguration => {
+	const result = globalConfiguration.decode(x);
+	switch (result._tag) {
+		case "Left":
+			return false;
+		case "Right":
+			return true;
+	}
+	return false;
+};
