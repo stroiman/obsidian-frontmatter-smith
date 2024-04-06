@@ -1,17 +1,35 @@
 # Obsidian Frontmatter Smith
 
-This is a plugin for Obsidian to help add frontmatter to 
+This is a plugin for Obsidian to help add frontmatter to markdown files, 
+particularly when you want to have more complex types, such as objects, or
+arrays of objects.
 
 ## Use cases
 
-I may have an idea for a pubslihed article about some aspect of JavaScript 
-development. For that, I might want to have an `type: Article` property, as
-well as something like `state: in-progress`, and I might want to have tags,
-such as `javascript`, `software-development`, `tdd`, etc.
+One use case is that I make a record of medicine I take. For each entry I want
+record:
 
-This plugin makes it much easier to add these types.
+- The type
+- The dose
+- The time.
+
+This is placed in an array, each element being an object. An example frontmatter
+could be this
+
+```yaml
+medicine:
+  - type: "[[Link]]"
+    dose: 123mg
+    time: 07:30
+  - type: "[[Link]]"
+    dose: 12mg
+    timt: 16:00
+```
 
 ## Notes regarding tests
+
+(NOTE, this was written long before the implementation of the use cases were
+added, so this description is a bit detached from the actual tests)
 
 The design of an obsidian plugin has some unfortunate effects on plugin 
 development. You create a class that extends from `Plugin` in the `obsidian`
