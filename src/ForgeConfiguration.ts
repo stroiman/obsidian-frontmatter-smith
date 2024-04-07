@@ -60,7 +60,7 @@ export class NumberResolver implements ValueResolver<number | null, Prompt> {
   async run(deps: Prompt) {
     const valueString = await deps.prompt(this.options);
     const value = Number(valueString);
-    return resolveResult.ret(value === NaN ? null : value);
+    return resolveResult.ret(isNaN(value) ? null : value);
   }
 }
 
