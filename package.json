@@ -9,12 +9,8 @@
     "version": "node version-bump.mjs && git add manifest.json versions.json",
     "test": "NODE_OPTIONS='--import tsx' mocha",
     "test:watch:old": "NODE_OPTIONS='--import tsx' nodemon -e js,ts -x mocha -- -R min -w",
-    "test:watch": "NODE_OPTIONS='--import tsx' mocha -w -R min || [ $? -eq 1 ] && npm run test:watch:restart",
+    "test:watch": "NODE_OPTIONS='--import tsx' mocha -w -R min --extension js,ts",
     "test:watch:restart": "node wait-for-file-change.js && npm run test:watch"
-  },
-  "mocha": {
-    "extension": "ts,js",
-    "spec": "tests/**/*.ts"
   },
   "keywords": [],
   "author": "Peter Strøiman",
@@ -38,7 +34,7 @@
     "sinon": "^17.0.1",
     "sinon-chai": "^3.7.0",
     "tslib": "2.4.0",
-    "tsx": "^4.7.1",
+    "tsx": "^4.15.2",
     "typescript": "4.7.4"
   },
   "dependencies": {

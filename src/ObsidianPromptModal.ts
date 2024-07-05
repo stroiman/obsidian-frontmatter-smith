@@ -1,11 +1,4 @@
-import {
-  App,
-  ButtonComponent,
-  Modal,
-  Platform,
-  TextAreaComponent,
-  TextComponent,
-} from "obsidian";
+import { App, Modal, TextComponent } from "obsidian";
 
 export type PromptOptions = {
   prompt: string;
