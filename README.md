@@ -93,7 +93,7 @@ overwritten.
 
 ```json
 {
-  "$command": "set-array-element",
+  "$command": "add-array-element",
   "key": "string",
   "value": {}
 }
@@ -246,7 +246,7 @@ NOTE: Invalid numbers are silently ignored.
 ```json
 {
   "$type": "number-input",
-  "prompt": "Dialog title prompt",
+  "prompt": "Dialog title prompt"
 }
 ```
 
