@@ -48,10 +48,12 @@ export default [
         },
       ],
 
+      // This generates bad errors in type constraints, i.e.
+      // type X<T extends U<any>>
+      "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/ban-ts-comment": "off",
       "no-prototype-builtins": "off",
       "@typescript-eslint/no-empty-function": "off",
     },
   },
 ];
-
