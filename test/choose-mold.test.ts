@@ -1,7 +1,6 @@
 import { expect } from "chai";
 import * as sinon from "sinon";
 import { TFile } from "./types";
-import { configurationFromJson } from "src/ConfigurationFactory";
 import { Modals } from "src/modals";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
 import RootRunner from "src/RootRunner";

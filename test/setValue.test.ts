@@ -1,12 +1,8 @@
-import FrontmatterSmithPlugin from "../main";
 import * as sinon from "sinon";
-import * as chai from "chai";
 import { expect } from "chai";
 import { Modals } from "../src/modals";
 import { TestFileManager, Forge } from "../src/Forge";
-import { randomUUID } from "crypto";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
-import { ForgeConfiguration } from "src/ForgeConfiguration";
 import { configurationFromJson, getResolver } from "src/ConfigurationFactory";
 import { ConfigurationOption } from "src/configuration-schema";
 

@@ -7,19 +7,11 @@ import {
   NumberResolver,
   ObjectResolver,
   PromtResolver,
-  resolveResult,
   SetValue,
   ValueResolver,
-  ValueResolverResult,
 } from "./ForgeConfiguration";
 import { Modals } from "./modals";
 import * as schema from "./configuration-schema";
-
-class ImpossibleError extends Error {
-  constructor(value: never) {
-    super("Received impossible value here: " + value);
-  }
-}
 
 export const getResolver = (
   option: schema.ValueOption,
@@ -29,12 +21,13 @@ export const getResolver = (
       return new NumberResolver(option);
     case "string-input":
       return new PromtResolver(option);
-    case "choice-input":
+    case "choice-input": {
       const options = option.options.map(({ commands, ...rest }) => ({
         ...rest,
         commands: createOperations(commands || []),
       }));
       return new ChoiceResolver({ ...option, options });
+    }
     case "object":
       return new ObjectResolver(
         option.values.map(({ key, value }) => ({

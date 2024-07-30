@@ -5,9 +5,9 @@
   "main": "main.js",
   "scripts": {
     "dev": "node esbuild.config.mjs",
-    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+    "build": "tsc -noEmit -skipLibCheck && eslint . && pnpm test && node esbuild.config.mjs production",
     "version": "node version-bump.mjs && git add manifest.json versions.json",
-    "test": "NODE_OPTIONS='--import tsx' mocha",
+    "test": "NODE_OPTIONS='--import tsx' mocha --extension js,ts",
     "test:watch": "NODE_OPTIONS='--import tsx' mocha -w -R min --extension js,ts"
   },
   "keywords": [],

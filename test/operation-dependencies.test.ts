@@ -1,17 +1,11 @@
-import FrontmatterSmithPlugin from "../main";
 import * as sinon from "sinon";
-import * as chai from "chai";
 import { expect } from "chai";
 import { Modals } from "../src/modals";
-import { TestFileManager, Forge } from "../src/Forge";
-import { randomUUID } from "crypto";
+import { Forge } from "../src/Forge";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
-import { ForgeConfiguration } from "src/ForgeConfiguration";
 import { configurationFromJson } from "src/ConfigurationFactory";
 import { TFile } from "./types";
 import { ConfigurationOption } from "src/configuration-schema";
-
-const { match } = sinon;
 
 describe("'dependent choices' case", () => {
   let fileManager: FakeMetadataFileManager;
