@@ -4,16 +4,16 @@ import {
   GlobalConfiguration,
 } from "./configuration-schema";
 const { div, h3 } = van.tags;
-import classes from "./configuration-editor.module.css";
+import * as classNames from "./configuration-editor.module.css";
 
 const ForgeEditor = ({ forgeConfig }: { forgeConfig: ForgeConfiguration }) =>
-  div({ className: classes["forge-config-block"] }, h3(forgeConfig.name));
+  div({ className: classNames.forgeConfigBlock }, h3(forgeConfig.name));
 
 const ConfigurationEditor = (props: { config: GlobalConfiguration }) => {
   const forges = props.config.forges;
   return div(
-    { className: classes["forge-config"] },
-    forges.map((forgeConfig) => ForgeEditor({ forgeConfig })),
+    { className: classNames.forgeConfig },
+    forges.map((c) => ForgeEditor({ forgeConfig: c })),
   );
 };
 

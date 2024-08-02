@@ -4,10 +4,10 @@
   "description": "Frontmatter smith plugin for Obsidian",
   "main": "main.js",
   "scripts": {
-    "dev": "node esbuild.config.mjs",
+    "dev": "touch main.css && node esbuild.config.mjs",
     "typecheck": "tsc -noEmit -skipLibCheck",
     "lint": "eslint .",
-    "bundle": "node esbuild.config.mjs production",
+    "bundle": "touch main.css && node esbuild.config.mjs production",
     "build": "pnpm typecheck && pnpm lint && pnpm test && pnpm bundle",
     "version": "node version-bump.mjs && git add manifest.json versions.json",
     "test": "NODE_OPTIONS='--import tsx' mocha --extension js,ts",
