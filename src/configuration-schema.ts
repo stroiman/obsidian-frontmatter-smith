@@ -106,6 +106,8 @@ const forgeConfiguration = t.strict({
   commands: t.array(command),
 });
 
+export type ForgeConfiguration = t.TypeOf<typeof forgeConfiguration>;
+
 export const globalConfiguration = t.strict({
   version: t.literal("1"),
   forges: t.array(forgeConfiguration),
