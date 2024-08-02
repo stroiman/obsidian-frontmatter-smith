@@ -1,4 +1,5 @@
 import { App, PluginSettingTab, Plugin } from "obsidian";
+import { render } from "src/configuration-editor";
 import {
   GlobalConfiguration,
   isConfigurationValid,
@@ -41,6 +42,9 @@ export default class FrontmatterSmithSettingTab extends PluginSettingTab {
       text: "Check the readme file for documentation of the syntax",
       href: "https://github.com/stroiman/obsidian-frontmatter-smith",
     });
+
+    const newEditor = containerEl.createDiv();
+    render(newEditor, this.value);
 
     const div = containerEl.createDiv();
     div.setCssStyles({

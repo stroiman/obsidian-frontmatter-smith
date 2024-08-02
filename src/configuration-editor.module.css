@@ -1,0 +1,9 @@
+.forge-config {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.forge-config-block {
+  border: 1px solid black;
+}

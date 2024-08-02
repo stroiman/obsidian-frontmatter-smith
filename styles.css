@@ -6,12 +6,3 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
-
-.forge-config {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-.forge-config-block {
-  border: 1px solid black;
-}
