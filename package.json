@@ -28,6 +28,7 @@
     "builtin-modules": "3.3.0",
     "chai": "^4.4.1",
     "esbuild": "0.17.3",
+    "esbuild-css-modules-plugin": "^3.1.2",
     "esbuild-runner": "^2.2.2",
     "eslint": "^9.7.0",
     "globals": "^15.8.0",
