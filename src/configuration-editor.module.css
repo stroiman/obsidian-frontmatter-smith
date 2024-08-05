@@ -4,6 +4,15 @@
   gap: 1rem;
 }
 
+.forge-config-heading {
+  margin-top: 0;
+}
+
 .forge-config-block {
-  border: 1px solid black;
+  border: var(--border-width) solid black;
+  border-radius: var(--radius-s);
+  padding: 1rem;
+}
+
+.command-heading {
 }

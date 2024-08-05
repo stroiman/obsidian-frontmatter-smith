@@ -6,7 +6,7 @@ export type ArrayConfigurationOption = {
   value: ValueOption;
 };
 
-type SetValueOption = {
+export type SetValueOption = {
   $command: "set-value";
   key: string;
   value: ValueOption;
@@ -46,6 +46,8 @@ export type ValueOption =
   | ChoiceInput
   | StringInput
   | ConstantValue;
+
+export type ValueType = ValueOption["$type"];
 
 const valueConfiguration: t.Type<ValueOption> = t.recursion("Value", () => {
   const stringInput = t.strict({
@@ -107,6 +109,8 @@ const forgeConfiguration = t.strict({
 });
 
 export type ForgeConfiguration = t.TypeOf<typeof forgeConfiguration>;
+export type Commands = ForgeConfiguration["commands"];
+export type Command = Commands[number];
 
 export const globalConfiguration = t.strict({
   version: t.literal("1"),

@@ -11,7 +11,7 @@ const addFoo: ConfigurationOption = {
 };
 
 const addBar: ConfigurationOption = {
-  $command: "set-value",
+  $command: "add-array-element",
   key: "bar",
   value: { $type: "constant", value: "bar value" },
 };
