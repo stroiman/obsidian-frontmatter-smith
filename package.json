@@ -20,7 +20,9 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
     "@eslint/js": "^9.7.0",
+    "@happy-dom/global-registrator": "^14.12.3",
     "@rtvision/mocha-esbuild": "^0.1.8",
+    "@testing-library/dom": "^10.4.0",
     "@types/chai": "^4.3.16",
     "@types/mocha": "^10.0.7",
     "@types/node": "^16.18.104",
@@ -35,6 +37,7 @@
     "esbuild-runner": "^2.2.2",
     "eslint": "^9.7.0",
     "globals": "^15.8.0",
+    "happy-dom": "^14.12.3",
     "mocha": "^10.7.0",
     "nodemon": "^3.1.4",
     "obsidian": "latest",
