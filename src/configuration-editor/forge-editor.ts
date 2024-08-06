@@ -131,6 +131,7 @@ export function ForgeEditor({
       {
         id,
         className: classNames.forgeConfigHeading,
+        ["aria-label"]: `Forge: ${forgeConfig.name}`,
       },
       forgeConfig.name,
     ),

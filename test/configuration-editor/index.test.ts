@@ -1,23 +1,30 @@
 //import { Window } from "happy-dom";
+import userEvent, { UserEvent } from "@testing-library/user-event";
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
-import { BoundFunctions, queries, within } from "@testing-library/dom";
+import { within } from "@testing-library/dom";
 import { emptyConfiguration } from "src/configuration-schema.js";
 import { render } from "src/configuration-editor";
 import { expect } from "chai";
+import { QueryFunctions } from "./types";
+import { getForgeSections } from "./dom-queries";
 
-type Within = BoundFunctions<typeof queries>;
+let user: UserEvent;
+
+before(async () => {
+  GlobalRegistrator.register();
+  user = userEvent.setup(global);
+});
+
+after(() => {
+  GlobalRegistrator.unregister();
+});
 
 describe("UI", () => {
-  let scope: Within;
+  let scope: QueryFunctions;
   let root: HTMLElement;
 
-  before(() => {
-    GlobalRegistrator.register();
-  });
-
   beforeEach(() => {
-    root = window.document.createElement("div");
-    window.document.body.appendChild(root);
+    root = document.body.appendChild(document.createElement("div"));
     scope = within(root);
   });
 
@@ -25,14 +32,12 @@ describe("UI", () => {
     window.document.body.removeChild(root);
   });
 
-  after(() => {
-    GlobalRegistrator.unregister();
-  });
-
   it("Works?", async () => {
     render(root, emptyConfiguration);
+    getForgeSections(scope).should.have.lengthOf(0);
     const button = scope.getByRole("button", { name: "New forge" });
-    button.click();
+    await user.click(button);
+    getForgeSections(scope).should.have.lengthOf(1);
   });
 
   it("Can find the section for a forge", () => {
@@ -46,7 +51,7 @@ describe("UI", () => {
       ],
     };
     render(root, config);
-    const sections = scope.getAllByRole("region", { name: "Test forge" });
+    const sections = getForgeSections(scope);
     expect(sections).to.have.lengthOf(1);
   });
 });
