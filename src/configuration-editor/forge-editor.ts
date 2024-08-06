@@ -1,18 +1,17 @@
 import van from "vanjs-core";
 import {
   ForgeConfiguration,
-  GlobalConfiguration,
   Command,
   SetValueOption,
   ArrayConfigurationOption,
   ValueOption,
   ValueType,
-} from "./configuration-schema";
-import * as classNames from "./configuration-editor.module.css";
+} from "../configuration-schema";
+
+import * as classNames from "./index.module.css";
 import { Setting } from "./obsidian-controls";
 
-const { div, h3, h4, button, input, select, option } = van.tags;
-
+const { section, div, h3, h4, button, input, select, option } = van.tags;
 const Option = ({
   type,
   text,
@@ -115,32 +114,26 @@ const CommandList = (props: { commands: Command[] }) => [
   props.commands.map((command) => CommandEditor({ command })),
 ];
 
-const ForgeEditor = ({ forgeConfig }: { forgeConfig: ForgeConfiguration }) =>
-  div(
-    { className: classNames.forgeConfigBlock },
+export function ForgeEditor({
+  forgeId,
+  forgeConfig,
+}: {
+  forgeId: string;
+  forgeConfig: ForgeConfiguration;
+}) {
+  const id = `forge-config-heading-${forgeId}`;
+  return section(
+    {
+      className: classNames.forgeConfigBlock,
+      ["aria-labelledBy"]: id,
+    },
     h3(
       {
+        id,
         className: classNames.forgeConfigHeading,
       },
       forgeConfig.name,
     ),
     CommandList({ commands: forgeConfig.commands }),
   );
-
-const ConfigurationEditor = (props: { config: GlobalConfiguration }) => {
-  const forges = props.config.forges;
-  return div(
-    { className: classNames.forgeConfig },
-    Setting({
-      name: "Forges",
-      description:
-        'A "forge" is a set of rules for populating frontmatter. A forge can generate multiple fields, and the fields generated can depend on previous choices',
-      control: button("New forge"),
-    }),
-    forges.map((c) => ForgeEditor({ forgeConfig: c })),
-  );
-};
-
-export const render = (root: HTMLElement, config: GlobalConfiguration) => {
-  van.add(root, ConfigurationEditor({ config }));
-};
+}
