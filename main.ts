@@ -4,6 +4,7 @@ import { ObsidianPromptModal } from "src/ObsidianPromptModal";
 import { Modals } from "src/modals";
 import SettingTab from "./PluginSettings";
 import {
+  emptyConfiguration,
   GlobalConfiguration,
   isConfigurationValid,
 } from "src/configuration-schema";
@@ -25,10 +26,7 @@ const createPluginClass = (baseClass: PluginConstructor) => {
       const storedSettings = await this.loadData();
       this.settings = isConfigurationValid(storedSettings)
         ? storedSettings
-        : {
-            version: "1",
-            forges: [],
-          };
+        : emptyConfiguration;
     }
 
     async onload() {

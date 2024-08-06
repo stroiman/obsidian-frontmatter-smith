@@ -119,6 +119,11 @@ export const globalConfiguration = t.strict({
 
 export type GlobalConfiguration = t.TypeOf<typeof globalConfiguration>;
 
+export const emptyConfiguration: GlobalConfiguration = {
+  version: "1",
+  forges: [],
+};
+
 export const isConfigurationValid = (x: unknown): x is GlobalConfiguration => {
   const result = globalConfiguration.decode(x);
   switch (result._tag) {
