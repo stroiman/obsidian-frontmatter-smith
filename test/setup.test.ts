@@ -2,6 +2,7 @@ import * as sinon from "sinon";
 import * as chai from "chai";
 import sinonChai from "sinon-chai";
 
+chai.should();
 chai.use(sinonChai);
 
 declare module "sinon" {
