@@ -1,9 +1,11 @@
 import * as sinon from "sinon";
 import * as chai from "chai";
 import sinonChai from "sinon-chai";
+import chaiLike from "chai-like";
 
 chai.should();
 chai.use(sinonChai);
+chai.use(chaiLike);
 
 declare module "sinon" {
   // eslint-disable-next-line
