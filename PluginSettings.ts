@@ -44,7 +44,7 @@ export default class FrontmatterSmithSettingTab extends PluginSettingTab {
     });
 
     const newEditor = containerEl.createDiv();
-    render(newEditor, this.value);
+    render(newEditor, this.value, (config) => this.onChange(config));
 
     const div = containerEl.createDiv();
     div.setCssStyles({
@@ -56,7 +56,6 @@ export default class FrontmatterSmithSettingTab extends PluginSettingTab {
       .createEl("textarea", {}, (el) => {
         el.value = JSON.stringify(this.value, null, 2);
         el.addEventListener("input", (e: any) => {
-          console.log("ONCHANGE");
           const newValue = e.target.value;
           try {
             const parsed: unknown = JSON.parse(newValue);
@@ -88,7 +87,7 @@ export default class FrontmatterSmithSettingTab extends PluginSettingTab {
         // 	}
         // });
       })
-      .setCssStyles({ flexGrow: "1" });
+      .setCssStyles({ flexGrow: "1", minHeight: "400px" });
 
     const invalidConfigEl = containerEl.createEl(
       "div",

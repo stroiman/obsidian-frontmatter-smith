@@ -9,14 +9,26 @@ import { ForgeEditor } from "./forge-editor";
 
 const { div, button } = van.tags;
 
+export type OnConfigChanged = (config: GlobalConfiguration) => void;
+
 const Forges = (props: { forges: ForgeConfiguration[] }) => {
   return props.forges.map((c, i) =>
     ForgeEditor({ forgeId: i.toString(), forgeConfig: c }),
   );
 };
 
-const ConfigurationEditor = (props: { config: GlobalConfiguration }) => {
+const ConfigurationEditor = (props: {
+  config: GlobalConfiguration;
+  onConfigChanged?: OnConfigChanged;
+}) => {
   const forges = van.state(props.config.forges);
+  van.derive(() => {
+    props.onConfigChanged &&
+      props.onConfigChanged({
+        ...props.config,
+        forges: forges.val,
+      });
+  });
   const count = van.state(0);
   return () =>
     div(
@@ -45,6 +57,10 @@ const ConfigurationEditor = (props: { config: GlobalConfiguration }) => {
     );
 };
 
-export const render = (root: HTMLElement, config: GlobalConfiguration) => {
-  van.add(root, ConfigurationEditor({ config }));
+export const render = (
+  root: HTMLElement,
+  config: GlobalConfiguration,
+  onConfigChanged?: OnConfigChanged,
+) => {
+  van.add(root, ConfigurationEditor({ config, onConfigChanged }));
 };
