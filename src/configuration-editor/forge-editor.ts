@@ -8,10 +8,10 @@ import {
   ValueType,
 } from "../configuration-schema";
 
-import * as classNames from "./index.module.css";
+import * as classNames from "./forge-editor.module.css";
 import { Setting } from "./obsidian-controls";
 
-const { section, div, h3, h4, button, input, select, option } = van.tags;
+const { section, div, h3, h4, button, input, select, option, p } = van.tags;
 const Option = ({
   type,
   text,
@@ -53,11 +53,16 @@ const ValueEditor = (props: { value: ValueOption }) =>
     ),
   );
 
-const CommandHead = h4;
+const CommandHead = (text: string) =>
+  h4({ className: classNames.commandHeading }, text);
+
+const CommandDescription = (text: string) =>
+  p({ className: classNames.commandDescription }, text);
 
 const SetValueEditor = (props: { command: SetValueOption }) => {
   return [
     CommandHead("Set Value"),
+    CommandDescription("Sets a single property in the frontmatter"),
     Setting({
       name: "Key",
       description:
@@ -77,6 +82,9 @@ const AddArrayElementEditor = (props: {
 }) => {
   return [
     CommandHead("Add element to array"),
+    CommandDescription(
+      "Assumes the element is an array. The generated value will be added to the array.",
+    ),
     Setting({
       name: "Key",
       description:

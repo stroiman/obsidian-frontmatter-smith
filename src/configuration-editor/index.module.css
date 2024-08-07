@@ -3,16 +3,3 @@
   flex-direction: column;
   gap: 1rem;
 }
-
-.forge-config-heading {
-  margin-top: 0;
-}
-
-.forge-config-block {
-  border: var(--border-width) solid black;
-  border-radius: var(--radius-s);
-  padding: 1rem;
-}
-
-.command-heading {
-}
