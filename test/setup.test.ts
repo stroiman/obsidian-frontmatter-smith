@@ -2,10 +2,12 @@ import * as sinon from "sinon";
 import * as chai from "chai";
 import sinonChai from "sinon-chai";
 import chaiLike from "chai-like";
+import chaiDom from "chai-dom";
 
 chai.should();
 chai.use(sinonChai);
 chai.use(chaiLike);
+chai.use(chaiDom);
 
 declare module "sinon" {
   // eslint-disable-next-line
