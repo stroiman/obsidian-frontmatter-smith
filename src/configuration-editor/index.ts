@@ -54,7 +54,6 @@ const ConfigurationEditor = (props: {
       //Forges({ forges: forges.val }),
       forges.val.map((c, i) =>
         ForgeEditor({
-          forgeId: i.toString(),
           forgeConfig: c,
           onChange: (c) => {
             const cp = [...forges.val];

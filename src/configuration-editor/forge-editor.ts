@@ -11,6 +11,15 @@ import {
 import * as classNames from "./forge-editor.module.css";
 import { Setting } from "./obsidian-controls";
 
+// Silly implementation to help generate unique DOM ids, e.g. for
+// <label id="input-1" /><input aria-labelledby="input-1" />.
+// They don't need to be secure; just unique.
+const genId = (() => {
+  let __nextId = 1;
+  return (pattern?: string) =>
+    `${pattern ? pattern + "-" : ""}${(++__nextId).toString()}`;
+})();
+
 const { section, div, h3, h4, button, input, select, option, p } = van.tags;
 const Option = ({
   type,
@@ -123,15 +132,13 @@ const CommandList = (props: { commands: Command[] }) => [
 ];
 
 export function ForgeEditor({
-  forgeId,
   forgeConfig,
   onChange,
 }: {
-  forgeId: string;
   forgeConfig: ForgeConfiguration;
   onChange: (c: ForgeConfiguration) => void;
 }) {
-  const id = `forge-config-heading-${forgeId}`;
+  const id = genId("forge-config-heading");
   return section(
     {
       className: classNames.forgeConfigBlock,
