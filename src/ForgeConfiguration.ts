@@ -178,25 +178,14 @@ export class AddToArray<TDeps> implements MetadataCommand<TDeps> {
         return [
           (metadata: FrontMatter) => {
             const existing = metadata[this.key];
-            const medicine = Array.isArray(existing) ? existing : [];
-            metadata[this.key] = [...(medicine || []), value];
+            metadata[this.key] = [
+              ...(Array.isArray(existing) ? existing : []),
+              value,
+            ];
           },
         ];
       }),
     );
-    //
-    //
-    // const { value } = await this.option.run(deps);
-    // if (!value) {
-    // 	return [];
-    // }
-    // return [
-    // 	(metadata) => {
-    // 		const existing = metadata[this.key];
-    // 		const medicine = Array.isArray(existing) ? existing : [];
-    // 		metadata[this.key] = [...(medicine || []), value];
-    // 	},
-    // ];
   }
 }
 
