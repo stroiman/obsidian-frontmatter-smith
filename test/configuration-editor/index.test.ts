@@ -45,6 +45,14 @@ describe("UI", () => {
     await user.click(button);
     getForgeSections(scope).should.have.lengthOf(1);
     onConfigChanged.lastCall.firstArg.should.be.like({ forges: [{}] });
+    await user.clear(scope.getByRole("textbox", { name: "Forge name" }));
+    await user.type(
+      scope.getByRole("textbox", { name: "Forge name" }),
+      "New name",
+    );
+    onConfigChanged.lastCall.firstArg.should.be.like({
+      forges: [{ name: "New name" }],
+    });
   });
 
   it("Can find the section for a forge", () => {

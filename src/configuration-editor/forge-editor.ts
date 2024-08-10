@@ -125,9 +125,11 @@ const CommandList = (props: { commands: Command[] }) => [
 export function ForgeEditor({
   forgeId,
   forgeConfig,
+  onChange,
 }: {
   forgeId: string;
   forgeConfig: ForgeConfiguration;
+  onChange: (c: ForgeConfiguration) => void;
 }) {
   const id = `forge-config-heading-${forgeId}`;
   return section(
@@ -143,6 +145,16 @@ export function ForgeEditor({
       },
       forgeConfig.name,
     ),
+    Setting({
+      name: "Forge name",
+      control: input({
+        type: "text",
+        "aria-label": "Forge name",
+        oninput: (e) => {
+          onChange({ ...forgeConfig, name: e.target.value });
+        },
+      }),
+    }),
     CommandList({ commands: forgeConfig.commands }),
   );
 }

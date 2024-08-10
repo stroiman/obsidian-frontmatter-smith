@@ -7,15 +7,9 @@ import * as classNames from "./index.module.css";
 import { Setting } from "./obsidian-controls";
 import { ForgeEditor } from "./forge-editor";
 
-const { div, button } = van.tags;
+const { div, form, select, option, button } = van.tags;
 
 export type OnConfigChanged = (config: GlobalConfiguration) => void;
-
-const Forges = (props: { forges: ForgeConfiguration[] }) => {
-  return props.forges.map((c, i) =>
-    ForgeEditor({ forgeId: i.toString(), forgeConfig: c }),
-  );
-};
 
 const ConfigurationEditor = (props: {
   config: GlobalConfiguration;
@@ -37,22 +31,39 @@ const ConfigurationEditor = (props: {
         name: "Forges",
         description:
           'A "forge" is a set of rules for populating frontmatter. A forge can generate multiple fields, and the fields generated can depend on previous choices',
-        control: button(
-          {
-            onclick: () => {
-              forges.val = [
-                ...forges.val,
-                { name: "New forge ...", commands: [] },
-              ];
-              count.val++;
+        control: form(
+          { className: classNames.newForgeForm },
+          select(
+            option({ value: "add-to-array" }, "Add to array"),
+            option({ value: "set-value" }, "Set value"),
+          ),
+          button(
+            {
+              onclick: () => {
+                forges.val = [
+                  ...forges.val,
+                  { name: "New forge ...", commands: [] },
+                ];
+                count.val++;
+              },
             },
-          },
-          "New forge",
+            "New forge",
+          ),
         ),
       }),
       //Forges({ forges: forges.val }),
       forges.val.map((c, i) =>
-        ForgeEditor({ forgeId: i.toString(), forgeConfig: c }),
+        ForgeEditor({
+          forgeId: i.toString(),
+          forgeConfig: c,
+          onChange: (c) => {
+            const cp = [...forges.val];
+            cp[i] = c;
+            if (props.onConfigChanged) {
+              props.onConfigChanged({ ...props.config, forges: cp });
+            }
+          },
+        }),
       ),
     );
 };
