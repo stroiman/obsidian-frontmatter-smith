@@ -69,4 +69,25 @@ describe("UI", () => {
     const sections = getForgeSections(scope);
     expect(sections).to.have.lengthOf(1);
   });
+
+  it("Should initialise the forge name input", () => {
+    const config = {
+      ...emptyConfiguration,
+      forges: [
+        {
+          name: "Forge 1",
+          commands: [],
+        },
+        {
+          name: "Forge 2",
+          commands: [],
+        },
+      ],
+    };
+    render(root, config);
+    const inputs = scope.getAllByRole("textbox", { name: "Forge name" });
+    inputs.should.have.lengthOf(2);
+    inputs[0].should.have.value("Forge 1");
+    inputs[1].should.have.value("Forge 2");
+  });
 });

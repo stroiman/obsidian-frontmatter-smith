@@ -129,8 +129,9 @@ const CommandList = (props: { commands: Command[] }) => [
     name: "Commands",
     description: "Enter the commands to run for this command",
     control: form(
-      //{ className: classNames.newForgeForm },
+      { className: classNames.newCommandForm },
       select(
+        { className: "dropdown" },
         option({ value: "add-to-array" }, "Add to array"),
         option({ value: "set-value" }, "Set value"),
       ),
@@ -148,6 +149,8 @@ export function ForgeEditor({
   onChange: (c: ForgeConfiguration) => void;
 }) {
   const id = genId("forge-config-heading");
+  const name = van.state(forgeConfig.name);
+  van.derive(() => onChange({ ...forgeConfig, name: name.val }));
   return section(
     {
       className: classNames.forgeConfigBlock,
@@ -159,15 +162,16 @@ export function ForgeEditor({
         className: classNames.forgeConfigHeading,
         ["aria-label"]: `Forge: ${forgeConfig.name}`,
       },
-      forgeConfig.name,
+      name,
     ),
     Setting({
       name: "Forge name",
       control: input({
         type: "text",
+        value: forgeConfig.name,
         "aria-label": "Forge name",
         oninput: (e) => {
-          onChange({ ...forgeConfig, name: e.target.value });
+          name.val = e.target.value;
         },
       }),
     }),

@@ -17,3 +17,9 @@
 .forge-config-heading {
   margin-top: 0;
 }
+
+.new-command-form {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
