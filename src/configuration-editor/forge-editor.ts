@@ -20,7 +20,9 @@ const genId = (() => {
     `${pattern ? pattern + "-" : ""}${(++__nextId).toString()}`;
 })();
 
-const { section, div, h3, h4, button, input, select, option, p } = van.tags;
+const { section, div, h3, h4, button, input, select, option, p, form } =
+  van.tags;
+
 const Option = ({
   type,
   text,
@@ -126,7 +128,14 @@ const CommandList = (props: { commands: Command[] }) => [
   Setting({
     name: "Commands",
     description: "Enter the commands to run for this command",
-    control: button("New command"),
+    control: form(
+      //{ className: classNames.newForgeForm },
+      select(
+        option({ value: "add-to-array" }, "Add to array"),
+        option({ value: "set-value" }, "Set value"),
+      ),
+      button("New command"),
+    ),
   }),
   props.commands.map((command) => CommandEditor({ command })),
 ];

@@ -26,11 +26,17 @@ export const Setting = (props: {
   name: string;
   description?: string;
   control?: ChildDom;
-}) =>
-  SettingItem(
+  renderControl?: (props: { "aria-label": string }) => ChildDom;
+}) => {
+  const { control, renderControl } = props;
+  if (control && renderControl) {
+    throw new Error("Cannot have both 'control' and 'renderControl' props");
+  }
+  return SettingItem(
     SettingItemInfo(
       SettingItemName(props.name),
       props.description && SettingItemDescription(props.description),
     ),
     props.control && SettingItemControl(props.control),
   );
+};
