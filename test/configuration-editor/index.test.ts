@@ -11,9 +11,26 @@ import { getForgeSections } from "./dom-queries";
 
 let user: UserEvent;
 
+const deepFreeze = (val: unknown) => {
+  if (val) {
+    switch (typeof val) {
+      case "object":
+        for (const v of Object.values(val)) {
+          deepFreeze(v);
+        }
+      case "function": // eslint-disable-line
+        Object.freeze(val);
+        break;
+      default:
+        break;
+    }
+  }
+};
+
 before(async () => {
   GlobalRegistrator.register();
   user = userEvent.setup(global);
+  deepFreeze(emptyConfiguration);
 });
 
 after(() => {

@@ -12,7 +12,7 @@ const ConfigurationEditor = (props: {
   config: GlobalConfiguration;
   onConfigChanged?: OnConfigChanged;
 }) => {
-  const forges = props.config.forges;
+  const forges = [...props.config.forges];
   van.derive(() => {
     props.onConfigChanged &&
       props.onConfigChanged({
