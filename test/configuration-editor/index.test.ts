@@ -1,3 +1,4 @@
+import { computeAccessibleDescription } from "dom-accessibility-api";
 //import { Window } from "happy-dom";
 import sinon from "sinon";
 import userEvent, { UserEvent } from "@testing-library/user-event";
@@ -140,7 +141,7 @@ describe("UI", () => {
       await user.click(scope.getByRole("button", { name: "New forge" }));
       const input = scope.getByRole("textbox", { name: "Value" });
       await user.clear(input);
-      await user.type(input, "THE VALUE");
+      await user.type(input, '"THE VALUE"');
       onConfigChanged.lastCall.firstArg.should.be.like({
         forges: [
           {
@@ -153,6 +154,20 @@ describe("UI", () => {
           },
         ],
       });
+    });
+
+    it("Should display an error message on non-valid JSON input", async () => {
+      render(root, emptyConfiguration, onConfigChanged);
+      await user.click(scope.getByRole("button", { name: "New forge" }));
+      const input = scope.getByRole("textbox", { name: "Value" });
+      await user.clear(input);
+      await user.type(input, '"bad input');
+      await user.tab();
+      input.should.have.attribute("aria-invalid", "true");
+
+      await user.type(input, '"');
+      await user.tab();
+      input.should.have.attribute("aria-invalid", "false");
     });
   });
 });

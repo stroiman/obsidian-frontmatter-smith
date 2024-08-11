@@ -87,12 +87,43 @@ const CommandDescription = (text: string) =>
   p({ className: classNames.commandDescription }, text);
 
 const ConstValueConfiguration = (props: { value: State<ConstantValue> }) => {
+  const id = genId("input-error");
+  const valid = van.state(true);
+  const touched = van.state(false);
+  const showError = van.derive(() => touched.val && !valid.val);
+  const i = input({
+    "aria-label": "Value",
+    "aria-errormessage": id,
+    "aria-invalid": van.derive(() => (showError.val ? "true" : "false")),
+    type: "text",
+    onblur: () => {
+      touched.val = true;
+    },
+    oninput: (e) => {
+      try {
+        const value = JSON.parse(e.target.value);
+        props.value.val = { ...props.value.val, value };
+        valid.val = true;
+      } catch {
+        valid.val = false;
+      }
+    },
+  });
   return div(
-    input({
-      "aria-label": "Value",
-      oninput: (e) => {
-        props.value.val = { ...props.value.val, value: e.target.value };
+    p(
+      {
+        id,
+        style: van.derive(() =>
+          showError.val ? "display: block" : "display: none",
+        ),
       },
+      "Invalid JSON",
+    ),
+    Setting({
+      name: "Value",
+      description:
+        "The 'value', must be valid JSON format. This allows the value to be simple text values, or complex objects or arrays. For a text value, the correct format is to enclose the value in quotation marks ( \" )",
+      control: i,
     }),
   );
 };
