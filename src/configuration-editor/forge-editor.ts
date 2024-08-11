@@ -1,4 +1,4 @@
-import van, { PropValueOrDerived } from "vanjs-core";
+import van, { PropValueOrDerived, State } from "vanjs-core";
 import {
   ForgeConfiguration,
   Command,
@@ -86,56 +86,59 @@ const CommandHead = (
 const CommandDescription = (text: string) =>
   p({ className: classNames.commandDescription }, text);
 
-const ValueConfiguration = (props: {
-  value: ConstantValue;
-  onChange: (v: ConstantValue) => void;
-}) => {
-  switch (props.value.$type) {
+const ConstValueConfiguration = (props: { value: State<ConstantValue> }) => {
+  return div(
+    input({
+      "aria-label": "Value",
+      oninput: (e) => {
+        props.value.val = { ...props.value.val, value: e.target.value };
+      },
+    }),
+  );
+};
+
+const ValueConfiguration = (props: { value: State<ValueOption> }) => {
+  const { value } = props;
+  switch (value.val.$type) {
     case "constant":
-      return div(
-        input({
-          "aria-label": "Value",
-          oninput: (e) => {
-            props.onChange({ ...props.value, value: e.target.value });
-          },
-        }),
-      );
+      return ConstValueConfiguration({
+        value: value as State<ConstantValue>,
+      });
     default:
       return div();
   }
 };
 
 const SetValueEditor = (props: {
-  command: SetValueOption;
+  command: State<SetValueOption>;
   headingId: string;
   onChange: (v: SetValueOption) => void;
 }) => {
+  const { command, headingId } = props;
+  const { key } = command.val;
+  const value = van.state(command.val.value);
+  van.derive(() => (command.val = { ...command.val, value: value.val }));
   return [
-    CommandHead({ id: props.headingId }, "Set Value"),
+    CommandHead({ id: headingId }, "Set Value"),
     CommandDescription("Sets a single property in the frontmatter"),
     Setting({
       name: "Key",
       description:
         "This is the name of the frontmatter field that will be created",
-      control: input({ type: "text", value: props.command.key }),
+      control: input({ type: "text", value: key }),
     }),
     Setting({
       name: "Value",
       description: "How will the value be generated",
-      control: ValueEditor(props.command),
+      control: ValueEditor(props.command.val),
     }),
-    ValueConfiguration({
-      value: props.command.value,
-      onChange: (value) => {
-        props.onChange({ ...props.command, value });
-      },
-    }),
+    ValueConfiguration({ value }),
   ];
 };
 
 const AddArrayElementEditor = (props: {
   headingId: string;
-  command: ArrayConfigurationOption;
+  command: State<ArrayConfigurationOption>;
 }) => {
   return [
     CommandHead({ id: props.headingId }, "Add element to array"),
@@ -146,7 +149,7 @@ const AddArrayElementEditor = (props: {
       name: "Key",
       description:
         "This is the name of the frontmatter field that will be created",
-      control: input({ type: "text", value: props.command.key }),
+      control: input({ type: "text", value: props.command.val.key }),
     }),
   ];
 };
@@ -156,19 +159,16 @@ const UnknownCommandEditor = (props: { command: never }) =>
     "The configuration contains an unrecognised element, and you will not be able to edit it",
   );
 
-const CommandEditor = (props: {
-  command: Command;
-  onChange: (c: Command) => void;
-}) => {
-  const { command, onChange } = props;
+const CommandEditor = (props: { command: State<Command> }) => {
+  const { command } = props;
   const id = genId("command-section");
-  switch (command.$command) {
+  switch (command.val.$command) {
     case "set-value":
       // Could have written, SetValueEditor(props), but TS
       // doesn't infer types correctly
       return section(
         { "aria-labelledBy": id },
-        SetValueEditor({ command, headingId: id, onChange }),
+        SetValueEditor({ command, headingId: id }),
       );
     case "add-array-element":
       return section(
@@ -183,34 +183,26 @@ const CommandEditor = (props: {
   }
 };
 
-const CommandList = (props: {
-  commands: Command[];
-  onChange: (c: Command[]) => void;
-}) => [
-  Setting({
-    name: "Commands",
-    description: "Enter the commands to run for this command",
-    control: form(
-      { className: classNames.newCommandForm },
-      select(
-        { className: "dropdown" },
-        option({ value: "add-to-array" }, "Add to array"),
-        option({ value: "set-value" }, "Set value"),
+const CommandList = (props: { commands: State<Command[]> }) => {
+  const states = props.commands.val.map((command) => van.state(command));
+  van.derive(() => (props.commands.val = states.map((x) => x.val)));
+  return [
+    Setting({
+      name: "Commands",
+      description: "Enter the commands to run for this command",
+      control: form(
+        { className: classNames.newCommandForm },
+        select(
+          { className: "dropdown" },
+          option({ value: "add-to-array" }, "Add to array"),
+          option({ value: "set-value" }, "Set value"),
+        ),
+        button("New command"),
       ),
-      button("New command"),
-    ),
-  }),
-  props.commands.map((command, i) =>
-    CommandEditor({
-      command,
-      onChange: (c) => {
-        const cp = [...props.commands];
-        cp[i] = c;
-        props.onChange(cp);
-      },
     }),
-  ),
-];
+    states.map((command, i) => CommandEditor({ command })),
+  ];
+};
 
 export function ForgeEditor({
   forgeConfig,
@@ -221,7 +213,10 @@ export function ForgeEditor({
 }) {
   const id = genId("forge-config-heading");
   const name = van.state(forgeConfig.name);
-  van.derive(() => onChange({ ...forgeConfig, name: name.val }));
+  const commands = van.state(forgeConfig.commands);
+  van.derive(() =>
+    onChange({ ...forgeConfig, name: name.val, commands: commands.val }),
+  );
   return section(
     {
       className: classNames.forgeConfigBlock,
@@ -246,11 +241,6 @@ export function ForgeEditor({
         },
       }),
     }),
-    CommandList({
-      commands: forgeConfig.commands,
-      onChange: (commands) => {
-        onChange({ ...forgeConfig, commands });
-      },
-    }),
+    CommandList({ commands }),
   );
 }
