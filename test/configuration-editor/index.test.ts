@@ -133,4 +133,26 @@ describe("UI", () => {
     inputs[0].should.have.value("Forge 1");
     inputs[1].should.have.value("Forge 2");
   });
+
+  describe("Value options configuration", () => {
+    it("Should set constant value", async () => {
+      render(root, emptyConfiguration, onConfigChanged);
+      await user.click(scope.getByRole("button", { name: "New forge" }));
+      const input = scope.getByRole("textbox", { name: "Value" });
+      await user.clear(input);
+      await user.type(input, "THE VALUE");
+      onConfigChanged.lastCall.firstArg.should.be.like({
+        forges: [
+          {
+            commands: [
+              {
+                $command: "set-value",
+                value: { $type: "constant", value: "THE VALUE" },
+              },
+            ],
+          },
+        ],
+      });
+    });
+  });
 });

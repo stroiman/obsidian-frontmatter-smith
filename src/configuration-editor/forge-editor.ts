@@ -6,6 +6,7 @@ import {
   ArrayConfigurationOption,
   ValueOption,
   ValueType,
+  ConstantValue,
 } from "../configuration-schema";
 
 import * as classNames from "./forge-editor.module.css";
@@ -85,9 +86,29 @@ const CommandHead = (
 const CommandDescription = (text: string) =>
   p({ className: classNames.commandDescription }, text);
 
+const ValueConfiguration = (props: {
+  value: ConstantValue;
+  onChange: (v: ConstantValue) => void;
+}) => {
+  switch (props.value.$type) {
+    case "constant":
+      return div(
+        input({
+          "aria-label": "Value",
+          oninput: (e) => {
+            props.onChange({ ...props.value, value: e.target.value });
+          },
+        }),
+      );
+    default:
+      return div();
+  }
+};
+
 const SetValueEditor = (props: {
   command: SetValueOption;
   headingId: string;
+  onChange: (v: SetValueOption) => void;
 }) => {
   return [
     CommandHead({ id: props.headingId }, "Set Value"),
@@ -102,6 +123,12 @@ const SetValueEditor = (props: {
       name: "Value",
       description: "How will the value be generated",
       control: ValueEditor(props.command),
+    }),
+    ValueConfiguration({
+      value: props.command.value,
+      onChange: (value) => {
+        props.onChange({ ...props.command, value });
+      },
     }),
   ];
 };
@@ -129,8 +156,11 @@ const UnknownCommandEditor = (props: { command: never }) =>
     "The configuration contains an unrecognised element, and you will not be able to edit it",
   );
 
-const CommandEditor = (props: { command: Command }) => {
-  const { command } = props;
+const CommandEditor = (props: {
+  command: Command;
+  onChange: (c: Command) => void;
+}) => {
+  const { command, onChange } = props;
   const id = genId("command-section");
   switch (command.$command) {
     case "set-value":
@@ -138,7 +168,7 @@ const CommandEditor = (props: { command: Command }) => {
       // doesn't infer types correctly
       return section(
         { "aria-labelledBy": id },
-        SetValueEditor({ command, headingId: id }),
+        SetValueEditor({ command, headingId: id, onChange }),
       );
     case "add-array-element":
       return section(
@@ -153,7 +183,10 @@ const CommandEditor = (props: { command: Command }) => {
   }
 };
 
-const CommandList = (props: { commands: Command[] }) => [
+const CommandList = (props: {
+  commands: Command[];
+  onChange: (c: Command[]) => void;
+}) => [
   Setting({
     name: "Commands",
     description: "Enter the commands to run for this command",
@@ -167,7 +200,16 @@ const CommandList = (props: { commands: Command[] }) => [
       button("New command"),
     ),
   }),
-  props.commands.map((command) => CommandEditor({ command })),
+  props.commands.map((command, i) =>
+    CommandEditor({
+      command,
+      onChange: (c) => {
+        const cp = [...props.commands];
+        cp[i] = c;
+        props.onChange(cp);
+      },
+    }),
+  ),
 ];
 
 export function ForgeEditor({
@@ -204,6 +246,11 @@ export function ForgeEditor({
         },
       }),
     }),
-    CommandList({ commands: forgeConfig.commands }),
+    CommandList({
+      commands: forgeConfig.commands,
+      onChange: (commands) => {
+        onChange({ ...forgeConfig, commands });
+      },
+    }),
   );
 }
