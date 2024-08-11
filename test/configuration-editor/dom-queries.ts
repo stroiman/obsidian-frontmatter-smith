@@ -2,3 +2,6 @@ import { QueryFunctions } from "./types";
 
 export const getForgeSections = (scope: QueryFunctions) =>
   scope.queryAllByRole("region", { name: /^Forge: / });
+
+export const getCommandSections = (scope: QueryFunctions) =>
+  scope.queryAllByRole("region", { name: /^Command: / });

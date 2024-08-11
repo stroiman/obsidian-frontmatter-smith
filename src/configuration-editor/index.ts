@@ -31,7 +31,16 @@ const ConfigurationEditor = (props: {
         {
           onclick: (e) => {
             e.preventDefault();
-            const newForge = { name: "New forge ...", commands: [] };
+            const newForge = {
+              name: "Forge name ...",
+              commands: [
+                {
+                  $command: "set-value" as const,
+                  key: "key",
+                  value: { $type: "constant" as const, value: "value" },
+                },
+              ],
+            };
             forges.push(newForge);
             count.val++;
             const i = forges.length - 1;

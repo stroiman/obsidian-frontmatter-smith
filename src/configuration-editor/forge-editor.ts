@@ -1,4 +1,4 @@
-import van from "vanjs-core";
+import van, { PropValueOrDerived } from "vanjs-core";
 import {
   ForgeConfiguration,
   Command,
@@ -64,15 +64,33 @@ const ValueEditor = (props: { value: ValueOption }) =>
     ),
   );
 
-const CommandHead = (text: string) =>
-  h4({ className: classNames.commandHeading }, text);
+const CommandHead = (
+  props: Record<string, PropValueOrDerived> | string,
+  text?: string,
+) => {
+  if (typeof props === "string") {
+    text = props;
+    props = {};
+  }
+  return h4(
+    {
+      ...props,
+      className: classNames.commandHeading,
+      "aria-label": `Command: ${text}`,
+    },
+    text,
+  );
+};
 
 const CommandDescription = (text: string) =>
   p({ className: classNames.commandDescription }, text);
 
-const SetValueEditor = (props: { command: SetValueOption }) => {
+const SetValueEditor = (props: {
+  command: SetValueOption;
+  headingId: string;
+}) => {
   return [
-    CommandHead("Set Value"),
+    CommandHead({ id: props.headingId }, "Set Value"),
     CommandDescription("Sets a single property in the frontmatter"),
     Setting({
       name: "Key",
@@ -89,10 +107,11 @@ const SetValueEditor = (props: { command: SetValueOption }) => {
 };
 
 const AddArrayElementEditor = (props: {
+  headingId: string;
   command: ArrayConfigurationOption;
 }) => {
   return [
-    CommandHead("Add element to array"),
+    CommandHead({ id: props.headingId }, "Add element to array"),
     CommandDescription(
       "Assumes the element is an array. The generated value will be added to the array.",
     ),
@@ -112,15 +131,25 @@ const UnknownCommandEditor = (props: { command: never }) =>
 
 const CommandEditor = (props: { command: Command }) => {
   const { command } = props;
+  const id = genId("command-section");
   switch (command.$command) {
     case "set-value":
       // Could have written, SetValueEditor(props), but TS
       // doesn't infer types correctly
-      return SetValueEditor({ command });
+      return section(
+        { "aria-labelledBy": id },
+        SetValueEditor({ command, headingId: id }),
+      );
     case "add-array-element":
-      return AddArrayElementEditor({ command });
+      return section(
+        { "aria-labelledBy": id },
+        AddArrayElementEditor({ command, headingId: id }),
+      );
     default:
-      return UnknownCommandEditor({ command });
+      return section(
+        { "aria-labelledBy": id },
+        UnknownCommandEditor({ command }),
+      );
   }
 };
 

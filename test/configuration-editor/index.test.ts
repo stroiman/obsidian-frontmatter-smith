@@ -2,12 +2,13 @@
 import sinon from "sinon";
 import userEvent, { UserEvent } from "@testing-library/user-event";
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
-import { within } from "@testing-library/dom";
+// eslint-disable-next-line
+import { within, screen } from "@testing-library/dom";
 import { emptyConfiguration } from "src/configuration-schema.js";
 import { OnConfigChanged, render } from "src/configuration-editor";
 import { expect } from "chai";
 import { QueryFunctions } from "./types";
-import { getForgeSections } from "./dom-queries";
+import { getCommandSections, getForgeSections } from "./dom-queries";
 
 let user: UserEvent;
 
@@ -55,11 +56,12 @@ describe("UI", () => {
     window.document.body.removeChild(root);
   });
 
-  it("Works?", async () => {
+  it("Should allow adding a new forge", async () => {
     render(root, emptyConfiguration, onConfigChanged);
     getForgeSections(scope).should.have.lengthOf(0);
     const button = scope.getByRole("button", { name: "New forge" });
     await user.click(button);
+
     getForgeSections(scope).should.have.lengthOf(1);
     onConfigChanged.lastCall.firstArg.should.be.like({ forges: [{}] });
     await user.clear(scope.getByRole("textbox", { name: "Forge name" }));
@@ -69,6 +71,36 @@ describe("UI", () => {
     );
     onConfigChanged.lastCall.firstArg.should.be.like({
       forges: [{ name: "New name" }],
+    });
+  });
+
+  describe("Default settings for new command", () => {
+    beforeEach(async () => {
+      render(root, emptyConfiguration, onConfigChanged);
+      getForgeSections(scope).should.have.lengthOf(0);
+      const button = scope.getByRole("button", { name: "New forge" });
+      await user.click(button);
+    });
+
+    it("Should have name, 'Forge name ...'", () => {
+      getForgeSections(scope).should.have.lengthOf(1);
+      onConfigChanged.lastCall.firstArg.should.be.like({
+        forges: [
+          {
+            name: "Forge name ...",
+          },
+        ],
+      });
+    });
+
+    it("Should initialise text box with new name", () => {
+      const input = scope.getByRole("textbox", { name: "Forge name" });
+      input.should.have.value("Forge name ...");
+    });
+
+    it("Should have a new 'set-value' command", async () => {
+      const sections = getCommandSections(scope);
+      sections.should.have.lengthOf(1);
     });
   });
 
@@ -91,14 +123,8 @@ describe("UI", () => {
     const config = {
       ...emptyConfiguration,
       forges: [
-        {
-          name: "Forge 1",
-          commands: [],
-        },
-        {
-          name: "Forge 2",
-          commands: [],
-        },
+        { name: "Forge 1", commands: [] },
+        { name: "Forge 2", commands: [] },
       ],
     };
     render(root, config);
