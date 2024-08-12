@@ -143,7 +143,6 @@ const ValueConfiguration = (props: { value: State<ValueOption> }) => {
 const SetValueEditor = (props: {
   command: State<SetValueOption>;
   headingId: string;
-  onChange: (v: SetValueOption) => void;
 }) => {
   const { command, headingId } = props;
   const { key } = command.val;
@@ -185,33 +184,40 @@ const AddArrayElementEditor = (props: {
   ];
 };
 
-const UnknownCommandEditor = (props: { command: never }) =>
+const UnknownCommandEditor = (props: { command: State<never> }) =>
   div(
     "The configuration contains an unrecognised element, and you will not be able to edit it",
   );
 
+const renderEditor = (command: State<Command>, headingId: string) => {
+  const tmp = command.val;
+  // Creating _new_ state values is completely unnecessary, this
+  // is to get TypeScript to compile properly, AND have
+  // exhaustiveness check.
+  switch (tmp.$command) {
+    case "set-value": {
+      const result = van.state(tmp);
+      van.derive(() => {
+        command.val = result.val;
+      });
+      return SetValueEditor({ command: result, headingId });
+    }
+    case "add-array-element": {
+      const result = van.state(tmp);
+      van.derive(() => {
+        command.val = result.val;
+      });
+      return AddArrayElementEditor({ command: result, headingId });
+    }
+    default:
+      return UnknownCommandEditor({ command: van.state(tmp) });
+  }
+};
+
 const CommandEditor = (props: { command: State<Command> }) => {
   const { command } = props;
   const id = genId("command-section");
-  switch (command.val.$command) {
-    case "set-value":
-      // Could have written, SetValueEditor(props), but TS
-      // doesn't infer types correctly
-      return section(
-        { "aria-labelledBy": id },
-        SetValueEditor({ command, headingId: id }),
-      );
-    case "add-array-element":
-      return section(
-        { "aria-labelledBy": id },
-        AddArrayElementEditor({ command, headingId: id }),
-      );
-    default:
-      return section(
-        { "aria-labelledBy": id },
-        UnknownCommandEditor({ command }),
-      );
-  }
+  return section({ "aria-labelledBy": id }, renderEditor(command, id));
 };
 
 const CommandList = (props: { commands: State<Command[]> }) => {
