@@ -101,29 +101,32 @@ const ConstValueConfiguration = (props: { value: State<ConstantValue> }) => {
     },
     oninput: (e) => {
       try {
-        const value = JSON.parse(e.target.value);
-        props.value.val = { ...props.value.val, value };
+        props.value.val = {
+          ...props.value.val,
+          value: JSON.parse(e.target.value),
+        };
         valid.val = true;
       } catch {
         valid.val = false;
       }
     },
   });
+  const err = p(
+    {
+      id,
+      style: van.derive(() =>
+        showError.val ? "display: block" : "display: none",
+      ),
+      className: classNames.errorMsg,
+    },
+    "Invalid JSON",
+  );
   return div(
-    p(
-      {
-        id,
-        style: van.derive(() =>
-          showError.val ? "display: block" : "display: none",
-        ),
-      },
-      "Invalid JSON",
-    ),
     Setting({
       name: "Value",
       description:
         "The 'value', must be valid JSON format. This allows the value to be simple text values, or complex objects or arrays. For a text value, the correct format is to enclose the value in quotation marks ( \" )",
-      control: i,
+      control: div(i, err),
     }),
   );
 };

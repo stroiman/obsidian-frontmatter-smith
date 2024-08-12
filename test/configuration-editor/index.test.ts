@@ -9,7 +9,11 @@ import { emptyConfiguration } from "src/configuration-schema.js";
 import { OnConfigChanged, render } from "src/configuration-editor";
 import { expect } from "chai";
 import { QueryFunctions } from "./types";
-import { getCommandSections, getForgeSections } from "./dom-queries";
+import {
+  getCommandSections,
+  getErrorMessage,
+  getForgeSections,
+} from "./dom-queries";
 
 let user: UserEvent;
 
@@ -156,18 +160,29 @@ describe("UI", () => {
       });
     });
 
-    it("Should display an error message on non-valid JSON input", async () => {
-      render(root, emptyConfiguration, onConfigChanged);
-      await user.click(scope.getByRole("button", { name: "New forge" }));
-      const input = scope.getByRole("textbox", { name: "Value" });
-      await user.clear(input);
-      await user.type(input, '"bad input');
-      await user.tab();
-      input.should.have.attribute("aria-invalid", "true");
+    describe("Non-valid JSON input", () => {
+      let input: HTMLElement;
 
-      await user.type(input, '"');
-      await user.tab();
-      input.should.have.attribute("aria-invalid", "false");
+      beforeEach(async () => {
+        render(root, emptyConfiguration, onConfigChanged);
+        await user.click(scope.getByRole("button", { name: "New forge" }));
+        input = scope.getByRole("textbox", { name: "Value" });
+        await user.clear(input);
+        await user.type(input, '"bad input');
+        await user.tab();
+      });
+
+      it("Should show validation errors", () => {
+        input.should.have.attribute("aria-invalid", "true");
+        expect(getErrorMessage(input)).to.equal("Invalid JSON");
+      });
+
+      it("Should clear the validation error after fix", async () => {
+        await user.type(input, '"');
+        await user.tab();
+        input.should.have.attribute("aria-invalid", "false");
+        expect(getErrorMessage(input)).to.be.undefined;
+      });
     });
   });
 });
