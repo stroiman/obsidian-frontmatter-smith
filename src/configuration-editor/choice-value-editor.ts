@@ -19,9 +19,7 @@ const Choice = (props: {
   const { choice } = props;
   const textLabelId = genId("choice-text-label");
   const valueLabelId = genId("choice-value-label");
-  const { commands } = deepState(choice); //van.state(choice.val.commands || []);
-  //const commands = van.state(choice.val.commands || []);
-  //van.derive(() => (choice.val = { ...choice.val, commands: commands.val }));
+  const { commands, text, value } = deepState(choice);
   const element = section(
     { "aria-label": "Option: " + choice.val.value },
     button(
@@ -35,7 +33,7 @@ const Choice = (props: {
         "aria-labelledBy": textLabelId,
         value: choice.val.text,
         oninput: (e) => {
-          props.choice.val = { ...choice.val, text: e.target.value };
+          text.val = e.target.value;
         },
       }),
     ),
@@ -46,7 +44,7 @@ const Choice = (props: {
         value: choice.val.value,
         "aria-labelledBy": valueLabelId,
         oninput: (e) => {
-          props.choice.val = { ...choice.val, value: e.target.value };
+          value.val = e.target.value;
         },
       }),
     ),
