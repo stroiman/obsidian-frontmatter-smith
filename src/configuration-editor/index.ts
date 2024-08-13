@@ -4,6 +4,7 @@ import * as classNames from "./index.module.css";
 import { Setting } from "./obsidian-controls";
 import { ForgeEditor } from "./forge-editor";
 import { defaultValue } from "./defaults";
+import { deepState, stateArray } from "./helpers";
 
 const { div, button } = van.tags;
 
@@ -13,8 +14,15 @@ const ConfigurationEditor = (props: {
   config: GlobalConfiguration;
   onConfigChanged?: OnConfigChanged;
 }) => {
-  const forges = [...props.config.forges];
-  const count = van.state(0);
+  const s = van.state(props.config);
+  const f = deepState(s).forges;
+  const forges = stateArray(f);
+  van.derive(() => {
+    const newState = s.val;
+    if (newState !== s.oldVal && props.onConfigChanged) {
+      props.onConfigChanged(newState);
+    }
+  });
   const result = div(
     { className: classNames.forgeConfig },
     Setting({
@@ -35,37 +43,15 @@ const ConfigurationEditor = (props: {
                 },
               ],
             };
-            forges.push(newForge);
-            count.val++;
-            const i = forges.length - 1;
             const forgeConfig = van.state(newForge);
-            van.derive(() => {
-              const cp = [...forges];
-              cp[i] = forgeConfig.val;
-              if (
-                props.onConfigChanged &&
-                forgeConfig.val !== forgeConfig.oldVal
-              ) {
-                props.onConfigChanged({ ...props.config, forges: cp });
-              }
-            });
+            forges.val = [...forges.val, forgeConfig];
             van.add(result, ForgeEditor({ forgeConfig }));
           },
         },
         "New forge",
       ),
     }),
-    ...forges.map((c, i) => {
-      const forgeConfig = van.state(c);
-      van.derive(() => {
-        const cp = [...forges];
-        cp[i] = forgeConfig.val;
-        if (props.onConfigChanged && forgeConfig.val !== forgeConfig.oldVal) {
-          props.onConfigChanged({ ...props.config, forges: cp });
-        }
-      });
-      return ForgeEditor({ forgeConfig });
-    }),
+    ...forges.val.map((forgeConfig) => ForgeEditor({ forgeConfig })),
   );
   return result;
 };

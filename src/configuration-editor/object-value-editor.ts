@@ -3,7 +3,7 @@ import { State } from "vanjs-core";
 import { button, div, h4, h6, input, section } from "./tags";
 import { ObjectInput, ObjectValue } from "src/configuration-schema";
 import { ValueConfiguration } from "./forge-editor";
-import { genId } from "./helpers";
+import { deepState, genId, stateArray } from "./helpers";
 import { defaultValue } from "./defaults";
 
 type OnRemoveClick = (x: {
@@ -47,11 +47,7 @@ const ValueEditor = ({
 };
 
 export const ObjectValueEditor = ({ value }: { value: State<ObjectInput> }) => {
-  const values = van.state(value.val.values.map((value) => van.state(value)));
-  van.derive(
-    () =>
-      (value.val = { ...value.val, values: values.val.map((val) => val.val) }),
-  );
+  const values = stateArray(deepState(value).values);
   const onRemoveClick: OnRemoveClick = ({ element, value }) => {
     values.val = values.val.filter((x) => x !== value);
     result.removeChild(element);

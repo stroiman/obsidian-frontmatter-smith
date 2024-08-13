@@ -25,11 +25,33 @@ export type ChoiceValue = {
   commands?: ConfigurationOption[];
 };
 
+export type SafeChoiceValue = {
+  text: string;
+  value: string;
+  commands: ConfigurationOption[];
+};
+
+export const toSafe = (v: ChoiceValue): SafeChoiceValue => ({
+  ...v,
+  commands: v.commands || [],
+});
+
 export type ChoiceInput = {
   $type: "choice-input";
   prompt: string;
   options: ChoiceValue[];
 };
+
+export type SafeChoiceInput = {
+  $type: "choice-input";
+  prompt: string;
+  options: SafeChoiceValue[];
+};
+
+export const toSafeInput = (x: ChoiceInput): SafeChoiceInput => ({
+  ...x,
+  options: x.options.map(toSafe),
+});
 
 export type ObjectValue = { key: string; value: ValueOption };
 export type ObjectValueInput = ObjectValue[];

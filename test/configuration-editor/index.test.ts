@@ -259,8 +259,10 @@ describe("UI", () => {
   });
 
   describe("Sensible behaviour", () => {
-    it("Should not call the update function on render", () => {
+    it("Should not call the update function on render", async () => {
+      //onConfigChanged.throws();
       render(root, fullConfiguration, onConfigChanged);
+      await new Promise((r) => setImmediate(r));
       onConfigChanged.should.not.have.been.called;
     });
   });

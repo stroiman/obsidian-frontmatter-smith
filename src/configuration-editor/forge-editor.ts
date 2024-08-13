@@ -8,12 +8,13 @@ import {
   ValueType,
   ConstantValue,
   StringInput,
+  toSafeInput,
 } from "../configuration-schema";
 
 import * as classNames from "./forge-editor.module.css";
 import { Setting } from "./obsidian-controls";
 import { ChoiceInputConfiguration } from "./choice-value-editor";
-import { genId } from "./helpers";
+import { deepState, genId, stateArray } from "./helpers";
 import { ChildGroup } from "./containers";
 import { ObjectValueEditor } from "./object-value-editor";
 import {
@@ -171,30 +172,37 @@ const StringInputConfiguration = (props: { value: State<StringInput> }) => {
   });
 };
 
+const wrapState = <T extends U, U>(val: T, state: State<U>): State<T> => {
+  const result = van.state(val);
+  van.derive(() => {
+    const val = result.val;
+    if (val !== result.oldVal) {
+      state.val = val;
+    }
+  });
+  return result;
+};
+
 export const ValueConfigurationInner = (props: {
   value: State<ValueOption>;
 }) => {
   const tmp = props.value.val;
   switch (tmp.$type) {
     case "constant": {
-      const value = van.state(tmp);
-      van.derive(() => (props.value.val = value.val));
+      const value = wrapState(tmp, props.value);
       return ConstValueConfiguration({ value });
     }
     case "string-input":
     case "number-input": {
-      const value = van.state(tmp);
-      van.derive(() => (props.value.val = value.val));
+      const value = wrapState(tmp, props.value);
       return StringInputConfiguration({ value });
     }
     case "choice-input": {
-      const value = van.state(tmp);
-      van.derive(() => (props.value.val = value.val));
+      const value = wrapState(toSafeInput(tmp), props.value);
       return ChoiceInputConfiguration({ value });
     }
     case "object": {
-      const value = van.state(tmp);
-      van.derive(() => (props.value.val = value.val));
+      const value = wrapState(tmp, props.value);
       return ObjectValueEditor({ value });
     }
     default:
@@ -230,8 +238,9 @@ const SetValueEditor = (props: {
 }) => {
   const { command, headingId } = props;
   const { key } = command.val;
-  const value = van.state(command.val.value);
-  van.derive(() => (command.val = { ...command.val, value: value.val }));
+  //const value = van.state(command.val.value);
+  //van.derive(() => (command.val = { ...command.val, value: value.val }));
+  const { value } = deepState(props.command);
   return [
     CommandHead({ id: headingId }, "Set Value"),
     CommandDescription("Sets a single property in the frontmatter"),
@@ -325,10 +334,7 @@ const CommandEditor = (props: {
 };
 
 export const CommandList = (props: { commands: State<Command[]> }) => {
-  const states = van.state(
-    props.commands.val.map((command) => van.state(command)),
-  );
-  van.derive(() => (props.commands.val = states.val.map((x) => x.val)));
+  const states = stateArray(props.commands);
 
   const onRemoveCommandClick: OnRemoveCommandClick = ({ element, command }) => {
     states.val = states.val.filter((x) => x !== command);
