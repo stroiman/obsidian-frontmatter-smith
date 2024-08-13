@@ -19,14 +19,16 @@ export type StringInput = {
   prompt: string;
 };
 
+export type ChoiceValue = {
+  text: string;
+  value: string;
+  commands?: ConfigurationOption[];
+};
+
 export type ChoiceInput = {
   $type: "choice-input";
   prompt: string;
-  options: {
-    text: string;
-    value: string;
-    commands?: ConfigurationOption[];
-  }[];
+  options: ChoiceValue[];
 };
 
 export type ObjectValueInput = { key: string; value: ValueOption }[];

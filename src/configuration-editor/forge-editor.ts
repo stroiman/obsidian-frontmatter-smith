@@ -13,6 +13,7 @@ import {
 
 import * as classNames from "./forge-editor.module.css";
 import { Setting } from "./obsidian-controls";
+import { ChoiceInputConfiguration } from "./choice-value-editor";
 
 // Silly implementation to help generate unique DOM ids, e.g. for
 // <label id="input-1" /><input aria-labelledby="input-1" />.
@@ -143,12 +144,6 @@ const StringInputConfiguration = (props: { value: State<StringInput> }) => {
       onChange: (e) =>
         (props.value.val = { ...props.value.val, prompt: e.target.value }),
     }),
-  });
-};
-
-const ChoiceInputConfiguration = (props: { value: State<ChoiceInput> }) => {
-  return Setting({
-    name: "Choice",
   });
 };
 

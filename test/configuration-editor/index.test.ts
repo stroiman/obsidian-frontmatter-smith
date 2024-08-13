@@ -1,4 +1,3 @@
-import { computeAccessibleDescription } from "dom-accessibility-api";
 //import { Window } from "happy-dom";
 import sinon from "sinon";
 import userEvent, { UserEvent } from "@testing-library/user-event";

@@ -24,6 +24,36 @@ const config: GlobalConfiguration = {
       commands: [
         {
           $command: "set-value",
+          key: "choice-input",
+          value: {
+            $type: "choice-input",
+            prompt: "Text prompt",
+            options: [
+              {
+                text: "Option 1",
+                value: "VALUE",
+              },
+              {
+                text: "Option 2",
+                value: "VALUE",
+                commands: [
+                  {
+                    $command: "set-value",
+                    key: "sub-value-1",
+                    value: { $type: "constant", value: "foo value" },
+                  },
+                  {
+                    $command: "set-value",
+                    key: "sub-value-2",
+                    value: { $type: "constant", value: "foo value" },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        {
+          $command: "set-value",
           key: "const-value",
           value: { $type: "constant", value: "foo value" },
         },
@@ -50,36 +80,6 @@ const config: GlobalConfiguration = {
               {
                 key: "key-2",
                 value: { $type: "number-input", prompt: "Text prompt" },
-              },
-            ],
-          },
-        },
-        {
-          $command: "set-value",
-          key: "choice-input",
-          value: {
-            $type: "choice-input",
-            prompt: "Text prompt",
-            options: [
-              {
-                text: "Option 1",
-                value: "VALUE",
-              },
-              {
-                text: "Option 2",
-                value: "VALUE",
-                commands: [
-                  {
-                    $command: "set-value",
-                    key: "sub-value-1",
-                    value: { $type: "constant", value: "foo value" },
-                  },
-                  {
-                    $command: "set-value",
-                    key: "sub-value-2",
-                    value: { $type: "constant", value: "foo value" },
-                  },
-                ],
               },
             ],
           },
