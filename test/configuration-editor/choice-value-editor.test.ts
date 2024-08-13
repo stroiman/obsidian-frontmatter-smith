@@ -13,9 +13,9 @@ import { QueryFunctions } from "./types";
 import { getOptions } from "./dom-queries";
 import { deepFreeze } from "./helpers";
 
-let user: UserEvent;
-
 describe("Choice value configuration", () => {
+  let user: UserEvent;
+
   before(() => {
     user = userEvent.setup(global);
   });

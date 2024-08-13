@@ -3,6 +3,7 @@ import { GlobalConfiguration } from "../configuration-schema";
 import * as classNames from "./index.module.css";
 import { Setting } from "./obsidian-controls";
 import { ForgeEditor } from "./forge-editor";
+import { defaultValue } from "./defaults";
 
 const { div, button } = van.tags;
 
@@ -37,7 +38,7 @@ const ConfigurationEditor = (props: {
                 {
                   $command: "set-value" as const,
                   key: "key",
-                  value: { $type: "constant" as const, value: "value" },
+                  value: defaultValue,
                 },
               ],
             };
