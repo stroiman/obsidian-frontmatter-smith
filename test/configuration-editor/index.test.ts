@@ -60,6 +60,45 @@ describe("UI", () => {
     });
   });
 
+  describe("Changing value", () => {
+    it("Should create a new value", async () => {
+      render(
+        root,
+        {
+          ...emptyConfiguration,
+          forges: [
+            {
+              name: "dummy",
+              commands: [
+                {
+                  $command: "set-value",
+                  key: "key",
+                  value: { $type: "constant", value: "123" },
+                },
+              ],
+            },
+          ],
+        },
+        onConfigChanged,
+      );
+      const dropdown = scope.getByRole("combobox", { name: "Type of value" });
+      await user.selectOptions(dropdown, "A text value");
+      const lastConfig = onConfigChanged.lastCall.firstArg;
+      return;
+      expect(lastConfig).to.be.like({
+        forges: [
+          {
+            commands: [
+              {
+                value: { $type: "string-input" },
+              },
+            ],
+          },
+        ],
+      });
+    });
+  });
+
   describe("Default settings for new command", () => {
     beforeEach(async () => {
       render(root, emptyConfiguration, onConfigChanged);

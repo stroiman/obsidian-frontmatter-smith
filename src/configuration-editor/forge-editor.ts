@@ -16,6 +16,15 @@ import { ChoiceInputConfiguration } from "./choice-value-editor";
 import { genId } from "./helpers";
 import { ChildGroup } from "./containers";
 import { ObjectValueEditor } from "./object-value-editor";
+import {
+  defaultChoice,
+  defaultConstant,
+  defaultNumberInput,
+  defaultObjectInput,
+  defaultStringInput,
+  defaultstringinput,
+  defaultValue,
+} from "./defaults";
 
 const { section, div, h3, h4, button, input, select, option, p, form } =
   van.tags;
@@ -53,11 +62,34 @@ const optionDescriptors: { type: ValueType; text: string }[] = [
   },
 ];
 
-const ValueEditor = (props: { value: ValueOption }) =>
+const ValueEditor = (props: { value: State<ValueOption> }) =>
   select(
-    { className: "dropdown" },
+    {
+      className: "dropdown",
+      "aria-label": "Type of value",
+      onchange: (e) => {
+        switch (e.target.value as ValueType) {
+          case "constant":
+            props.value.val = defaultConstant;
+            break;
+          case "string-input":
+            props.value.val = defaultStringInput;
+            break;
+          case "number-input":
+            props.value.val = defaultNumberInput;
+            break;
+          case "object":
+            props.value.val = defaultObjectInput;
+            break;
+          case "choice-input":
+            props.value.val = defaultChoice;
+            break;
+        }
+        //console.log("CHANGE", e.target.value);
+      },
+    },
     optionDescriptors.map((option) =>
-      Option({ ...option, selectedValue: props.value.$type }),
+      Option({ ...option, selectedValue: props.value.val.$type }),
     ),
   );
 
@@ -140,7 +172,9 @@ const StringInputConfiguration = (props: { value: State<StringInput> }) => {
   });
 };
 
-export const ValueConfiguration = (props: { value: State<ValueOption> }) => {
+export const ValueConfigurationInner = (props: {
+  value: State<ValueOption>;
+}) => {
   const tmp = props.value.val;
   switch (tmp.$type) {
     case "constant": {
@@ -169,6 +203,23 @@ export const ValueConfiguration = (props: { value: State<ValueOption> }) => {
   }
 };
 
+export const ValueConfiguration = (props: { value: State<ValueOption> }) => {
+  const { value } = props;
+  const type = van.derive(() => value.val.$type);
+
+  let result: HTMLElement = ValueConfigurationInner(props);
+  const d = div(ValueEditor({ value }), result);
+  van.derive(() => {
+    const newType = type.val;
+    if (newType !== type.oldVal) {
+      d.removeChild(result);
+      result = ValueConfigurationInner({ value });
+      van.add(d, result);
+    }
+  });
+  return d;
+};
+
 const UnrecognisedValue = (props: { value: never }) =>
   div(
     "Your configuration contains an unrecognised value, and you will not be able to edit it",
@@ -191,11 +242,11 @@ const SetValueEditor = (props: {
         "This is the name of the frontmatter field that will be created",
       control: input({ type: "text", value: key }),
     }),
-    Setting({
-      name: "Value",
-      description: "How will the value be generated",
-      control: ValueEditor(props.command.val),
-    }),
+    //Setting({
+    //  name: "Value",
+    //  description: "How will the value be generated",
+    //  control: ValueEditor(props.command.val),
+    //}),
     ValueConfiguration({ value }),
   ];
 };
