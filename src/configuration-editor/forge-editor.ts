@@ -7,6 +7,8 @@ import {
   ValueOption,
   ValueType,
   ConstantValue,
+  StringInput,
+  ChoiceInput,
 } from "../configuration-schema";
 
 import * as classNames from "./forge-editor.module.css";
@@ -131,13 +133,35 @@ const ConstValueConfiguration = (props: { value: State<ConstantValue> }) => {
   );
 };
 
+const StringInputConfiguration = (props: { value: State<StringInput> }) => {
+  return Setting({
+    name: "Prompt",
+    description: "This will be displayed in the prompt of the dialog",
+    control: input({
+      type: "text",
+      value: props.value.val.prompt,
+      onChange: (e) =>
+        (props.value.val = { ...props.value.val, prompt: e.target.value }),
+    }),
+  });
+};
+
+const ChoiceInputConfiguration = (props: { value: State<ChoiceInput> }) => {
+  return Setting({
+    name: "Choice",
+  });
+};
+
 const ValueConfiguration = (props: { value: State<ValueOption> }) => {
   const { value } = props;
   switch (value.val.$type) {
     case "constant":
-      return ConstValueConfiguration({
-        value: value as State<ConstantValue>,
-      });
+      return ConstValueConfiguration({ value: value as State<ConstantValue> });
+    case "string-input":
+    case "number-input":
+      return StringInputConfiguration({ value: value as State<StringInput> });
+    case "choice-input":
+      return ChoiceInputConfiguration({ value: value as State<ChoiceInput> });
     default:
       return div();
   }
