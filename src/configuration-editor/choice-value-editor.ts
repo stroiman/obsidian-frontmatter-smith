@@ -2,8 +2,8 @@ import van, { State } from "vanjs-core";
 import { SafeChoiceValue, SafeChoiceInput } from "../configuration-schema";
 import { Setting } from "./obsidian-controls";
 import { deepState, genId, stateArray } from "./helpers";
-import { CommandList } from "./forge-editor";
 import { ChildGroup } from "./containers";
+import { CommandList } from "./value-editor";
 
 const { section, label, div, h4, input, p, button } = van.tags;
 

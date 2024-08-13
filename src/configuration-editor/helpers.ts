@@ -43,3 +43,27 @@ export const deepState = <T extends object>(x: State<T>): DeepState<T> => {
   });
   return result;
 };
+
+/**
+ * This function doesn't add _anything_ functionally.
+ *
+ * It creates a state of a specialised type, synchronising the changes back to a
+ * state of a more general type. But at runtime, the two state values are
+ * identical.
+ *
+ * It exists _only_ to make the TypeScript code be typesafe, i.e. avoiding type
+ * casts, e.g. in order to have exhaustiveness check in the compiler.
+ */
+export const wrapState = <T extends U, U>(
+  val: T,
+  state: State<U>,
+): State<T> => {
+  const result = van.state(val);
+  van.derive(() => {
+    const val = result.val;
+    if (val !== result.oldVal) {
+      state.val = val;
+    }
+  });
+  return result;
+};

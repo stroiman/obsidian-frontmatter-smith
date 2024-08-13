@@ -1,0 +1,9 @@
+.command-heading {
+  margin-bottom: 0;
+}
+
+.command-description {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  margin-top: 0;
+}
