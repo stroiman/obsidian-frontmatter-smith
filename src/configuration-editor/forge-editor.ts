@@ -300,10 +300,30 @@ const renderEditor = (command: State<Command>, headingId: string) => {
   }
 };
 
-const CommandEditor = (props: { command: State<Command> }) => {
+type OnRemoveCommandClick = (x: {
+  element: HTMLElement;
+  command: State<Command>;
+}) => void;
+
+const CommandEditor = (props: {
+  command: State<Command>;
+  onRemoveCommandClick: OnRemoveCommandClick;
+}) => {
   const { command } = props;
   const id = genId("command-section");
-  return section({ "aria-labelledBy": id }, renderEditor(command, id));
+  const element = section(
+    { "aria-labelledBy": id },
+    button(
+      {
+        onclick: () => {
+          props.onRemoveCommandClick({ element, command });
+        },
+      },
+      "Remove command",
+    ),
+    renderEditor(command, id),
+  );
+  return element;
 };
 
 export const CommandList = (props: { commands: State<Command[]> }) => {
@@ -312,8 +332,14 @@ export const CommandList = (props: { commands: State<Command[]> }) => {
   );
   van.derive(() => (props.commands.val = states.val.map((x) => x.val)));
 
+  const onRemoveCommandClick: OnRemoveCommandClick = ({ element, command }) => {
+    states.val = states.val.filter((x) => x !== command);
+    children.removeChild(element);
+  };
   const children = ChildGroup(
-    states.val.map((command, i) => CommandEditor({ command })),
+    states.val.map((command, i) =>
+      CommandEditor({ command, onRemoveCommandClick }),
+    ),
   );
   return [
     Setting({
@@ -331,7 +357,10 @@ export const CommandList = (props: { commands: State<Command[]> }) => {
             onclick: () => {
               const command = van.state(defaultCommand);
               states.val = [...states.val, command];
-              van.add(children, CommandEditor({ command }));
+              van.add(
+                children,
+                CommandEditor({ command, onRemoveCommandClick }),
+              );
             },
           },
           "Add command",

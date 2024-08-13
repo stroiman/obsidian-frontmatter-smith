@@ -234,6 +234,27 @@ describe("UI", () => {
           forges: [{ commands: [{}] }],
         });
       });
+
+      describe("Remove command", () => {
+        beforeEach(async () => {
+          const lastSection = getForgeSections(scope).at(-1)!;
+          const removeButton = within(lastSection).getByRole("button", {
+            name: /^Remove/,
+          });
+          await user.click(removeButton);
+        });
+
+        it("Should remove the command from the UI", () => {
+          const regions = getCommandSections(scope);
+          expect(regions).to.have.lengthOf(0);
+        });
+
+        it("Should remove the command from the configuration", async () => {
+          expect(onConfigChanged.lastCall.lastArg).to.be.like({
+            forges: [{ commands: [] }],
+          });
+        });
+      });
     });
   });
 
