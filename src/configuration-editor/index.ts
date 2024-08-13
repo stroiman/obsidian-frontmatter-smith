@@ -38,36 +38,34 @@ const ConfigurationEditor = (props: {
             forges.push(newForge);
             count.val++;
             const i = forges.length - 1;
-            van.add(
-              result,
-              ForgeEditor({
-                forgeConfig: newForge,
-                onChange: (c) => {
-                  const cp = [...forges];
-                  cp[i] = c;
-                  if (props.onConfigChanged) {
-                    props.onConfigChanged({ ...props.config, forges: cp });
-                  }
-                },
-              }),
-            );
+            const forgeConfig = van.state(newForge);
+            van.derive(() => {
+              const cp = [...forges];
+              cp[i] = forgeConfig.val;
+              if (
+                props.onConfigChanged &&
+                forgeConfig.val !== forgeConfig.oldVal
+              ) {
+                props.onConfigChanged({ ...props.config, forges: cp });
+              }
+            });
+            van.add(result, ForgeEditor({ forgeConfig }));
           },
         },
         "New forge",
       ),
     }),
-    ...forges.map((c, i) =>
-      ForgeEditor({
-        forgeConfig: c,
-        onChange: (c) => {
-          const cp = [...forges];
-          cp[i] = c;
-          if (props.onConfigChanged) {
-            props.onConfigChanged({ ...props.config, forges: cp });
-          }
-        },
-      }),
-    ),
+    ...forges.map((c, i) => {
+      const forgeConfig = van.state(c);
+      van.derive(() => {
+        const cp = [...forges];
+        cp[i] = forgeConfig.val;
+        if (props.onConfigChanged && forgeConfig.val !== forgeConfig.oldVal) {
+          props.onConfigChanged({ ...props.config, forges: cp });
+        }
+      });
+      return ForgeEditor({ forgeConfig });
+    }),
   );
   return result;
 };

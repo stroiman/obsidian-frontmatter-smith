@@ -369,19 +369,14 @@ export const CommandList = (props: { commands: State<Command[]> }) => {
   ];
 };
 
-export function ForgeEditor({
-  forgeConfig,
-  onChange,
-}: {
-  forgeConfig: ForgeConfiguration;
-  onChange: (c: ForgeConfiguration) => void;
-}) {
+export function ForgeEditor(props: { forgeConfig: State<ForgeConfiguration> }) {
+  const forgeConfig = props.forgeConfig.val;
   const id = genId("forge-config-heading");
   const name = van.state(forgeConfig.name);
   const commands = van.state(forgeConfig.commands);
   van.derive(() => {
     if (name.val !== name.oldVal || commands.val !== commands.oldVal) {
-      onChange({ ...forgeConfig, name: name.val, commands: commands.val });
+      props.forgeConfig.val = { name: name.val, commands: commands.val };
     }
   });
   return section(
