@@ -15,8 +15,7 @@ const ConfigurationEditor = (props: {
   onConfigChanged?: OnConfigChanged;
 }) => {
   const s = van.state(props.config);
-  const f = deepState(s).forges;
-  const forges = stateArray(f);
+  const forges = stateArray(deepState(s).forges);
   van.derive(() => {
     const newState = s.val;
     if (newState !== s.oldVal && props.onConfigChanged) {

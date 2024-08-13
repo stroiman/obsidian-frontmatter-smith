@@ -160,18 +160,31 @@ const ConstValueConfiguration = (props: { value: State<ConstantValue> }) => {
 };
 
 const StringInputConfiguration = (props: { value: State<StringInput> }) => {
+  const { prompt } = deepState(props.value);
   return Setting({
     name: "Prompt",
     description: "This will be displayed in the prompt of the dialog",
     control: input({
       type: "text",
       value: props.value.val.prompt,
-      onChange: (e) =>
-        (props.value.val = { ...props.value.val, prompt: e.target.value }),
+      "aria-label": "Prompt",
+      oninput: (e) => {
+        prompt.val = e.target.value;
+      },
     }),
   });
 };
 
+/**
+ * This function doesn't add _anything_ functionally.
+ *
+ * It creates a state of a specialised type, synchronising the changes back to a
+ * state of a more general type. But at runtime, the two state values are
+ * identical.
+ *
+ * It exists _only_ to make the TypeScript code be typesafe, i.e. avoiding type
+ * casts, e.g. in order to have exhaustiveness check in the compiler.
+ */
 const wrapState = <T extends U, U>(val: T, state: State<U>): State<T> => {
   const result = van.state(val);
   van.derive(() => {
@@ -284,22 +297,13 @@ const UnknownCommandEditor = (props: { command: never }) =>
 
 const renderEditor = (command: State<Command>, headingId: string) => {
   const tmp = command.val;
-  // Creating _new_ state values is completely unnecessary, this
-  // is to get TypeScript to compile properly, AND have
-  // exhaustiveness check.
   switch (tmp.$command) {
     case "set-value": {
-      const result = van.state(tmp);
-      van.derive(() => {
-        command.val = result.val;
-      });
+      const result = wrapState(tmp, command);
       return SetValueEditor({ command: result, headingId });
     }
     case "add-array-element": {
-      const result = van.state(tmp);
-      van.derive(() => {
-        command.val = result.val;
-      });
+      const result = wrapState(tmp, command);
       return AddArrayElementEditor({ command: result, headingId });
     }
     default:
@@ -376,15 +380,8 @@ export const CommandList = (props: { commands: State<Command[]> }) => {
 };
 
 export function ForgeEditor(props: { forgeConfig: State<ForgeConfiguration> }) {
-  const forgeConfig = props.forgeConfig.val;
   const id = genId("forge-config-heading");
-  const name = van.state(forgeConfig.name);
-  const commands = van.state(forgeConfig.commands);
-  van.derive(() => {
-    if (name.val !== name.oldVal || commands.val !== commands.oldVal) {
-      props.forgeConfig.val = { name: name.val, commands: commands.val };
-    }
-  });
+  const { name, commands } = deepState(props.forgeConfig);
   return section(
     {
       className: classNames.forgeConfigBlock,
@@ -394,7 +391,7 @@ export function ForgeEditor(props: { forgeConfig: State<ForgeConfiguration> }) {
       {
         id,
         className: classNames.forgeConfigHeading,
-        ["aria-label"]: `Forge: ${forgeConfig.name}`,
+        ["aria-label"]: `Forge: ${name.val}`,
       },
       name,
     ),
@@ -402,7 +399,7 @@ export function ForgeEditor(props: { forgeConfig: State<ForgeConfiguration> }) {
       name: "Forge name",
       control: input({
         type: "text",
-        value: forgeConfig.name,
+        value: name.val,
         "aria-label": "Forge name",
         oninput: (e) => {
           name.val = e.target.value;

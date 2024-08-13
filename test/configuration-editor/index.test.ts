@@ -84,14 +84,16 @@ describe("UI", () => {
       );
       const dropdown = scope.getByRole("combobox", { name: "Type of value" });
       await user.selectOptions(dropdown, "A text value");
+      const input = scope.getByRole("textbox", { name: /Prompt/ });
+      await user.clear(input);
+      await user.type(input, "The prompt!");
       const lastConfig = onConfigChanged.lastCall.firstArg;
-      return;
       expect(lastConfig).to.be.like({
         forges: [
           {
             commands: [
               {
-                value: { $type: "string-input" },
+                value: { $type: "string-input", prompt: "The prompt!" },
               },
             ],
           },
