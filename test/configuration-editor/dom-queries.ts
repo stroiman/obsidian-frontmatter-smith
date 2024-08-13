@@ -6,6 +6,9 @@ export const getForgeSections = (scope: QueryFunctions) =>
 export const getCommandSections = (scope: QueryFunctions) =>
   scope.queryAllByRole("region", { name: /^Command: / });
 
+export const getOptions = (scope: QueryFunctions) =>
+  scope.queryAllByRole("region", { name: /^Option: / });
+
 const isVisible = (e: HTMLElement) => {
   // Not a _correct_ implementation; just checks the properties we actually use.
   return e.style.display !== "none";

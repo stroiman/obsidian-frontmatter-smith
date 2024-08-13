@@ -2,18 +2,47 @@ import van, { State } from "vanjs-core";
 import { ChoiceValue, ChoiceInput } from "../configuration-schema";
 import { Setting } from "./obsidian-controls";
 import * as classNames from "./choice-value-editor.module.css";
+import { genId } from "./helpers";
 
-const { div, h4, input, p, hr } = van.tags;
+const { section, label, div, h4, input, hr } = van.tags;
 
-const Choice = (props: { choice: ChoiceValue }) => {
-  const { choice } = props;
-  return div(p("Text: ", choice.text), p("Value: ", choice.value));
+const Choice = (props: { choice: State<ChoiceValue> }) => {
+  const choice = props.choice.val;
+  const textLabelId = genId("choice-text-label");
+  const valueLabelId = genId("choice-value-label");
+  return section(
+    { "aria-label": "Option: " + choice.value },
+    div(
+      label({ id: textLabelId }, "Text"),
+      input({
+        type: "text",
+        "aria-labelledBy": textLabelId,
+        oninput: (e) => {
+          props.choice.val = { ...choice, text: e.target.value };
+        },
+      }),
+    ),
+    div(
+      label({ id: valueLabelId }, "Value"),
+      input({
+        type: "text",
+        "aria-labelledBy": valueLabelId,
+        oninput: (e) => {
+          props.choice.val = { ...choice, value: e.target.value };
+        },
+      }),
+    ),
+  );
 };
 
 export const ChoiceInputConfiguration = (props: {
   value: State<ChoiceInput>;
 }) => {
   const { value } = props;
+  const options = value.val.options.map((x) => van.state(x));
+  van.derive(() => {
+    value.val = { ...value.val, options: options.map((x) => x.val) };
+  });
   return div(
     h4("Choice"),
     Setting({
@@ -23,7 +52,7 @@ export const ChoiceInputConfiguration = (props: {
     }),
     div(
       { className: classNames.valueList },
-      value.val.options.map((choice, i) => {
+      options.map((choice, i) => {
         const c = Choice({ choice });
         return i > 0 ? [hr(), c] : c;
       }),
