@@ -1,10 +1,10 @@
 import van, { State } from "vanjs-core";
-import { ForgeConfiguration } from "../configuration-schema";
+import { ForgeConfiguration } from "../../configuration-schema";
 
-import * as classNames from "./forge-editor.module.css";
-import { Setting } from "./obsidian-controls";
-import { deepState, genId } from "./helpers";
-import { CommandList } from "./value-editor";
+import * as classNames from "./index.module.css";
+import { Setting } from "../obsidian-controls";
+import { deepState, genId } from "../helpers";
+import { CommandList } from "../value-editor";
 
 const { section, h3, input } = van.tags;
 

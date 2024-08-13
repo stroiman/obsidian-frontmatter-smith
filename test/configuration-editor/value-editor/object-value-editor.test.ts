@@ -4,11 +4,11 @@ import {
   emptyConfiguration,
   GlobalConfiguration,
 } from "src/configuration-schema.js";
-import { deepFreeze } from "./helpers";
+import { deepFreeze } from "../helpers";
 import { OnConfigChanged, render } from "src/configuration-editor";
 import { within } from "@testing-library/dom";
-import { QueryFunctions } from "./types";
-import { getObjectKeys } from "./dom-queries";
+import { QueryFunctions } from "../types";
+import { getObjectKeys } from "../dom-queries";
 import { expect } from "chai";
 import { defaultValue } from "src/configuration-editor/defaults";
 

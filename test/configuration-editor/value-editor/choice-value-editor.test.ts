@@ -9,9 +9,9 @@ import {
 } from "src/configuration-schema.js";
 import { OnConfigChanged, render } from "src/configuration-editor";
 import { expect } from "chai";
-import { QueryFunctions } from "./types";
-import { getOptions } from "./dom-queries";
-import { deepFreeze } from "./helpers";
+import { QueryFunctions } from "../types";
+import { getOptions } from "../dom-queries";
+import { deepFreeze } from "../helpers";
 
 describe("Choice value configuration", () => {
   let user: UserEvent;

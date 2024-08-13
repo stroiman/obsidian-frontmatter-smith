@@ -1,15 +1,15 @@
 import { PropValueOrDerived, State } from "vanjs-core";
-import * as classNames from "./command-editor.module.css";
+import * as classNames from "./index.module.css";
 import {
   Command,
   SetValueOption,
   ArrayConfigurationOption,
-} from "../configuration-schema";
+} from "../../configuration-schema";
 
-import { Setting } from "./obsidian-controls";
-import { deepState, genId, wrapState } from "./helpers";
-import { button, div, h4, input, p, section } from "./tags";
-import { ValueConfiguration } from "./value-editor";
+import { Setting } from "../obsidian-controls";
+import { deepState, genId, wrapState } from "../helpers";
+import { button, div, h4, input, p, section } from "../tags";
+import { ValueConfiguration } from "../value-editor";
 
 export type OnRemoveCommandClick = (x: {
   element: HTMLElement;

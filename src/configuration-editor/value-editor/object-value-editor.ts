@@ -1,10 +1,10 @@
 import van from "vanjs-core";
 import { State } from "vanjs-core";
-import { button, div, h4, h6, input, section } from "./tags";
+import { button, div, h4, h6, input, section } from "../tags";
 import { ObjectInput, ObjectValue } from "src/configuration-schema";
-import { deepState, genId, stateArray } from "./helpers";
-import { defaultValue } from "./defaults";
-import { ValueConfiguration } from "./value-editor";
+import { deepState, genId, stateArray } from "../helpers";
+import { defaultValue } from "../defaults";
+import { ValueConfiguration } from "./index";
 
 type OnRemoveClick = (x: {
   element: HTMLElement;

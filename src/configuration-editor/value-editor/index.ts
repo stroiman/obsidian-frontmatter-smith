@@ -1,5 +1,5 @@
 import van, { State } from "vanjs-core";
-import * as classNames from "./value-editor.module.css";
+import * as classNames from "./index.module.css";
 import {
   Command,
   ValueOption,
@@ -8,12 +8,12 @@ import {
   StringInput,
   toSafeInput,
   CommandType,
-} from "../configuration-schema";
+} from "../../configuration-schema";
 
-import { Setting } from "./obsidian-controls";
+import { Setting } from "../obsidian-controls";
 import { ChoiceInputConfiguration } from "./choice-value-editor";
-import { deepState, genId, stateArray, wrapState } from "./helpers";
-import { ChildGroup } from "./containers";
+import { deepState, genId, stateArray, wrapState } from "../helpers";
+import { ChildGroup } from "../containers";
 import { ObjectValueEditor } from "./object-value-editor";
 import {
   defaultChoice,
@@ -22,9 +22,9 @@ import {
   defaultNumberInput,
   defaultObjectInput,
   defaultStringInput,
-} from "./defaults";
-import { CommandEditor, OnRemoveCommandClick } from "./command-editor";
-import { button, div, form, input, option, p, select } from "./tags";
+} from "../defaults";
+import { CommandEditor, OnRemoveCommandClick } from "../command-editor";
+import { button, div, form, input, option, p, select } from "../tags";
 
 const Option = ({
   type,
