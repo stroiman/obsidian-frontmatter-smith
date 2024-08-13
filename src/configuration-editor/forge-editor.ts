@@ -14,15 +14,7 @@ import {
 import * as classNames from "./forge-editor.module.css";
 import { Setting } from "./obsidian-controls";
 import { ChoiceInputConfiguration } from "./choice-value-editor";
-
-// Silly implementation to help generate unique DOM ids, e.g. for
-// <label id="input-1" /><input aria-labelledby="input-1" />.
-// They don't need to be secure; just unique.
-const genId = (() => {
-  let __nextId = 1;
-  return (pattern?: string) =>
-    `${pattern ? pattern + "-" : ""}${(++__nextId).toString()}`;
-})();
+import { genId } from "./helpers";
 
 const { section, div, h3, h4, button, input, select, option, p, form } =
   van.tags;
