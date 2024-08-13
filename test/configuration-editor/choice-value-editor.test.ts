@@ -43,11 +43,60 @@ describe("Choice value configuration", () => {
     window.document.body.removeChild(root);
   });
 
-  describe("Modifying texts", () => {
-    beforeEach(() => {
-      render(root, testConfiguration, onConfigChanged);
-    });
+  beforeEach(() => {
+    render(root, testConfiguration, onConfigChanged);
+  });
 
+  describe("Initial render", () => {
+    it("Should initialise the text boxes", async () => {
+      const options = getOptions(scope);
+      const textInput = within(options[0]).getByRole("textbox", {
+        name: "Text",
+      });
+      const valueInput = within(options[0]).getByRole("textbox", {
+        name: "Value",
+      });
+      expect(textInput).to.have.value("Option 1");
+      expect(valueInput).to.have.value("Value 1");
+    });
+  });
+
+  describe("Add value", () => {
+    it("Should add a new value", async () => {
+      await user.click(scope.getByRole("button", { name: "Add choice" }));
+      const options = getOptions(scope);
+      const textInput = within(options.at(-1)!).getByRole("textbox", {
+        name: "Text",
+      });
+      await user.clear(textInput);
+      await user.type(textInput, "New text value");
+      const valueInput = within(options.at(-1)!).getByRole("textbox", {
+        name: "Value",
+      });
+      await user.clear(valueInput);
+      await user.type(valueInput, "New value");
+      const actualConfig = onConfigChanged.lastCall.firstArg;
+      expect(actualConfig).to.be.like({
+        forges: [
+          {
+            commands: [
+              {
+                value: {
+                  options: [
+                    { text: "Option 1", value: "Value 1" },
+                    { text: "Option 2", value: "Value 2" },
+                    { text: "New text value", value: "New value" },
+                  ],
+                },
+              },
+            ],
+          },
+        ],
+      });
+    });
+  });
+
+  describe("Modifying texts", () => {
     it("Should update option text", async () => {
       const options = getOptions(scope);
       const textInput = within(options[0]).getByRole("textbox", {
