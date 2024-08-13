@@ -15,6 +15,7 @@ import { Setting } from "./obsidian-controls";
 import { ChoiceInputConfiguration } from "./choice-value-editor";
 import { genId } from "./helpers";
 import { ChildGroup } from "./containers";
+import { ObjectValueEditor } from "./object-value-editor";
 
 const { section, div, h3, h4, button, input, select, option, p, form } =
   van.tags;
@@ -139,7 +140,7 @@ const StringInputConfiguration = (props: { value: State<StringInput> }) => {
   });
 };
 
-const ValueConfiguration = (props: { value: State<ValueOption> }) => {
+export const ValueConfiguration = (props: { value: State<ValueOption> }) => {
   const tmp = props.value.val;
   switch (tmp.$type) {
     case "constant": {
@@ -158,10 +159,20 @@ const ValueConfiguration = (props: { value: State<ValueOption> }) => {
       van.derive(() => (props.value.val = value.val));
       return ChoiceInputConfiguration({ value });
     }
+    case "object": {
+      const value = van.state(tmp);
+      van.derive(() => (props.value.val = value.val));
+      return ObjectValueEditor({ value });
+    }
     default:
-      return div();
+      return UnrecognisedValue({ value: tmp });
   }
 };
+
+const UnrecognisedValue = (props: { value: never }) =>
+  div(
+    "Your configuration contains an unrecognised value, and you will not be able to edit it",
+  );
 
 const SetValueEditor = (props: {
   command: State<SetValueOption>;
@@ -207,7 +218,7 @@ const AddArrayElementEditor = (props: {
   ];
 };
 
-const UnknownCommandEditor = (props: { command: State<never> }) =>
+const UnknownCommandEditor = (props: { command: never }) =>
   div(
     "The configuration contains an unrecognised element, and you will not be able to edit it",
   );
@@ -233,7 +244,7 @@ const renderEditor = (command: State<Command>, headingId: string) => {
       return AddArrayElementEditor({ command: result, headingId });
     }
     default:
-      return UnknownCommandEditor({ command: van.state(tmp) });
+      return UnknownCommandEditor({ command: tmp });
   }
 };
 

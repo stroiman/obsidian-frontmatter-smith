@@ -31,7 +31,8 @@ export type ChoiceInput = {
   options: ChoiceValue[];
 };
 
-export type ObjectValueInput = { key: string; value: ValueOption }[];
+export type ObjectValue = { key: string; value: ValueOption };
+export type ObjectValueInput = ObjectValue[];
 
 export type ObjectInput = {
   $type: "object";
