@@ -79,6 +79,35 @@ describe("Object configuration", () => {
       });
     });
   });
+
+  describe("Remove key", () => {
+    beforeEach(async () => {
+      const keys = getObjectKeys(scope);
+      await user.click(within(keys[1]).getByRole("button", { name: "Remove" }));
+    });
+
+    it("Should remove the option from the UI", () => {
+      const keys = getObjectKeys(scope);
+      expect(keys).to.have.lengthOf(1);
+    });
+
+    it("Should remove the option from the config", () => {
+      const actualConfig = onConfigChanged.lastCall.firstArg;
+      expect(actualConfig).to.be.like({
+        forges: [
+          {
+            commands: [
+              {
+                value: {
+                  values: [{ key: "Option 1" }],
+                },
+              },
+            ],
+          },
+        ],
+      });
+    });
+  });
 });
 
 const testConfiguration: GlobalConfiguration = deepFreeze({
