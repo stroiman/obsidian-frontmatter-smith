@@ -1,4 +1,4 @@
-export const deepFreeze = (val: unknown) => {
+export const deepFreeze = <T>(val: T): T => {
   if (val) {
     switch (typeof val) {
       case "object":
@@ -12,4 +12,5 @@ export const deepFreeze = (val: unknown) => {
         break;
     }
   }
+  return val;
 };
