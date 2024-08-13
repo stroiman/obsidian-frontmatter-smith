@@ -9,6 +9,7 @@ import {
   ConstantValue,
   StringInput,
   toSafeInput,
+  CommandType,
 } from "../configuration-schema";
 
 import * as classNames from "./forge-editor.module.css";
@@ -19,7 +20,7 @@ import { ChildGroup } from "./containers";
 import { ObjectValueEditor } from "./object-value-editor";
 import {
   defaultChoice,
-  defaultCommand,
+  defaultCommandByType,
   defaultConstant,
   defaultNumberInput,
   defaultObjectInput,
@@ -248,15 +249,22 @@ const UnrecognisedValue = (props: { value: never }) =>
 const SetValueEditor = (props: {
   command: State<SetValueOption>;
   headingId: string;
+  onRemoveClick: () => void;
 }) => {
   const { command, headingId } = props;
   const { key } = command.val;
-  //const value = van.state(command.val.value);
-  //van.derive(() => (command.val = { ...command.val, value: value.val }));
   const { value } = deepState(props.command);
   return [
     CommandHead({ id: headingId }, "Set Value"),
     CommandDescription("Sets a single property in the frontmatter"),
+    button(
+      {
+        onclick: () => {
+          props.onRemoveClick();
+        },
+      },
+      "Remove command",
+    ),
     Setting({
       name: "Key",
       description:
@@ -275,11 +283,20 @@ const SetValueEditor = (props: {
 const AddArrayElementEditor = (props: {
   headingId: string;
   command: State<ArrayConfigurationOption>;
+  onRemoveClick: () => void;
 }) => {
   return [
     CommandHead({ id: props.headingId }, "Add element to array"),
     CommandDescription(
       "Assumes the element is an array. The generated value will be added to the array.",
+    ),
+    button(
+      {
+        onclick: () => {
+          props.onRemoveClick();
+        },
+      },
+      "Remove command",
     ),
     Setting({
       name: "Key",
@@ -295,16 +312,24 @@ const UnknownCommandEditor = (props: { command: never }) =>
     "The configuration contains an unrecognised element, and you will not be able to edit it",
   );
 
-const renderEditor = (command: State<Command>, headingId: string) => {
+const renderEditor = (
+  command: State<Command>,
+  headingId: string,
+  onRemoveClick: () => void,
+) => {
   const tmp = command.val;
   switch (tmp.$command) {
     case "set-value": {
       const result = wrapState(tmp, command);
-      return SetValueEditor({ command: result, headingId });
+      return SetValueEditor({ command: result, headingId, onRemoveClick });
     }
     case "add-array-element": {
       const result = wrapState(tmp, command);
-      return AddArrayElementEditor({ command: result, headingId });
+      return AddArrayElementEditor({
+        command: result,
+        headingId,
+        onRemoveClick,
+      });
     }
     default:
       return UnknownCommandEditor({ command: tmp });
@@ -324,15 +349,17 @@ const CommandEditor = (props: {
   const id = genId("command-section");
   const element = section(
     { "aria-labelledBy": id },
-    button(
-      {
-        onclick: () => {
-          props.onRemoveCommandClick({ element, command });
-        },
-      },
-      "Remove command",
-    ),
-    renderEditor(command, id),
+    //button(
+    //  {
+    //    onclick: () => {
+    //      props.onRemoveCommandClick({ element, command });
+    //    },
+    //  },
+    //  "Remove command",
+    //),
+    renderEditor(command, id, () => {
+      props.onRemoveCommandClick({ element, command });
+    }),
   );
   return element;
 };
@@ -349,21 +376,25 @@ export const CommandList = (props: { commands: State<Command[]> }) => {
       CommandEditor({ command, onRemoveCommandClick }),
     ),
   );
+  const dropdown = select(
+    { className: "dropdown" },
+    option({ value: "add-array-element" }, "Add to array"),
+    option({ value: "set-value" }, "Set value"),
+  );
   return [
     Setting({
       name: "Commands",
       description: "Enter the commands to run for this command",
       control: form(
         { className: classNames.newCommandForm },
-        select(
-          { className: "dropdown" },
-          option({ value: "add-to-array" }, "Add to array"),
-          option({ value: "set-value" }, "Set value"),
-        ),
+        dropdown,
         button(
           {
-            onclick: () => {
-              const command = van.state(defaultCommand);
+            onclick: (e) => {
+              e.preventDefault();
+              const command = van.state(
+                defaultCommandByType[dropdown.value as CommandType],
+              );
               states.val = [...states.val, command];
               van.add(
                 children,

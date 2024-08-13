@@ -35,8 +35,21 @@ export const defaultObjectInput: ObjectInput = {
 
 export const defaultValue: ValueOption = defaultConstant;
 
-export const defaultCommand: Command = {
+export const defaultAddToArrayCommand: Command = {
+  $command: "add-array-element",
+  key: "Key",
+  value: defaultValue,
+};
+
+export const defaultSetValueCommand: Command = {
   $command: "set-value",
   key: "Key",
   value: defaultValue,
 };
+
+export const defaultCommandByType: Record<Command["$command"], Command> = {
+  [defaultAddToArrayCommand.$command]: defaultAddToArrayCommand,
+  [defaultSetValueCommand.$command]: defaultSetValueCommand,
+};
+
+export const defaultCommand = defaultSetValueCommand;

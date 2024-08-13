@@ -136,6 +136,7 @@ const forgeConfiguration = t.strict({
 export type ForgeConfiguration = t.TypeOf<typeof forgeConfiguration>;
 export type Commands = ForgeConfiguration["commands"];
 export type Command = t.TypeOf<typeof command>; // Commands[number];
+export type CommandType = Command["$command"];
 
 export const globalConfiguration = t.strict({
   version: t.literal("1"),

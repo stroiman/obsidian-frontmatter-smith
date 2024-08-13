@@ -221,8 +221,9 @@ describe("UI", () => {
       );
     });
 
-    describe("Add command", () => {
+    describe("Add set-value command", () => {
       beforeEach(async () => {
+        await user.selectOptions(scope.getByRole("combobox"), "Set value");
         await user.click(scope.getByRole("button", { name: "Add command" }));
       });
 
@@ -233,7 +234,46 @@ describe("UI", () => {
 
       it("Should add to the configuration", async () => {
         expect(onConfigChanged.lastCall.lastArg).to.be.like({
-          forges: [{ commands: [{}] }],
+          forges: [{ commands: [{ $command: "set-value" }] }],
+        });
+      });
+
+      describe("Remove command", () => {
+        beforeEach(async () => {
+          const lastSection = getForgeSections(scope).at(-1)!;
+          const removeButton = within(lastSection).getByRole("button", {
+            name: /^Remove/,
+          });
+          await user.click(removeButton);
+        });
+
+        it("Should remove the command from the UI", () => {
+          const regions = getCommandSections(scope);
+          expect(regions).to.have.lengthOf(0);
+        });
+
+        it("Should remove the command from the configuration", async () => {
+          expect(onConfigChanged.lastCall.lastArg).to.be.like({
+            forges: [{ commands: [] }],
+          });
+        });
+      });
+    });
+
+    describe("Add add-array-element command", () => {
+      beforeEach(async () => {
+        await user.selectOptions(scope.getByRole("combobox"), "Add to array");
+        await user.click(scope.getByRole("button", { name: "Add command" }));
+      });
+
+      it("Should add a new UI element", async () => {
+        const regions = getCommandSections(scope);
+        expect(regions).to.have.lengthOf(1);
+      });
+
+      it("Should add to the configuration", async () => {
+        expect(onConfigChanged.lastCall.lastArg).to.be.like({
+          forges: [{ commands: [{ $command: "add-array-element" }] }],
         });
       });
 
