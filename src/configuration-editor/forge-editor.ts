@@ -23,8 +23,6 @@ import {
   defaultNumberInput,
   defaultObjectInput,
   defaultStringInput,
-  defaultstringinput,
-  defaultValue,
 } from "./defaults";
 
 const { section, div, h3, h4, button, input, select, option, p, form } =
