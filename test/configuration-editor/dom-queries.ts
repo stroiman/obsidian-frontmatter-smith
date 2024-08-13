@@ -9,6 +9,9 @@ export const getCommandSections = (scope: QueryFunctions) =>
 export const getOptions = (scope: QueryFunctions) =>
   scope.queryAllByRole("region", { name: /^Option: / });
 
+export const getChoiceValues = (scope: QueryFunctions) =>
+  scope.queryAllByRole("region", { name: /^Choice:/ });
+
 const isVisible = (e: HTMLElement) => {
   // Not a _correct_ implementation; just checks the properties we actually use.
   return e.style.display !== "none";

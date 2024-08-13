@@ -3,15 +3,30 @@ import { ChoiceValue, ChoiceInput } from "../configuration-schema";
 import { Setting } from "./obsidian-controls";
 import * as classNames from "./choice-value-editor.module.css";
 import { genId } from "./helpers";
+import { CommandList } from "./forge-editor";
 
-const { section, label, div, h4, input, hr, button } = van.tags;
+const { section, label, div, h4, input, p, button } = van.tags;
 
-const Choice = (props: { choice: State<ChoiceValue> }) => {
+type OnRemoveClick = (x: {
+  element: HTMLElement;
+  choice: State<ChoiceValue>;
+}) => void;
+
+const Choice = (props: {
+  choice: State<ChoiceValue>;
+  onRemoveClick: OnRemoveClick;
+}) => {
   const { choice } = props;
   const textLabelId = genId("choice-text-label");
   const valueLabelId = genId("choice-value-label");
-  return section(
+  const commands = van.state(choice.val.commands || []);
+  van.derive(() => (choice.val = { ...choice.val, commands: commands.val }));
+  const element = section(
     { "aria-label": "Option: " + choice.val.value },
+    button(
+      { onclick: () => props.onRemoveClick({ element, choice }) },
+      "Remove choice",
+    ),
     div(
       label({ id: textLabelId }, "Text"),
       input({
@@ -34,7 +49,14 @@ const Choice = (props: { choice: State<ChoiceValue> }) => {
         },
       }),
     ),
+    h4("Commands"),
+    p(
+      { className: "text-muted" },
+      "Add additional commands that are executed if this choice is selected",
+    ),
+    div({ className: classNames.valueList }, CommandList({ commands })),
   );
+  return element;
 };
 
 export const ChoiceInputConfiguration = (props: {
@@ -51,15 +73,20 @@ export const ChoiceInputConfiguration = (props: {
         options: options.val.map((option) => option.val),
       }),
   );
+  const onRemoveClick: OnRemoveClick = ({ element, choice }) => {
+    options.val = options.val.filter((x) => x !== choice);
+    optionsDiv.removeChild(element);
+  };
   const optionsDiv = div(
     { className: classNames.valueList },
     options.val.map((choice, i) => {
-      const c = Choice({ choice });
-      return i > 0 ? [hr(), c] : c;
+      return Choice({ choice, onRemoveClick });
     }),
   );
-  return div(
-    h4("Choice"),
+  const headingId = genId("choice-heading");
+  return section(
+    { "aria-labelledBy": headingId },
+    h4({ id: headingId }, "Choice:"),
     Setting({
       name: "Prompt",
       description: "The heading of the prompt dialog",
@@ -73,8 +100,7 @@ export const ChoiceInputConfiguration = (props: {
             value: "Value ...",
           });
           options.val = [...options.val, choice];
-          const addHr = options.val.length > 1;
-          van.add(optionsDiv, [addHr ? hr() : [], Choice({ choice })]);
+          van.add(optionsDiv, Choice({ choice, onRemoveClick }));
         },
       },
       "Add choice",

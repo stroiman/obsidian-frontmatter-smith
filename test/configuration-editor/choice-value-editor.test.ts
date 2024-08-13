@@ -12,6 +12,7 @@ import { OnConfigChanged, render } from "src/configuration-editor";
 import { expect } from "chai";
 import { QueryFunctions } from "./types";
 import {
+  getChoiceValues,
   getCommandSections,
   getErrorMessage,
   getForgeSections,
@@ -91,6 +92,24 @@ describe("Choice value configuration", () => {
               },
             ],
           },
+        ],
+      });
+    });
+  });
+
+  describe("Remove value", () => {
+    it("Should remove the value", async () => {
+      let options = getOptions(scope);
+      const removeButton = within(options[0]).getByRole("button", {
+        name: /^Remove/,
+      });
+      await user.click(removeButton);
+      options = getOptions(scope);
+      expect(options).to.have.lengthOf(1);
+      const actualConfig = onConfigChanged.lastCall.firstArg;
+      expect(actualConfig).to.be.like({
+        forges: [
+          { commands: [{ value: { options: [{ text: "Option 2" }] } }] },
         ],
       });
     });

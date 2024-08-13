@@ -234,7 +234,7 @@ const CommandEditor = (props: { command: State<Command> }) => {
   return section({ "aria-labelledBy": id }, renderEditor(command, id));
 };
 
-const CommandList = (props: { commands: State<Command[]> }) => {
+export const CommandList = (props: { commands: State<Command[]> }) => {
   const states = props.commands.val.map((command) => van.state(command));
   van.derive(() => (props.commands.val = states.map((x) => x.val)));
   return [
