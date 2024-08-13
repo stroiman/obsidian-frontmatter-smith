@@ -1,9 +1,9 @@
 import van, { State } from "vanjs-core";
 import { ChoiceValue, ChoiceInput } from "../configuration-schema";
 import { Setting } from "./obsidian-controls";
-import * as classNames from "./choice-value-editor.module.css";
 import { genId } from "./helpers";
 import { CommandList } from "./forge-editor";
+import { ChildGroup } from "./containers";
 
 const { section, label, div, h4, input, p, button } = van.tags;
 
@@ -54,7 +54,7 @@ const Choice = (props: {
       { className: "text-muted" },
       "Add additional commands that are executed if this choice is selected",
     ),
-    div({ className: classNames.valueList }, CommandList({ commands })),
+    CommandList({ commands }),
   );
   return element;
 };
@@ -77,8 +77,7 @@ export const ChoiceInputConfiguration = (props: {
     options.val = options.val.filter((x) => x !== choice);
     optionsDiv.removeChild(element);
   };
-  const optionsDiv = div(
-    { className: classNames.valueList },
+  const optionsDiv = ChildGroup(
     options.val.map((choice, i) => {
       return Choice({ choice, onRemoveClick });
     }),

@@ -15,6 +15,7 @@ import * as classNames from "./forge-editor.module.css";
 import { Setting } from "./obsidian-controls";
 import { ChoiceInputConfiguration } from "./choice-value-editor";
 import { genId } from "./helpers";
+import { ChildGroup } from "./containers";
 
 const { section, div, h3, h4, button, input, select, option, p, form } =
   van.tags;
@@ -251,7 +252,7 @@ export const CommandList = (props: { commands: State<Command[]> }) => {
         button("New command"),
       ),
     }),
-    states.map((command, i) => CommandEditor({ command })),
+    ChildGroup(states.map((command, i) => CommandEditor({ command }))),
   ];
 };
 
