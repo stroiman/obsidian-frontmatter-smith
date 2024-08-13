@@ -5,19 +5,12 @@ import userEvent, { UserEvent } from "@testing-library/user-event";
 import { within, screen } from "@testing-library/dom";
 import {
   emptyConfiguration,
-  emptyConfiguration,
   GlobalConfiguration,
 } from "src/configuration-schema.js";
 import { OnConfigChanged, render } from "src/configuration-editor";
 import { expect } from "chai";
 import { QueryFunctions } from "./types";
-import {
-  getChoiceValues,
-  getCommandSections,
-  getErrorMessage,
-  getForgeSections,
-  getOptions,
-} from "./dom-queries";
+import { getOptions } from "./dom-queries";
 import { deepFreeze } from "./helpers";
 
 let user: UserEvent;
