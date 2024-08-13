@@ -8,7 +8,6 @@ import {
   ValueType,
   ConstantValue,
   StringInput,
-  ChoiceInput,
 } from "../configuration-schema";
 
 import * as classNames from "./forge-editor.module.css";
@@ -141,15 +140,24 @@ const StringInputConfiguration = (props: { value: State<StringInput> }) => {
 };
 
 const ValueConfiguration = (props: { value: State<ValueOption> }) => {
-  const { value } = props;
-  switch (value.val.$type) {
-    case "constant":
-      return ConstValueConfiguration({ value: value as State<ConstantValue> });
+  const tmp = props.value.val;
+  switch (tmp.$type) {
+    case "constant": {
+      const value = van.state(tmp);
+      van.derive(() => (props.value.val = value.val));
+      return ConstValueConfiguration({ value });
+    }
     case "string-input":
-    case "number-input":
-      return StringInputConfiguration({ value: value as State<StringInput> });
-    case "choice-input":
-      return ChoiceInputConfiguration({ value: value as State<ChoiceInput> });
+    case "number-input": {
+      const value = van.state(tmp);
+      van.derive(() => (props.value.val = value.val));
+      return StringInputConfiguration({ value });
+    }
+    case "choice-input": {
+      const value = van.state(tmp);
+      van.derive(() => (props.value.val = value.val));
+      return ChoiceInputConfiguration({ value });
+    }
     default:
       return div();
   }
