@@ -6,13 +6,16 @@ import { ValueConfiguration } from "./forge-editor";
 import { genId } from "./helpers";
 import { defaultValue } from "./defaults";
 
-type OnRemoveClick = (x: { element: HTMLElement; value: ObjectValue }) => void;
+type OnRemoveClick = (x: {
+  element: HTMLElement;
+  value: State<ObjectValue>;
+}) => void;
 
 const ValueEditor = ({
   value,
   onRemoveClick,
 }: {
-  value: ObjectValue;
+  value: State<ObjectValue>;
   onRemoveClick: OnRemoveClick;
 }): HTMLElement => {
   const id = genId("object-key");
@@ -27,15 +30,28 @@ const ValueEditor = ({
       },
       "Remove",
     ),
-    div("Key", input({ type: "text", value: value.key })),
-    div("Value", ValueConfiguration({ value: van.state(value.value) })),
+    div(
+      "Key",
+      input({
+        type: "text",
+        value: value.val.key,
+        "aria-label": "Key",
+        oninput: (e) => {
+          value.val = { ...value.val, key: e.target.value };
+        },
+      }),
+    ),
+    div("Value", ValueConfiguration({ value: van.state(value.val.value) })),
   );
   return element;
 };
 
 export const ObjectValueEditor = ({ value }: { value: State<ObjectInput> }) => {
-  const values = van.state(value.val.values);
-  van.derive(() => (value.val = { ...value.val, values: values.val }));
+  const values = van.state(value.val.values.map((value) => van.state(value)));
+  van.derive(
+    () =>
+      (value.val = { ...value.val, values: values.val.map((val) => val.val) }),
+  );
   const onRemoveClick: OnRemoveClick = ({ element, value }) => {
     values.val = values.val.filter((x) => x !== value);
     result.removeChild(element);
@@ -45,10 +61,10 @@ export const ObjectValueEditor = ({ value }: { value: State<ObjectInput> }) => {
     button(
       {
         onclick: () => {
-          const value: ObjectValue = {
+          const value = van.state({
             key: "key ...",
             value: defaultValue,
-          };
+          });
           values.val = [...values.val, value];
           van.add(result, ValueEditor({ value, onRemoveClick }));
         },

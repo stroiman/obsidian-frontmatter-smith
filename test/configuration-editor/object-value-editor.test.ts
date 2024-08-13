@@ -10,6 +10,7 @@ import { within } from "@testing-library/dom";
 import { QueryFunctions } from "./types";
 import { getObjectKeys } from "./dom-queries";
 import { expect } from "chai";
+import { defaultValue } from "src/configuration-editor/defaults";
 
 describe("Object configuration", () => {
   let user: UserEvent;
@@ -68,7 +69,7 @@ describe("Object configuration", () => {
                     { key: "Option 1" },
                     { key: "Option 2" },
                     {
-                      // There should be one more, what are defaults?
+                      value: defaultValue,
                     },
                   ],
                 },
@@ -100,6 +101,29 @@ describe("Object configuration", () => {
               {
                 value: {
                   values: [{ key: "Option 1" }],
+                },
+              },
+            ],
+          },
+        ],
+      });
+    });
+  });
+
+  describe("Editing a key", () => {
+    it("Updates the key", async () => {
+      const keys = getObjectKeys(scope);
+      const input = within(keys[0]).getByRole("textbox", { name: "Key" });
+      await user.clear(input);
+      await user.type(input, "new key");
+      const actualConfig = onConfigChanged.lastCall.firstArg;
+      expect(actualConfig).to.be.like({
+        forges: [
+          {
+            commands: [
+              {
+                value: {
+                  values: [{ key: "new key" }, { key: "Option 2" }],
                 },
               },
             ],
