@@ -13,6 +13,7 @@ import {
   getForgeSections,
 } from "./dom-queries";
 import { deepFreeze } from "./helpers";
+import { fullConfiguration } from "test/fixtures";
 
 let user: UserEvent;
 
@@ -203,6 +204,43 @@ describe("UI", () => {
         input.should.have.attribute("aria-invalid", "false");
         expect(getErrorMessage(input)).to.be.undefined;
       });
+    });
+  });
+
+  describe("Add/change/remove command", () => {
+    beforeEach(() => {
+      render(
+        root,
+        {
+          ...emptyConfiguration,
+          forges: [{ name: "Empty forge", commands: [] }],
+        },
+        onConfigChanged,
+      );
+    });
+
+    describe("Add command", () => {
+      beforeEach(async () => {
+        await user.click(scope.getByRole("button", { name: "Add command" }));
+      });
+
+      it("Should add a new UI element", async () => {
+        const regions = getCommandSections(scope);
+        expect(regions).to.have.lengthOf(1);
+      });
+
+      it("Should add to the configuration", async () => {
+        expect(onConfigChanged.lastCall.lastArg).to.be.like({
+          forges: [{ commands: [{}] }],
+        });
+      });
+    });
+  });
+
+  describe("Sensible behaviour", () => {
+    it("Should not call the update function on render", () => {
+      render(root, fullConfiguration, onConfigChanged);
+      onConfigChanged.should.not.have.been.called;
     });
   });
 });

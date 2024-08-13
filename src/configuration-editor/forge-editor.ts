@@ -18,6 +18,7 @@ import { ChildGroup } from "./containers";
 import { ObjectValueEditor } from "./object-value-editor";
 import {
   defaultChoice,
+  defaultCommand,
   defaultConstant,
   defaultNumberInput,
   defaultObjectInput,
@@ -306,8 +307,14 @@ const CommandEditor = (props: { command: State<Command> }) => {
 };
 
 export const CommandList = (props: { commands: State<Command[]> }) => {
-  const states = props.commands.val.map((command) => van.state(command));
-  van.derive(() => (props.commands.val = states.map((x) => x.val)));
+  const states = van.state(
+    props.commands.val.map((command) => van.state(command)),
+  );
+  van.derive(() => (props.commands.val = states.val.map((x) => x.val)));
+
+  const children = ChildGroup(
+    states.val.map((command, i) => CommandEditor({ command })),
+  );
   return [
     Setting({
       name: "Commands",
@@ -319,10 +326,19 @@ export const CommandList = (props: { commands: State<Command[]> }) => {
           option({ value: "add-to-array" }, "Add to array"),
           option({ value: "set-value" }, "Set value"),
         ),
-        button("New command"),
+        button(
+          {
+            onclick: () => {
+              const command = van.state(defaultCommand);
+              states.val = [...states.val, command];
+              van.add(children, CommandEditor({ command }));
+            },
+          },
+          "Add command",
+        ),
       ),
     }),
-    ChildGroup(states.map((command, i) => CommandEditor({ command }))),
+    children,
   ];
 };
 
@@ -336,9 +352,11 @@ export function ForgeEditor({
   const id = genId("forge-config-heading");
   const name = van.state(forgeConfig.name);
   const commands = van.state(forgeConfig.commands);
-  van.derive(() =>
-    onChange({ ...forgeConfig, name: name.val, commands: commands.val }),
-  );
+  van.derive(() => {
+    if (name.val !== name.oldVal || commands.val !== commands.oldVal) {
+      onChange({ ...forgeConfig, name: name.val, commands: commands.val });
+    }
+  });
   return section(
     {
       className: classNames.forgeConfigBlock,

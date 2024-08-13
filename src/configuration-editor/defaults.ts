@@ -1,5 +1,6 @@
 import {
   ChoiceInput,
+  Command,
   ConstantValue,
   ObjectInput,
   StringInput,
@@ -33,3 +34,9 @@ export const defaultObjectInput: ObjectInput = {
 };
 
 export const defaultValue: ValueOption = defaultConstant;
+
+export const defaultCommand: Command = {
+  $command: "set-value",
+  key: "Key",
+  value: defaultValue,
+};

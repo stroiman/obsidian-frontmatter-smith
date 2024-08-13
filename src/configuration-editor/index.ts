@@ -14,13 +14,6 @@ const ConfigurationEditor = (props: {
   onConfigChanged?: OnConfigChanged;
 }) => {
   const forges = [...props.config.forges];
-  van.derive(() => {
-    props.onConfigChanged &&
-      props.onConfigChanged({
-        ...props.config,
-        forges: forges,
-      });
-  });
   const count = van.state(0);
   const result = div(
     { className: classNames.forgeConfig },
