@@ -1,7 +1,6 @@
 //import { Window } from "happy-dom";
 import sinon from "sinon";
 import userEvent, { UserEvent } from "@testing-library/user-event";
-import { GlobalRegistrator } from "@happy-dom/global-registrator";
 // eslint-disable-next-line
 import { within, screen } from "@testing-library/dom";
 import { emptyConfiguration } from "src/configuration-schema.js";
@@ -33,16 +32,14 @@ const deepFreeze = (val: unknown) => {
 };
 
 before(async () => {
-  GlobalRegistrator.register();
-  user = userEvent.setup(global);
   deepFreeze(emptyConfiguration);
 });
 
-after(() => {
-  GlobalRegistrator.unregister();
-});
-
 describe("UI", () => {
+  before(() => {
+    user = userEvent.setup(global);
+  });
+
   let scope: QueryFunctions;
   let root: HTMLElement;
   let onConfigChanged: sinon.SinonStub<
