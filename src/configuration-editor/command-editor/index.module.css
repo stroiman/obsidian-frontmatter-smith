@@ -1,4 +1,13 @@
+.command-block {
+  display: flex;
+}
+
+.command-block-left {
+  margin-right: auto;
+}
+
 .command-heading {
+  margin-top: 0;
   margin-bottom: 0;
 }
 

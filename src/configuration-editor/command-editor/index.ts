@@ -1,4 +1,4 @@
-import { PropValueOrDerived, State } from "vanjs-core";
+import { State } from "vanjs-core";
 import * as classNames from "./index.module.css";
 import {
   Command,
@@ -16,26 +16,37 @@ export type OnRemoveCommandClick = (x: {
   command: State<Command>;
 }) => void;
 
-const CommandHead = (
-  props: Record<string, PropValueOrDerived> | string,
-  text?: string,
-) => {
-  if (typeof props === "string") {
-    text = props;
-    props = {};
-  }
-  return h4(
-    {
-      ...props,
-      className: classNames.commandHeading,
-      "aria-label": `Command: ${text}`,
-    },
-    text,
+const CommandNameAndDesc = (props: {
+  headingId: string;
+  name: string;
+  description: string;
+  onRemoveClick: () => void;
+}) => {
+  const { headingId, name, description, onRemoveClick } = props;
+  return div(
+    { className: classNames.commandBlock },
+    div(
+      { className: classNames.commandBlockLeft },
+      h4(
+        {
+          id: headingId,
+          className: classNames.commandHeading,
+          "aria-label": `Command: ${name}`,
+        },
+        name,
+      ),
+      p({ className: classNames.commandDescription }, description),
+    ),
+    button(
+      {
+        onclick: () => {
+          onRemoveClick();
+        },
+      },
+      "Remove command",
+    ),
   );
 };
-
-const CommandDescription = (text: string) =>
-  p({ className: classNames.commandDescription }, text);
 
 const SetValueEditor = (props: {
   command: State<SetValueOption>;
@@ -46,27 +57,18 @@ const SetValueEditor = (props: {
   const { key } = command.val;
   const { value } = deepState(props.command);
   return [
-    CommandHead({ id: headingId }, "Set Value"),
-    CommandDescription("Sets a single property in the frontmatter"),
-    button(
-      {
-        onclick: () => {
-          props.onRemoveClick();
-        },
-      },
-      "Remove command",
-    ),
+    CommandNameAndDesc({
+      name: "Set Value",
+      description: "Sets a single property in the frontmatter",
+      headingId,
+      onRemoveClick: props.onRemoveClick,
+    }),
     Setting({
       name: "Key",
       description:
         "This is the name of the frontmatter field that will be created",
       control: input({ type: "text", value: key }),
     }),
-    //Setting({
-    //  name: "Value",
-    //  description: "How will the value be generated",
-    //  control: ValueEditor(props.command.val),
-    //}),
     ValueConfiguration({ value }),
   ];
 };
@@ -76,19 +78,15 @@ const AddArrayElementEditor = (props: {
   command: State<ArrayConfigurationOption>;
   onRemoveClick: () => void;
 }) => {
+  const { headingId, onRemoveClick } = props;
   return [
-    CommandHead({ id: props.headingId }, "Add element to array"),
-    CommandDescription(
-      "Assumes the element is an array. The generated value will be added to the array.",
-    ),
-    button(
-      {
-        onclick: () => {
-          props.onRemoveClick();
-        },
-      },
-      "Remove command",
-    ),
+    CommandNameAndDesc({
+      headingId,
+      name: "Add element to array",
+      description:
+        "Assumes the element is an array. The generated value will be added to the array.",
+      onRemoveClick,
+    }),
     Setting({
       name: "Key",
       description:
