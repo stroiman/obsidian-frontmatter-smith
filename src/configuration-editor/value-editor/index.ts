@@ -128,7 +128,8 @@ const ValueConfigurationInner = (props: { value: State<ValueOption> }) => {
       return UnrecognisedValue({ value: tmp });
   }
 };
-const ValueEditor = (props: { value: State<ValueOption> }) =>
+
+export const ValueTypeEditor = (props: { value: State<ValueOption> }) =>
   select(
     {
       className: "dropdown",
@@ -226,19 +227,28 @@ export const CommandList = (props: { commands: State<Command[]> }) => {
   ];
 };
 
-export const ValueConfiguration = (props: { value: State<ValueOption> }) => {
-  const { value } = props;
+/**
+ * Logic that reacts to the value changing 'type'. This removes the current
+ * editor and renders a new for the new type.
+ *
+ * Note, the editor will be the last child of the passed parent.
+ */
+const renderValueEditor = (parent: HTMLElement, value: State<ValueOption>) => {
   const type = van.derive(() => value.val.$type);
-
-  let result: HTMLElement = ValueConfigurationInner(props);
-  const d = div(ValueEditor({ value }), result);
+  let editor: HTMLElement = ValueConfigurationInner({ value });
+  van.add(parent, editor);
   van.derive(() => {
-    const newType = type.val;
-    if (newType !== type.oldVal) {
-      d.removeChild(result);
-      result = ValueConfigurationInner({ value });
-      van.add(d, result);
+    if (type.val !== type.oldVal) {
+      parent.removeChild(editor);
+      editor = ValueConfigurationInner({ value });
+      van.add(parent, editor);
     }
   });
-  return d;
+  return parent;
+};
+
+export const ValueConfiguration = (props: { value: State<ValueOption> }) => {
+  const { value } = props;
+
+  return renderValueEditor(div(ValueTypeEditor({ value })), value);
 };
