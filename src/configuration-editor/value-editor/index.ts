@@ -96,9 +96,9 @@ const ConstValueConfiguration = (props: { value: State<ConstantValue> }) => {
   );
   return div(
     Setting({
-      name: "Value",
+      name: "Constant",
       description:
-        "The 'value', must be valid JSON format. This allows the value to be simple text values, or complex objects or arrays. For a text value, the correct format is to enclose the value in quotation marks ( \" )",
+        "The constant 'value', must be valid JSON format. This allows the value to be simple text values, or complex objects or arrays. For a text value, the correct format is to enclose the value in quotation marks ( \" )",
       control: div(i, err),
     }),
   );
@@ -233,7 +233,10 @@ export const CommandList = (props: { commands: State<Command[]> }) => {
  *
  * Note, the editor will be the last child of the passed parent.
  */
-const renderValueEditor = (parent: HTMLElement, value: State<ValueOption>) => {
+export const renderValueEditor = (
+  parent: HTMLElement,
+  value: State<ValueOption>,
+) => {
   const type = van.derive(() => value.val.$type);
   let editor: HTMLElement = ValueConfigurationInner({ value });
   van.add(parent, editor);

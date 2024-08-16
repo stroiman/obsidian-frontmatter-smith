@@ -1,0 +1,29 @@
+.value-type-heading {
+  margin-bottom: 0;
+}
+
+.value-type-description {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  margin-bottom: 0.75rem;
+}
+
+.options-list {
+  display: grid;
+  row-gap: 0.25rem;
+  grid-template-columns: 1fr 1fr auto;
+}
+
+.choice-commands {
+  grid-column: span 3;
+}
+
+.hidden {
+  display: none;
+}
+
+.choice-section {
+  display: grid;
+  grid-column: span 3;
+  grid-template-columns: subgrid;
+}

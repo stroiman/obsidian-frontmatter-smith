@@ -1,3 +1,4 @@
+import * as classNames from "./choice-value-editor.module.css";
 import van, { State } from "vanjs-core";
 import { SafeChoiceValue, SafeChoiceInput } from "../../configuration-schema";
 import { Setting } from "../obsidian-controls";
@@ -19,13 +20,18 @@ const Choice = (props: {
   const { choice } = props;
   const textLabelId = genId("choice-text-label");
   const valueLabelId = genId("choice-value-label");
+  const showChildren = van.state(true);
+  const childCls = van.derive(() =>
+    showChildren.val
+      ? classNames.choiceCommands
+      : classNames.choiceCommands + " " + classNames.hidden,
+  );
   const { commands, text, value } = deepState(choice);
   const element = section(
-    { "aria-label": "Option: " + choice.val.value },
-    button(
-      { onclick: () => props.onRemoveClick({ element, choice }) },
-      "Remove choice",
-    ),
+    {
+      "aria-label": "Option: " + choice.val.value,
+      className: classNames.choiceSection,
+    },
     div(
       label({ id: textLabelId }, "Text"),
       input({
@@ -48,12 +54,31 @@ const Choice = (props: {
         },
       }),
     ),
-    h4("Commands"),
-    p(
-      { className: "text-muted" },
-      "Add additional commands that are executed if this choice is selected",
+    div(
+      button(
+        { onclick: () => props.onRemoveClick({ element, choice }) },
+        "Remove choice",
+      ),
+      button(
+        {
+          onclick: () => {
+            showChildren.val = !showChildren.val;
+          },
+        },
+        "Show/hide",
+      ),
     ),
-    CommandList({ commands }),
+    div(
+      { className: childCls },
+      ChildGroup(
+        h4("Commands"),
+        p(
+          { className: "text-muted" },
+          "Add additional commands that are executed if this choice is selected",
+        ),
+        CommandList({ commands }),
+      ),
+    ),
   );
   return element;
 };
@@ -61,26 +86,54 @@ const Choice = (props: {
 export const ChoiceInputConfiguration = (props: {
   value: State<SafeChoiceInput>;
 }) => {
+  //const ds = deepState(props.value);
+  //const options = stateArray(ds.options);
+  //const onRemoveClick: OnRemoveClick = ({ element, choice }) => {
+  //  options.val = options.val.filter((x) => x !== choice);
+  //  optionsDiv.removeChild(element);
+  //};
+  //const optionsDiv = ChildGroup(
+  //  options.val.map((choice, i) => {
+  //    return Choice({ choice, onRemoveClick });
+  //  }),
+  //);
+  const headingId = genId("choice-heading");
+  return section(
+    { "aria-labelledBy": headingId },
+    h4({ id: headingId, className: classNames.valueTypeHeading }, "Choice:"),
+    div(
+      { className: classNames.valueTypeDescription },
+      "Provides a selection of multiple choices. Each choice can contain subsequent commands to run if that choice is selected.",
+    ),
+    Setting({
+      name: "Prompt",
+      description: "The heading of the prompt dialog",
+      control: input({ type: "text" }),
+    }),
+    Choices(props),
+  );
+};
+
+const Choices = (props: { value: State<SafeChoiceInput> }) => {
   const ds = deepState(props.value);
   const options = stateArray(ds.options);
   const onRemoveClick: OnRemoveClick = ({ element, choice }) => {
     options.val = options.val.filter((x) => x !== choice);
     optionsDiv.removeChild(element);
   };
-  const optionsDiv = ChildGroup(
+  const optionsDiv = div(
+    {
+      className: classNames.optionsList,
+    },
     options.val.map((choice, i) => {
       return Choice({ choice, onRemoveClick });
     }),
   );
-  const headingId = genId("choice-heading");
-  return section(
-    { "aria-labelledBy": headingId },
-    h4({ id: headingId }, "Choice:"),
-    Setting({
-      name: "Prompt",
-      description: "The heading of the prompt dialog",
-      control: input({ type: "text" }),
-    }),
+  return div(
+    //{
+    //  className: classNames.optionsList,
+    //},
+    h4("Choices"),
     button(
       {
         onclick: (e) => {
@@ -95,6 +148,6 @@ export const ChoiceInputConfiguration = (props: {
       },
       "Add choice",
     ),
-    optionsDiv,
+    ChildGroup(optionsDiv),
   );
 };

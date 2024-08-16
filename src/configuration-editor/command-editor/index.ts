@@ -9,7 +9,8 @@ import {
 import { Setting } from "../obsidian-controls";
 import { deepState, genId, wrapState } from "../helpers";
 import { button, div, h4, input, p, section } from "../tags";
-import { ValueConfiguration } from "../value-editor";
+import { renderValueEditor, ValueTypeEditor } from "../value-editor";
+import { ChildGroup } from "../containers";
 
 export type OnRemoveCommandClick = (x: {
   element: HTMLElement;
@@ -65,11 +66,15 @@ const SetValueEditor = (props: {
     }),
     Setting({
       name: "Key",
-      description:
-        "This is the name of the frontmatter field that will be created",
+      description: "This is the name of the frontmatter field that will be set",
       control: input({ type: "text", value: key }),
     }),
-    ValueConfiguration({ value }),
+    Setting({
+      name: "Value",
+      description: "How will the value be generated",
+      control: ValueTypeEditor({ value }),
+    }),
+    renderValueEditor(ChildGroup(), value),
   ];
 };
 
@@ -94,7 +99,13 @@ const AddArrayElementEditor = (props: {
         "This is the name of the frontmatter field that will be created",
       control: input({ type: "text", value: props.command.val.key }),
     }),
-    ValueConfiguration({ value }),
+    //ValueConfiguration({ value }),
+    Setting({
+      name: "Value",
+      description: "How will the value be generated",
+      control: ValueTypeEditor({ value }),
+    }),
+    renderValueEditor(ChildGroup(), value),
   ];
 };
 
