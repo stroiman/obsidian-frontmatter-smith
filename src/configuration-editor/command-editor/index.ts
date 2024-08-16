@@ -79,6 +79,7 @@ const AddArrayElementEditor = (props: {
   onRemoveClick: () => void;
 }) => {
   const { headingId, onRemoveClick } = props;
+  const { value } = deepState(props.command);
   return [
     CommandNameAndDesc({
       headingId,
@@ -93,6 +94,7 @@ const AddArrayElementEditor = (props: {
         "This is the name of the frontmatter field that will be created",
       control: input({ type: "text", value: props.command.val.key }),
     }),
+    ValueConfiguration({ value }),
   ];
 };
 
