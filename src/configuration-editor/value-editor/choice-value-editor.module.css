@@ -11,11 +11,11 @@
 .options-list {
   display: grid;
   gap: var(--grid-gap);
-  grid-template-columns: 1fr 1fr auto;
+  grid-template-columns: auto 1fr 1fr auto;
 }
 
 .choice-commands {
-  grid-column: span 3;
+  grid-column: 2/5;
 }
 
 .hidden {
@@ -24,6 +24,6 @@
 
 .choice-section {
   display: grid;
-  grid-column: span 3;
+  grid-column: span 4;
   grid-template-columns: subgrid;
 }

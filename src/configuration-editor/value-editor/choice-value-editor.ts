@@ -5,6 +5,7 @@ import { Setting } from "../obsidian-controls";
 import { deepState, genId, stateArray } from "../helpers";
 import { ChildGroup, HeadingWithButton } from "../containers";
 import { CommandList } from "../value-editor";
+import { ExpandCollapseButton } from "../components";
 
 const { section, label, div, h4, input, p, button } = van.tags;
 
@@ -56,6 +57,7 @@ const Choice = (props: {
       "aria-label": "Option: " + choice.val.value,
       className: classNames.choiceSection,
     },
+    ExpandCollapseButton({ visible: showChildren }),
     StateInput({ labelId: textLabelId, value: text }),
     StateInput({ labelId: valueLabelId, value }),
     div(
@@ -63,25 +65,16 @@ const Choice = (props: {
         { onclick: () => props.onRemoveClick({ element, choice }) },
         "Remove choice",
       ),
-      button(
-        {
-          onclick: () => {
-            showChildren.val = !showChildren.val;
-          },
-        },
-        "Show/hide",
-      ),
     ),
     div(
       { className: childCls },
-      ChildGroup(
-        h4("Commands"),
-        p(
-          { className: "text-muted" },
-          "Add additional commands that are executed if this choice is selected",
-        ),
-        CommandList({ commands }),
+
+      h4("Commands"),
+      p(
+        { className: "text-muted" },
+        "Add additional commands that are executed if this choice is selected",
       ),
+      CommandList({ commands }),
     ),
   );
   return element;
