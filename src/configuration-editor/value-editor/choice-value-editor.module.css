@@ -10,7 +10,7 @@
 
 .options-list {
   display: grid;
-  row-gap: 0.25rem;
+  gap: var(--grid-gap);
   grid-template-columns: 1fr 1fr auto;
 }
 
