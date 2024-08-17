@@ -2,9 +2,9 @@ import van from "vanjs-core";
 import clsx from "clsx";
 import * as classNames from "./object-value-editor.module.css";
 import { State } from "vanjs-core";
-import { button, div, input, section } from "../tags";
+import { button, div, input, section, label } from "../tags";
 import { ObjectInput, ObjectValue } from "src/configuration-schema";
-import { deepState, stateArray } from "../helpers";
+import { deepState, genId, stateArray } from "../helpers";
 import { defaultValue } from "../defaults";
 import { renderValueEditor, ValueTypeEditor } from "./index";
 import { HeadingWithButton } from "../containers";
@@ -16,9 +16,10 @@ type OnRemoveClick = (x: {
 
 const ValueEditor = (props: {
   value: State<ObjectValue>;
+  keyLabelId: string;
   onRemoveClick: OnRemoveClick;
 }): HTMLElement => {
-  const { onRemoveClick } = props;
+  const { onRemoveClick, keyLabelId } = props;
   const { key, value } = deepState(props.value);
   const showValue = van.state(false);
   const style = van.derive(() =>
@@ -29,7 +30,7 @@ const ValueEditor = (props: {
   );
   const expendButtonContent = van.derive(() => (showValue.val ? "▼" : "▲"));
   const element = section(
-    { "aria-label": "Object key", className: classNames.property },
+    { "aria-labelledBy": keyLabelId, className: classNames.property },
     button(
       {
         className: clsx(classNames.collapseButton, "clickable-icon"),
@@ -71,13 +72,16 @@ export const ObjectValueEditor = ({ value }: { value: State<ObjectInput> }) => {
     values.val = values.val.filter((x) => x !== value);
     items.removeChild(element);
   };
+  const keyLabelId = genId("attribute-label");
   const items = div(
     { className: classNames.propertyList },
     div(),
-    div("Object key"),
+    label({ id: keyLabelId }, "Object key"),
     div("Value"),
     div(),
-    values.val.map((value) => ValueEditor({ value, onRemoveClick })),
+    values.val.map((value) =>
+      ValueEditor({ value, onRemoveClick, keyLabelId }),
+    ),
   );
   return section(
     HeadingWithButton({
@@ -91,7 +95,7 @@ export const ObjectValueEditor = ({ value }: { value: State<ObjectInput> }) => {
               value: defaultValue,
             });
             values.val = [...values.val, value];
-            van.add(items, ValueEditor({ value, onRemoveClick }));
+            van.add(items, ValueEditor({ value, keyLabelId, onRemoveClick }));
           },
         },
         "Add value",
