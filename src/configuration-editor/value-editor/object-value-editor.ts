@@ -42,14 +42,18 @@ const ValueEditor = ({
       },
       expendButtonContent,
     ),
-    input({
-      type: "text",
-      value: value.val.key,
-      "aria-label": "Key",
-      oninput: (e) => {
-        value.val = { ...value.val, key: e.target.value };
-      },
-    }),
+    div(
+      h6({ id }, "Object key"),
+      "Key",
+      input({
+        type: "text",
+        value: value.val.key,
+        "aria-label": "Key",
+        oninput: (e) => {
+          value.val = { ...value.val, key: e.target.value };
+        },
+      }),
+    ),
     button(
       {
         onclick: () => {
@@ -75,9 +79,6 @@ export const ObjectValueEditor = ({ value }: { value: State<ObjectInput> }) => {
   };
   const items = div(
     { className: classNames.propertyList },
-    div(),
-    div("Key"),
-    div(),
     values.val.map((value) => ValueEditor({ value, onRemoveClick })),
   );
   return section(
