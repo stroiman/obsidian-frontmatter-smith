@@ -8,6 +8,7 @@ import { deepState, genId, stateArray } from "../helpers";
 import { defaultValue } from "../defaults";
 import { renderValueEditor, ValueTypeEditor } from "./index";
 import { HeadingWithButton } from "../containers";
+import { ExpandCollapseButton } from "../components";
 
 type OnRemoveClick = (x: {
   element: HTMLElement;
@@ -21,26 +22,13 @@ const ValueEditor = (props: {
 }): HTMLElement => {
   const { onRemoveClick, keyLabelId } = props;
   const { key, value } = deepState(props.value);
-  const showValue = van.state(false);
+  const visible = van.state(false);
   const style = van.derive(() =>
-    showValue.val ? "display: block" : "display: none",
+    visible.val ? "display: block" : "display: none",
   );
-  const expandCollapseLabel = van.derive(() =>
-    showValue.val ? "Collapse value editor" : "Expend value editor",
-  );
-  const expendButtonContent = van.derive(() => (showValue.val ? "▼" : "▲"));
   const element = section(
     { "aria-labelledBy": keyLabelId, className: classNames.property },
-    button(
-      {
-        className: clsx(classNames.collapseButton, "clickable-icon"),
-        "aria-label": expandCollapseLabel,
-        onclick: () => {
-          showValue.val = !showValue.val;
-        },
-      },
-      expendButtonContent,
-    ),
+    ExpandCollapseButton({ visible }),
     input({
       type: "text",
       value: key.val,
