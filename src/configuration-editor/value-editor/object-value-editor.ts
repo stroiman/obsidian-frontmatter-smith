@@ -14,13 +14,12 @@ type OnRemoveClick = (x: {
   value: State<ObjectValue>;
 }) => void;
 
-const ValueEditor = ({
-  value,
-  onRemoveClick,
-}: {
+const ValueEditor = (props: {
   value: State<ObjectValue>;
   onRemoveClick: OnRemoveClick;
 }): HTMLElement => {
+  const { onRemoveClick } = props;
+  const { key, value } = deepState(props.value);
   const showValue = van.state(false);
   const style = van.derive(() =>
     showValue.val ? "display: block" : "display: none",
@@ -47,17 +46,17 @@ const ValueEditor = ({
       "Key",
       input({
         type: "text",
-        value: value.val.key,
+        value: key.val,
         "aria-label": "Key",
         oninput: (e) => {
-          value.val = { ...value.val, key: e.target.value };
+          key.val = e.target.value;
         },
       }),
     ),
     button(
       {
         onclick: () => {
-          onRemoveClick({ element, value });
+          onRemoveClick({ element, value: props.value });
         },
       },
       "Remove",
@@ -65,7 +64,7 @@ const ValueEditor = ({
     div(
       { className: classNames.propertyValue, style },
       "Value",
-      ValueConfiguration({ value: van.state(value.val.value) }),
+      ValueConfiguration({ value }),
     ),
   );
   return element;
