@@ -1,5 +1,4 @@
 import van from "vanjs-core";
-import clsx from "clsx";
 import * as classNames from "./object-value-editor.module.css";
 import { State } from "vanjs-core";
 import { button, div, input, section, label } from "../tags";

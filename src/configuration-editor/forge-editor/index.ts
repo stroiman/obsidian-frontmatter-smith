@@ -7,7 +7,12 @@ import { deepState, genId } from "../helpers";
 import { CommandList } from "../value-editor";
 import { div } from "../tags";
 import { ExpandCollapseButton } from "../components";
-import clsx from "clsx";
+
+const clsx = (...args: any[]): string => {
+  return args
+    .reduce((p, c) => (typeof c === "string" ? p + " " + c : p), "")
+    .trim();
+};
 
 const { section, h3, input } = van.tags;
 

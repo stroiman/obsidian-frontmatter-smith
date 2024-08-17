@@ -37,7 +37,6 @@
     "chai": "^4.4.1",
     "chai-dom": "^1.12.0",
     "chai-like": "^1.1.1",
-    "clsx": "^2.1.1",
     "esbuild": "0.17.3",
     "esbuild-css-modules-plugin": "^3.1.2",
     "esbuild-runner": "^2.2.2",
