@@ -5,6 +5,7 @@ import { ObjectInput, ObjectValue } from "src/configuration-schema";
 import { deepState, genId, stateArray } from "../helpers";
 import { defaultValue } from "../defaults";
 import { ValueConfiguration } from "./index";
+import { HeadingWithButton } from "../containers";
 
 type OnRemoveClick = (x: {
   element: HTMLElement;
