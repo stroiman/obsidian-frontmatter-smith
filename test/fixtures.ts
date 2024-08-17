@@ -16,6 +16,23 @@ export const fullConfiguration: GlobalConfiguration = {
       commands: [
         {
           $command: "set-value",
+          key: "object-input",
+          value: {
+            $type: "object",
+            values: [
+              {
+                key: "key-1",
+                value: { $type: "number-input", prompt: "Text prompt" },
+              },
+              {
+                key: "key-2",
+                value: { $type: "number-input", prompt: "Text prompt" },
+              },
+            ],
+          },
+        },
+        {
+          $command: "set-value",
           key: "choice-input",
           value: {
             $type: "choice-input",
@@ -58,23 +75,6 @@ export const fullConfiguration: GlobalConfiguration = {
           $command: "set-value",
           key: "number-const-value",
           value: { $type: "number-input", prompt: "Text prompt" },
-        },
-        {
-          $command: "set-value",
-          key: "object-input",
-          value: {
-            $type: "object",
-            values: [
-              {
-                key: "key-1",
-                value: { $type: "number-input", prompt: "Text prompt" },
-              },
-              {
-                key: "key-2",
-                value: { $type: "number-input", prompt: "Text prompt" },
-              },
-            ],
-          },
         },
       ],
     },

@@ -1,6 +1,8 @@
 import van from "vanjs-core";
+import clsx from "clsx";
+import * as classNames from "./object-value-editor.module.css";
 import { State } from "vanjs-core";
-import { button, div, h4, h6, input, section } from "../tags";
+import { button, div, h6, input, section } from "../tags";
 import { ObjectInput, ObjectValue } from "src/configuration-schema";
 import { deepState, genId, stateArray } from "../helpers";
 import { defaultValue } from "../defaults";
@@ -19,10 +21,35 @@ const ValueEditor = ({
   value: State<ObjectValue>;
   onRemoveClick: OnRemoveClick;
 }): HTMLElement => {
+  const showValue = van.state(false);
+  const style = van.derive(() =>
+    showValue.val ? "display: block" : "display: none",
+  );
+  const expandCollapseLabel = van.derive(() =>
+    showValue.val ? "Collapse value editor" : "Expend value editor",
+  );
+  const expendButtonContent = van.derive(() => (showValue.val ? "▼" : "▲"));
   const id = genId("object-key");
   const element = section(
-    { "aria-labelledBy": id },
-    h6({ id }, "Object key"),
+    { "aria-labelledBy": id, className: classNames.property },
+    button(
+      {
+        className: clsx(classNames.collapseButton, "clickable-icon"),
+        "aria-label": expandCollapseLabel,
+        onclick: () => {
+          showValue.val = !showValue.val;
+        },
+      },
+      expendButtonContent,
+    ),
+    input({
+      type: "text",
+      value: value.val.key,
+      "aria-label": "Key",
+      oninput: (e) => {
+        value.val = { ...value.val, key: e.target.value };
+      },
+    }),
     button(
       {
         onclick: () => {
@@ -32,17 +59,10 @@ const ValueEditor = ({
       "Remove",
     ),
     div(
-      "Key",
-      input({
-        type: "text",
-        value: value.val.key,
-        "aria-label": "Key",
-        oninput: (e) => {
-          value.val = { ...value.val, key: e.target.value };
-        },
-      }),
+      { className: classNames.propertyValue, style },
+      "Value",
+      ValueConfiguration({ value: van.state(value.val.value) }),
     ),
-    div("Value", ValueConfiguration({ value: van.state(value.val.value) })),
   );
   return element;
 };
@@ -51,24 +71,33 @@ export const ObjectValueEditor = ({ value }: { value: State<ObjectInput> }) => {
   const values = stateArray(deepState(value).values);
   const onRemoveClick: OnRemoveClick = ({ element, value }) => {
     values.val = values.val.filter((x) => x !== value);
-    result.removeChild(element);
+    items.removeChild(element);
   };
-  const result = section(
-    h4("Object value"),
-    button(
-      {
-        onclick: () => {
-          const value = van.state({
-            key: "key ...",
-            value: defaultValue,
-          });
-          values.val = [...values.val, value];
-          van.add(result, ValueEditor({ value, onRemoveClick }));
-        },
-      },
-      "Add value",
-    ),
+  const items = div(
+    { className: classNames.propertyList },
+    div(),
+    div("Key"),
+    div(),
     values.val.map((value) => ValueEditor({ value, onRemoveClick })),
   );
-  return result;
+  return section(
+    HeadingWithButton({
+      name: "Object value",
+      description: "",
+      control: button(
+        {
+          onclick: () => {
+            const value = van.state({
+              key: "key ...",
+              value: defaultValue,
+            });
+            values.val = [...values.val, value];
+            van.add(items, ValueEditor({ value, onRemoveClick }));
+          },
+        },
+        "Add value",
+      ),
+    }),
+    items,
+  );
 };
