@@ -2,11 +2,11 @@ import van from "vanjs-core";
 import clsx from "clsx";
 import * as classNames from "./object-value-editor.module.css";
 import { State } from "vanjs-core";
-import { button, div, h6, input, section } from "../tags";
+import { button, div, input, section } from "../tags";
 import { ObjectInput, ObjectValue } from "src/configuration-schema";
-import { deepState, genId, stateArray } from "../helpers";
+import { deepState, stateArray } from "../helpers";
 import { defaultValue } from "../defaults";
-import { ValueConfiguration } from "./index";
+import { renderValueEditor, ValueTypeEditor } from "./index";
 import { HeadingWithButton } from "../containers";
 
 type OnRemoveClick = (x: {
@@ -28,9 +28,8 @@ const ValueEditor = (props: {
     showValue.val ? "Collapse value editor" : "Expend value editor",
   );
   const expendButtonContent = van.derive(() => (showValue.val ? "▼" : "▲"));
-  const id = genId("object-key");
   const element = section(
-    { "aria-labelledBy": id, className: classNames.property },
+    { "aria-label": "Object key", className: classNames.property },
     button(
       {
         className: clsx(classNames.collapseButton, "clickable-icon"),
@@ -41,18 +40,15 @@ const ValueEditor = (props: {
       },
       expendButtonContent,
     ),
-    div(
-      h6({ id }, "Object key"),
-      "Key",
-      input({
-        type: "text",
-        value: key.val,
-        "aria-label": "Key",
-        oninput: (e) => {
-          key.val = e.target.value;
-        },
-      }),
-    ),
+    input({
+      type: "text",
+      value: key.val,
+      "aria-label": "Key",
+      oninput: (e) => {
+        key.val = e.target.value;
+      },
+    }),
+    ValueTypeEditor({ value }),
     button(
       {
         onclick: () => {
@@ -61,10 +57,9 @@ const ValueEditor = (props: {
       },
       "Remove",
     ),
-    div(
-      { className: classNames.propertyValue, style },
-      "Value",
-      ValueConfiguration({ value }),
+    renderValueEditor(
+      div({ className: classNames.propertyValue, style }),
+      value,
     ),
   );
   return element;
@@ -78,6 +73,10 @@ export const ObjectValueEditor = ({ value }: { value: State<ObjectInput> }) => {
   };
   const items = div(
     { className: classNames.propertyList },
+    div(),
+    div("Object key"),
+    div("Value"),
+    div(),
     values.val.map((value) => ValueEditor({ value, onRemoveClick })),
   );
   return section(
