@@ -44,7 +44,7 @@ const ConfigurationEditor = (props: {
             };
             const forgeConfig = van.state(newForge);
             forges.val = [...forges.val, forgeConfig];
-            van.add(result, ForgeEditor({ forgeConfig }));
+            van.add(result, ForgeEditor({ forgeConfig, expand: true }));
           },
         },
         "New forge",

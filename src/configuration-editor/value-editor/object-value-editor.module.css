@@ -14,8 +14,3 @@
   grid-column: 2/5;
   margin: var(--grid-gap) 0;
 }
-
-.collapse-button {
-  display: inline;
-  border-color: red;
-}
