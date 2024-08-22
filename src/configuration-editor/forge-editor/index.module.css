@@ -1,0 +1,24 @@
+.forge-config-block {
+  border: var(--border-width) solid black;
+  border-radius: var(--radius-s);
+  padding: 1rem;
+}
+
+.forge-config-header {
+  display: flex;
+  gap: 1rem;
+}
+
+.forge-config-heading {
+  margin: 0;
+}
+
+.forge-config-commands {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.hidden {
+  display: none;
+}

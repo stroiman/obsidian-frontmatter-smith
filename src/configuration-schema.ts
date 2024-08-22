@@ -6,7 +6,7 @@ export type ArrayConfigurationOption = {
   value: ValueOption;
 };
 
-type SetValueOption = {
+export type SetValueOption = {
   $command: "set-value";
   key: string;
   value: ValueOption;
@@ -19,17 +19,42 @@ export type StringInput = {
   prompt: string;
 };
 
+export type ChoiceValue = {
+  text: string;
+  value: string;
+  commands?: ConfigurationOption[];
+};
+
+export type SafeChoiceValue = {
+  text: string;
+  value: string;
+  commands: ConfigurationOption[];
+};
+
+export const toSafe = (v: ChoiceValue): SafeChoiceValue => ({
+  ...v,
+  commands: v.commands || [],
+});
+
 export type ChoiceInput = {
   $type: "choice-input";
   prompt: string;
-  options: {
-    text: string;
-    value: string;
-    commands?: ConfigurationOption[];
-  }[];
+  options: ChoiceValue[];
 };
 
-export type ObjectValueInput = { key: string; value: ValueOption }[];
+export type SafeChoiceInput = {
+  $type: "choice-input";
+  prompt: string;
+  options: SafeChoiceValue[];
+};
+
+export const toSafeInput = (x: ChoiceInput): SafeChoiceInput => ({
+  ...x,
+  options: x.options.map(toSafe),
+});
+
+export type ObjectValue = { key: string; value: ValueOption };
+export type ObjectValueInput = ObjectValue[];
 
 export type ObjectInput = {
   $type: "object";
@@ -46,6 +71,8 @@ export type ValueOption =
   | ChoiceInput
   | StringInput
   | ConstantValue;
+
+export type ValueType = ValueOption["$type"];
 
 const valueConfiguration: t.Type<ValueOption> = t.recursion("Value", () => {
   const stringInput = t.strict({
@@ -106,12 +133,22 @@ const forgeConfiguration = t.strict({
   commands: t.array(command),
 });
 
+export type ForgeConfiguration = t.TypeOf<typeof forgeConfiguration>;
+export type Commands = ForgeConfiguration["commands"];
+export type Command = t.TypeOf<typeof command>; // Commands[number];
+export type CommandType = Command["$command"];
+
 export const globalConfiguration = t.strict({
   version: t.literal("1"),
   forges: t.array(forgeConfiguration),
 });
 
 export type GlobalConfiguration = t.TypeOf<typeof globalConfiguration>;
+
+export const emptyConfiguration: GlobalConfiguration = {
+  version: "1",
+  forges: [],
+};
 
 export const isConfigurationValid = (x: unknown): x is GlobalConfiguration => {
   const result = globalConfiguration.decode(x);

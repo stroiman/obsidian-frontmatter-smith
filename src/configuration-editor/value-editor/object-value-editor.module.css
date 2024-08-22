@@ -1,0 +1,16 @@
+.property-list {
+  display: grid;
+  gap: var(--grid-gap);
+  grid-template-columns: auto 1fr auto auto;
+}
+
+.property {
+  grid-column: span 4;
+  display: grid;
+  grid-template-columns: subgrid;
+}
+
+.property-value {
+  grid-column: 2/5;
+  margin: var(--grid-gap) 0;
+}

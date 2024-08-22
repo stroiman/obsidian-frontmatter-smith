@@ -1,3 +1,7 @@
+*.module.css.d.ts
+*.module.d.css.ts
+main.css
+styles.css
 # vscode
 .vscode 
 .temp-mocha-*

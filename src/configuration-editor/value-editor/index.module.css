@@ -1,0 +1,9 @@
+.error-msg {
+  color: var(--text-error);
+}
+
+.new-command-form {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
