@@ -1,7 +1,7 @@
 {
 	"id": "frontmatter-smith",
 	"name": "Frontmatter Smith",
-	"version": "0.5.2",
+	"version": "0.5.3",
 	"minAppVersion": "0.15.0",
 	"description": "Automate repetitive and/or complex front matter manipulation",
 	"author": "Peter Strøiman",
