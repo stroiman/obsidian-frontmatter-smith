@@ -19,12 +19,12 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: "20.x" # You might need to adjust this value to your own version
+          cache: 'pnpm'
       - name: Build
         id: build
         run: |
-          npm i
-          npm run test
-          npm run build
+          pnpm i
+          pnpm build
           mkdir ${{ env.PLUGIN_NAME }}
           cp main.js manifest.json ${{ env.PLUGIN_NAME }}
           zip -r ${{ env.PLUGIN_NAME }}.zip ${{ env.PLUGIN_NAME }}
