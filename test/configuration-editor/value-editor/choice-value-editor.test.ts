@@ -5,7 +5,7 @@ import userEvent, { UserEvent } from "@testing-library/user-event";
 import { within, screen } from "@testing-library/dom";
 import {
   emptyConfiguration,
-  GlobalConfiguration,
+  parseConfiguration,
 } from "src/configuration-schema.js";
 import { OnConfigChanged, render } from "src/configuration-editor";
 import { expect } from "chai";
@@ -202,31 +202,41 @@ describe("Choice value configuration", () => {
   });
 });
 
-const testConfiguration: GlobalConfiguration = deepFreeze({
-  ...emptyConfiguration,
-  forges: [
-    {
-      name: "Forge",
-      commands: [
-        {
-          $command: "set-value",
-          key: "key",
-          value: {
-            $type: "choice-input",
-            prompt: "Choice",
-            options: [
-              {
-                text: "Option 1",
-                value: "Value 1",
-              },
-              {
-                text: "Option 2",
-                value: "Value 2",
-              },
-            ],
+export const parseConfigurationOrThrow = (x: unknown) => {
+  const result = parseConfiguration(x);
+  if (!result) {
+    throw new Error("Invalid configuration");
+  }
+  return result;
+};
+
+const testConfiguration = deepFreeze(
+  parseConfigurationOrThrow({
+    ...emptyConfiguration,
+    forges: [
+      {
+        name: "Forge",
+        commands: [
+          {
+            $command: "set-value",
+            key: "key",
+            value: {
+              $type: "choice-input",
+              prompt: "Choice",
+              options: [
+                {
+                  text: "Option 1",
+                  value: "Value 1",
+                },
+                {
+                  text: "Option 2",
+                  value: "Value 2",
+                },
+              ],
+            },
           },
-        },
-      ],
-    },
-  ],
-});
+        ],
+      },
+    ],
+  }),
+);

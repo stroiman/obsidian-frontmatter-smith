@@ -14,6 +14,7 @@ import {
 } from "./dom-queries";
 import { deepFreeze } from "./helpers";
 import { fullConfiguration } from "test/fixtures";
+import { parseConfigurationOrThrow } from "./value-editor/choice-value-editor.test";
 
 let user: UserEvent;
 
@@ -337,7 +338,11 @@ describe("UI", () => {
   describe("Sensible behaviour", () => {
     it("Should not call the update function on render", async () => {
       //onConfigChanged.throws();
-      render(root, fullConfiguration, onConfigChanged);
+      render(
+        root,
+        parseConfigurationOrThrow(fullConfiguration),
+        onConfigChanged,
+      );
       await new Promise((r) => setImmediate(r));
       onConfigChanged.should.not.have.been.called;
     });

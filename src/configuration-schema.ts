@@ -158,3 +158,19 @@ export const isConfigurationValid = (x: unknown): x is GlobalConfiguration => {
   }
   return false;
 };
+
+export const parseConfiguration = (x: unknown): GlobalConfiguration | null => {
+  const result = globalConfiguration.decode(x);
+  switch (result._tag) {
+    case "Left":
+      console.error("Error parsing plugin config", result.left);
+      return null;
+    case "Right":
+      return result.right;
+  }
+  throw new Error("Not supposed to be here!");
+};
+
+export const parseConfigOrDefault = (x: unknown): GlobalConfiguration => {
+  return parseConfiguration(x) || emptyConfiguration;
+};
