@@ -1,4 +1,5 @@
 import * as t from "io-ts";
+import { withFallback } from "io-ts-types";
 
 export type AddToArrayCommand = {
   $command: "add-array-element";
@@ -22,36 +23,14 @@ export type StringInputValue = {
 export type ChoiceValueItem = {
   text: string;
   value: string;
-  commands?: Command[];
-};
-
-export type SafeChoiceValue = {
-  text: string;
-  value: string;
   commands: Command[];
 };
-
-export const toSafe = (v: ChoiceValueItem): SafeChoiceValue => ({
-  ...v,
-  commands: v.commands || [],
-});
 
 export type ChoiceValue = {
   $type: "choice-input";
   prompt: string;
   options: ChoiceValueItem[];
 };
-
-export type SafeChoiceInput = {
-  $type: "choice-input";
-  prompt: string;
-  options: SafeChoiceValue[];
-};
-
-export const toSafeInput = (x: ChoiceValue): SafeChoiceInput => ({
-  ...x,
-  options: x.options.map(toSafe),
-});
 
 export type ObjectValueItem = { key: string; value: Value };
 
@@ -84,8 +63,6 @@ const value: t.Type<Value> = t.recursion("Value", () => {
     value: t.any,
   });
 
-  const optional = <T extends t.Any>(codec: T) => t.union([t.undefined, codec]);
-
   const choiceValue: t.Type<ChoiceValue> = t.type({
     $type: t.literal("choice-input"),
     prompt: t.string,
@@ -93,7 +70,7 @@ const value: t.Type<Value> = t.recursion("Value", () => {
       t.type({
         text: t.string,
         value: t.string,
-        commands: optional(t.array(command)),
+        commands: withFallback(t.array(command), []),
       }),
     ),
   });

@@ -51,6 +51,7 @@ const medConfig: Command[] = [
         {
           text: "Choice 1",
           value: "[[Choice 1]]",
+          commands: [],
         },
         {
           text: "Choice 2",

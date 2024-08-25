@@ -1,6 +1,6 @@
 import * as classNames from "./choice-value-editor.module.css";
 import van, { State } from "vanjs-core";
-import { SafeChoiceValue, SafeChoiceInput } from "../../configuration-schema";
+import { ChoiceValue, ChoiceValueItem } from "../../configuration-schema";
 import { Setting } from "../obsidian-controls";
 import { deepState, genId, stateArray } from "../helpers";
 import { ChildGroup, HeadingWithButton } from "../containers";
@@ -15,11 +15,11 @@ const { section, label, div, h4, p, button } = van.tags;
 
 type OnRemoveClick = (x: {
   element: HTMLElement;
-  choice: State<SafeChoiceValue>;
+  choice: State<ChoiceValueItem>;
 }) => void;
 
 const Choice = (props: {
-  choice: State<SafeChoiceValue>;
+  choice: State<ChoiceValueItem>;
   onRemoveClick: OnRemoveClick;
   textLabelId: string;
   valueLabelId: string;
@@ -61,7 +61,7 @@ const Choice = (props: {
 };
 
 export const ChoiceInputConfiguration = (props: {
-  value: State<SafeChoiceInput>;
+  value: State<ChoiceValue>;
 }) => {
   const headingId = genId("choice-heading");
   const { prompt } = deepState(props.value);
@@ -85,7 +85,7 @@ export const ChoiceInputConfiguration = (props: {
   );
 };
 
-const Choices = (props: { value: State<SafeChoiceInput> }) => {
+const Choices = (props: { value: State<ChoiceValue> }) => {
   const ds = deepState(props.value);
   const options = stateArray(ds.options);
   const onRemoveClick: OnRemoveClick = ({ element, choice }) => {

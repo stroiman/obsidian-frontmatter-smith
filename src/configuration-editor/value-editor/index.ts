@@ -6,7 +6,6 @@ import {
   ValueType,
   ConstantValue,
   StringInputValue,
-  toSafeInput,
   CommandType,
 } from "../../configuration-schema";
 
@@ -117,7 +116,7 @@ const ValueConfigurationInner = (props: { value: State<Value> }) => {
       return StringInputConfiguration({ value });
     }
     case "choice-input": {
-      const value = wrapState(toSafeInput(tmp), props.value);
+      const value = wrapState(tmp, props.value);
       return ChoiceInputConfiguration({ value });
     }
     case "object": {

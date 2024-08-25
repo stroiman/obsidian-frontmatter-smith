@@ -1,5 +1,3 @@
-import { GlobalConfiguration } from "src/configuration-schema";
-
 /**
  * A configuration containing all possible types.
  *
@@ -8,7 +6,7 @@ import { GlobalConfiguration } from "src/configuration-schema";
  * test configuration in a test UI, or verifying that loading the configuration
  * does not result in "updated" events.
  */
-export const fullConfiguration: GlobalConfiguration = {
+export const fullConfiguration: unknown = {
   version: "1",
   forges: [
     {

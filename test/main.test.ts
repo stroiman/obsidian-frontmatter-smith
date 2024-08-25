@@ -106,10 +106,12 @@ const medConfig: Command[] = [
               {
                 text: "Aspirin",
                 value: "[[Aspirin]]",
+                commands: [],
               },
               {
                 text: "Paracetamol",
                 value: "[[Paracetamol]]",
+                commands: [],
               },
             ],
           },
