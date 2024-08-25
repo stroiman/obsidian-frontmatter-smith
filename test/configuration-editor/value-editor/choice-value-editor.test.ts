@@ -10,8 +10,9 @@ import {
 import { OnConfigChanged, render } from "src/configuration-editor";
 import { expect } from "chai";
 import { QueryFunctions } from "../types";
-import { getOptions } from "../dom-queries";
+import { getCommandSections, getOptions } from "../dom-queries";
 import { deepFreeze } from "../helpers";
+import { section } from "src/configuration-editor/tags";
 
 describe("Choice value configuration", () => {
   let user: UserEvent;
@@ -52,6 +53,41 @@ describe("Choice value configuration", () => {
       });
       expect(textInput).to.have.value("Option 1");
       expect(valueInput).to.have.value("Value 1");
+    });
+  });
+
+  describe("There is a single command", () => {
+    let commandRootEl: HTMLElement;
+
+    beforeEach(() => {
+      const sections = getCommandSections(scope);
+      expect(sections).to.have.lengthOf(1);
+      commandRootEl = sections[0];
+    });
+
+    describe("Changing the prompt", () => {
+      it("Should update the configuration", async () => {
+        const textInput = within(commandRootEl).getByRole("textbox", {
+          name: "Prompt",
+        });
+        await user.clear(textInput);
+        await user.type(textInput, "PROMPT");
+
+        const actualConfig = onConfigChanged.lastCall.firstArg;
+        expect(actualConfig).to.be.like({
+          forges: [
+            {
+              commands: [
+                {
+                  value: {
+                    prompt: "PROMPT",
+                  },
+                },
+              ],
+            },
+          ],
+        });
+      });
     });
   });
 

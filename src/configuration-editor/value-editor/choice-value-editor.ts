@@ -5,7 +5,11 @@ import { Setting } from "../obsidian-controls";
 import { deepState, genId, stateArray } from "../helpers";
 import { ChildGroup, HeadingWithButton } from "../containers";
 import { CommandList } from "../value-editor";
-import { ExpandCollapseButton, SimpleStateInput } from "../components";
+import {
+  ExpandCollapseButton,
+  SimpleStateInput,
+  StateInput,
+} from "../components";
 
 const { section, label, div, h4, input, p, button } = van.tags;
 
@@ -60,6 +64,7 @@ export const ChoiceInputConfiguration = (props: {
   value: State<SafeChoiceInput>;
 }) => {
   const headingId = genId("choice-heading");
+  const { prompt } = deepState(props.value);
   return section(
     { "aria-labelledBy": headingId },
     h4({ id: headingId, className: classNames.valueTypeHeading }, "Choice:"),
@@ -70,7 +75,11 @@ export const ChoiceInputConfiguration = (props: {
     Setting({
       name: "Prompt",
       description: "The heading of the prompt dialog",
-      control: input({ type: "text" }),
+      control: StateInput({
+        type: "text",
+        ["aria-label"]: "Prompt",
+        value: prompt,
+      }),
     }),
     Choices(props),
   );
