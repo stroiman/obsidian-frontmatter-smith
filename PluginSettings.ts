@@ -70,22 +70,6 @@ export default class FrontmatterSmithSettingTab extends PluginSettingTab {
             showInvalidJsonMessage();
           }
         });
-        // const component = el as TextAreaComponent;
-        // component.setValue(this.value);
-        // component.onChange((newValue) => {
-        // 	try {
-        // 		const parsed: unknown = JSON.parse(newValue);
-        // 		hideInvalidJsonMessage();
-        // 		if (isConfigurationValid(parsed)) {
-        // 			this.onChange(parsed);
-        // 			hideInvalidConfigMessage();
-        // 		} else {
-        // 			showInvalidConfigMessage();
-        // 		}
-        // 	} catch {
-        // 		showInvalidJsonMessage();
-        // 	}
-        // });
       })
       .setCssStyles({ flexGrow: "1", minHeight: "400px" });
 
