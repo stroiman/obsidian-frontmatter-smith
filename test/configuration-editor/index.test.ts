@@ -102,7 +102,7 @@ describe("UI", () => {
     });
   });
 
-  describe("Default settings for new command", () => {
+  describe("Default settings for new forge", () => {
     beforeEach(async () => {
       render(root, emptyConfiguration, onConfigChanged);
       getForgeSections(scope).should.have.lengthOf(0);
@@ -227,6 +227,27 @@ describe("UI", () => {
         await user.click(scope.getByRole("button", { name: "Add command" }));
       });
 
+      it("Should allow modifying the key", async () => {
+        const regions = getCommandSections(scope);
+        const input = within(regions[0]).getByRole("textbox", {
+          name: "Key",
+        });
+        await user.clear(input);
+        await user.type(input, "field-name");
+        onConfigChanged.lastCall.firstArg.should.be.like({
+          forges: [
+            {
+              name: "Empty forge",
+              commands: [
+                {
+                  key: "field-name",
+                },
+              ],
+            },
+          ],
+        });
+      });
+
       it("Should add a new UI element", async () => {
         const regions = getCommandSections(scope);
         expect(regions).to.have.lengthOf(1);
@@ -274,6 +295,19 @@ describe("UI", () => {
       it("Should add to the configuration", async () => {
         expect(onConfigChanged.lastCall.lastArg).to.be.like({
           forges: [{ commands: [{ $command: "add-array-element" }] }],
+        });
+      });
+
+      it("Should allow changing the key", async () => {
+        const regions = getCommandSections(scope);
+        const input = within(regions[0]).getByRole("textbox", { name: "Key" });
+        await user.clear(input);
+        await user.type(input, "new-key");
+
+        expect(onConfigChanged.lastCall.lastArg).to.be.like({
+          forges: [
+            { commands: [{ $command: "add-array-element", key: "new-key" }] },
+          ],
         });
       });
 

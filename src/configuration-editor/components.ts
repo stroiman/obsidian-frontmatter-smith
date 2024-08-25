@@ -33,12 +33,21 @@ export type StateInputProps = {
 /**
  * Renders an input field that automatically updates a van state field.
  */
-export const StateInput = ({ labelId, value }: StateInputProps) =>
+export const SimpleStateInput = ({ labelId, value }: StateInputProps) =>
   input({
     type: "text",
     "aria-labelledBy": labelId,
     value: value.val,
     oninput: (e) => {
       value.val = e.target.value;
+    },
+  });
+
+export const StateInput = (props: any) =>
+  input({
+    ...props,
+    value: props.value.val,
+    oninput: (e) => {
+      props.value.val = e.target.value;
     },
   });

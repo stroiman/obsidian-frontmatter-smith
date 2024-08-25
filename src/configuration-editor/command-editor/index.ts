@@ -11,6 +11,7 @@ import { deepState, genId, wrapState } from "../helpers";
 import { button, div, h4, input, p, section } from "../tags";
 import { renderValueEditor, ValueTypeEditor } from "../value-editor";
 import { ChildGroup } from "../containers";
+import { StateInput } from "../components";
 
 export type OnRemoveCommandClick = (x: {
   element: HTMLElement;
@@ -55,7 +56,7 @@ const SetValueEditor = (props: {
   onRemoveClick: () => void;
 }) => {
   const { command, headingId } = props;
-  const { key } = command.val;
+  const { key } = deepState(command);
   const { value } = deepState(props.command);
   return [
     CommandNameAndDesc({
@@ -67,7 +68,7 @@ const SetValueEditor = (props: {
     Setting({
       name: "Key",
       description: "This is the name of the frontmatter field that will be set",
-      control: input({ type: "text", value: key }),
+      control: StateInput({ type: "text", value: key, ["aria-label"]: "Key" }),
     }),
     Setting({
       name: "Value",
@@ -83,8 +84,9 @@ const AddArrayElementEditor = (props: {
   command: State<ArrayConfigurationOption>;
   onRemoveClick: () => void;
 }) => {
-  const { headingId, onRemoveClick } = props;
+  const { headingId, onRemoveClick, command } = props;
   const { value } = deepState(props.command);
+  const { key } = deepState(command);
   return [
     CommandNameAndDesc({
       headingId,
@@ -97,7 +99,7 @@ const AddArrayElementEditor = (props: {
       name: "Key",
       description:
         "This is the name of the frontmatter field that will be created",
-      control: input({ type: "text", value: props.command.val.key }),
+      control: StateInput({ type: "text", value: key, ["aria-label"]: "Key" }),
     }),
     //ValueConfiguration({ value }),
     Setting({

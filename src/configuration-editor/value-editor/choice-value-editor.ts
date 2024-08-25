@@ -5,7 +5,7 @@ import { Setting } from "../obsidian-controls";
 import { deepState, genId, stateArray } from "../helpers";
 import { ChildGroup, HeadingWithButton } from "../containers";
 import { CommandList } from "../value-editor";
-import { ExpandCollapseButton, StateInput } from "../components";
+import { ExpandCollapseButton, SimpleStateInput } from "../components";
 
 const { section, label, div, h4, input, p, button } = van.tags;
 
@@ -34,8 +34,8 @@ const Choice = (props: {
       className: classNames.choiceSection,
     },
     ExpandCollapseButton({ visible: showChildren }),
-    StateInput({ labelId: textLabelId, value: text }),
-    StateInput({ labelId: valueLabelId, value }),
+    SimpleStateInput({ labelId: textLabelId, value: text }),
+    SimpleStateInput({ labelId: valueLabelId, value }),
     div(
       button(
         { onclick: () => props.onRemoveClick({ element, choice }) },
