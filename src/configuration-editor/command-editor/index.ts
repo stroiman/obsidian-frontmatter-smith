@@ -8,7 +8,7 @@ import {
 
 import { Setting } from "../obsidian-controls";
 import { deepState, genId, wrapState } from "../helpers";
-import { button, div, h4, input, p, section } from "../tags";
+import { button, div, h4, p, section } from "../tags";
 import { renderValueEditor, ValueTypeEditor } from "../value-editor";
 import { ChildGroup } from "../containers";
 import { StateInput } from "../components";

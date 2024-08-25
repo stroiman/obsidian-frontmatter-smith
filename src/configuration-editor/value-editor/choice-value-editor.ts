@@ -11,7 +11,7 @@ import {
   StateInput,
 } from "../components";
 
-const { section, label, div, h4, input, p, button } = van.tags;
+const { section, label, div, h4, p, button } = van.tags;
 
 type OnRemoveClick = (x: {
   element: HTMLElement;

@@ -12,7 +12,6 @@ import { expect } from "chai";
 import { QueryFunctions } from "../types";
 import { getCommandSections, getOptions } from "../dom-queries";
 import { deepFreeze } from "../helpers";
-import { section } from "src/configuration-editor/tags";
 
 describe("Choice value configuration", () => {
   let user: UserEvent;
