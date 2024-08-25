@@ -5,33 +5,9 @@ import { Setting } from "../obsidian-controls";
 import { deepState, genId, stateArray } from "../helpers";
 import { ChildGroup, HeadingWithButton } from "../containers";
 import { CommandList } from "../value-editor";
-import { ExpandCollapseButton } from "../components";
+import { ExpandCollapseButton, StateInput } from "../components";
 
 const { section, label, div, h4, input, p, button } = van.tags;
-
-type StateInputProps = {
-  /**
-   * id of the <label> element that describes this input field
-   */
-  labelId: string;
-  /**
-   * The van state value that will be updated when you type
-   */
-  value: State<string>;
-};
-
-/**
- * Renders an input field that automatically updates a van state field.
- */
-const StateInput = ({ labelId, value }: StateInputProps) =>
-  input({
-    type: "text",
-    "aria-labelledBy": labelId,
-    value: value.val,
-    oninput: (e) => {
-      value.val = e.target.value;
-    },
-  });
 
 type OnRemoveClick = (x: {
   element: HTMLElement;
