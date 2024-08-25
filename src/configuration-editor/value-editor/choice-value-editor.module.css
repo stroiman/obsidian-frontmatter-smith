@@ -23,7 +23,5 @@
 }
 
 .choice-section {
-  display: grid;
-  grid-column: span 4;
-  grid-template-columns: subgrid;
+  display: contents;
 }

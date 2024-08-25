@@ -98,6 +98,7 @@ const Choices = (props: { value: State<SafeChoiceInput> }) => {
     {
       className: classNames.optionsList,
     },
+    div(),
     label({ id: textLabelId }, "Text"),
     label({ id: valueLabelId }, "Value"),
     div(),

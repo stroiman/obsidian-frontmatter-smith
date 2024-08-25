@@ -5,9 +5,7 @@
 }
 
 .property {
-  grid-column: span 4;
-  display: grid;
-  grid-template-columns: subgrid;
+  display: contents;
 }
 
 .property-value {
