@@ -4,9 +4,9 @@ import { ObsidianPromptModal } from "src/ObsidianPromptModal";
 import { Modals } from "src/modals";
 import SettingTab from "./PluginSettings";
 import {
-  GlobalConfiguration,
+  SmithConfiguration,
   parseConfigOrDefault,
-} from "src/configuration-schema";
+} from "src/smith-configuration-schema";
 import RootRunner from "src/RootRunner";
 
 interface PluginConstructor {
@@ -19,7 +19,7 @@ interface PluginConstructor {
 
 const createPluginClass = (baseClass: PluginConstructor) => {
   return class MyPlugin extends baseClass {
-    settings: GlobalConfiguration;
+    settings: SmithConfiguration;
 
     async loadSettings() {
       const storedSettings = await this.loadData();
@@ -29,7 +29,7 @@ const createPluginClass = (baseClass: PluginConstructor) => {
     async onload() {
       await this.loadSettings();
 
-      const handleSettingChange = (newValue: GlobalConfiguration) => {
+      const handleSettingChange = (newValue: SmithConfiguration) => {
         this.settings = newValue;
         settingsTab.setValue(newValue);
         this.saveData(newValue);

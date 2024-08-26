@@ -1,6 +1,6 @@
 import * as classNames from "./choice-value-editor.module.css";
 import van, { State } from "vanjs-core";
-import { ChoiceValue, ChoiceValueItem } from "../../configuration-schema";
+import { ChoiceValue, ChoiceValueItem } from "../../smith-configuration-schema";
 import { Setting } from "../obsidian-controls";
 import { deepState, genId, stateArray } from "../helpers";
 import { ChildGroup, HeadingWithButton } from "../containers";

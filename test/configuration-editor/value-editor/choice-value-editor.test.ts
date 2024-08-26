@@ -3,7 +3,7 @@ import sinon from "sinon";
 import userEvent, { UserEvent } from "@testing-library/user-event";
 // eslint-disable-next-line
 import { within, screen } from "@testing-library/dom";
-import { emptyConfiguration } from "src/configuration-schema";
+import { emptySmithConfiguration } from "src/smith-configuration-schema.js";
 import { OnConfigChanged, render } from "src/configuration-editor";
 import { expect } from "chai";
 import { QueryFunctions } from "../types";
@@ -202,7 +202,7 @@ describe("Choice value configuration", () => {
 
 const testConfiguration = deepFreeze(
   parseConfigurationOrThrow({
-    ...emptyConfiguration,
+    ...emptySmithConfiguration,
     forges: [
       {
         name: "Forge",

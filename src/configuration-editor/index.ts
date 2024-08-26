@@ -1,5 +1,5 @@
 import van from "vanjs-core";
-import { GlobalConfiguration } from "../configuration-schema";
+import { SmithConfiguration } from "../smith-configuration-schema";
 import * as classNames from "./index.module.css";
 import { Setting } from "./obsidian-controls";
 import { ForgeEditor } from "./forge-editor";
@@ -8,10 +8,10 @@ import { deepState, stateArray } from "./helpers";
 
 const { div, button } = van.tags;
 
-export type OnConfigChanged = (config: GlobalConfiguration) => void;
+export type OnConfigChanged = (config: SmithConfiguration) => void;
 
 const ConfigurationEditor = (props: {
-  config: GlobalConfiguration;
+  config: SmithConfiguration;
   onConfigChanged?: OnConfigChanged;
 }) => {
   const s = van.state(props.config);
@@ -57,7 +57,7 @@ const ConfigurationEditor = (props: {
 
 export const render = (
   root: HTMLElement,
-  config: GlobalConfiguration,
+  config: SmithConfiguration,
   onConfigChanged?: OnConfigChanged,
 ) => {
   van.add(root, ConfigurationEditor({ config, onConfigChanged }));

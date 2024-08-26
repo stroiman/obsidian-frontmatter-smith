@@ -7,7 +7,7 @@ import {
   ConstantValue,
   StringInputValue,
   CommandType,
-} from "../../configuration-schema";
+} from "../../smith-configuration-schema";
 
 import { Setting } from "../obsidian-controls";
 import { ChoiceInputConfiguration } from "./choice-value-editor";

@@ -1,4 +1,4 @@
-import { parseConfiguration } from "../src/configuration-schema";
+import { parseConfiguration } from "../src/smith-configuration-schema";
 
 export const parseConfigurationOrThrow = (x: unknown) => {
   const result = parseConfiguration(x);
@@ -15,6 +15,9 @@ export const parseConfigurationOrThrow = (x: unknown) => {
  * tests, where we want to be sure that every case is covered, e.g. rendering a
  * test configuration in a test UI, or verifying that loading the configuration
  * does not result in "updated" events.
+ *
+ * This is also 'unknown', as this is passed to the `parse` function verifying
+ * that migration of older formats work.
  */
 export const fullConfiguration: unknown = {
   version: "1",

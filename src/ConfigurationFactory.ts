@@ -11,7 +11,7 @@ import {
   ValueResolver,
 } from "./ForgeConfiguration";
 import { Modals } from "./modals";
-import * as schema from "./configuration-schema";
+import * as schema from "./smith-configuration-schema";
 
 export const getResolver = (
   option: schema.Value,

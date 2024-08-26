@@ -5,7 +5,7 @@ import {
   ObjectValue,
   StringInputValue,
   Value,
-} from "../configuration-schema";
+} from "../smith-configuration-schema";
 
 export const defaultConstant: ConstantValue = {
   $type: "constant" as const,

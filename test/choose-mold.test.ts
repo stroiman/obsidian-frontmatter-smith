@@ -6,9 +6,9 @@ import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
 import RootRunner from "src/RootRunner";
 import {
   Command,
-  GlobalConfiguration,
+  SmithConfiguration,
   isConfigurationValid,
-} from "src/configuration-schema";
+} from "src/smith-configuration-schema";
 
 describe("Choosing a mold", () => {
   let fileManager: FakeMetadataFileManager;
@@ -83,7 +83,7 @@ const addBar: Command = {
   value: { $type: "constant", value: "bar value" },
 };
 
-const config: GlobalConfiguration = {
+const config: SmithConfiguration = {
   version: "1",
   forges: [
     {
@@ -94,7 +94,7 @@ const config: GlobalConfiguration = {
   ],
 };
 
-const singleMoldConfig: GlobalConfiguration = {
+const singleMoldConfig: SmithConfiguration = {
   version: "1",
   forges: [
     {

@@ -113,20 +113,20 @@ export type ForgeConfiguration = t.TypeOf<typeof forgeConfiguration>;
 export type Commands = ForgeConfiguration["commands"];
 export type CommandType = Command["$command"];
 
-export const globalConfiguration = t.strict({
+export const smithConfiguration = t.strict({
   version: t.literal("1"),
   forges: t.array(forgeConfiguration),
 });
 
-export type GlobalConfiguration = t.TypeOf<typeof globalConfiguration>;
+export type SmithConfiguration = t.TypeOf<typeof smithConfiguration>;
 
-export const emptyConfiguration: GlobalConfiguration = {
+export const emptySmithConfiguration: SmithConfiguration = {
   version: "1",
   forges: [],
 };
 
-export const isConfigurationValid = (x: unknown): x is GlobalConfiguration => {
-  const result = globalConfiguration.decode(x);
+export const isConfigurationValid = (x: unknown): x is SmithConfiguration => {
+  const result = smithConfiguration.decode(x);
   switch (result._tag) {
     case "Left":
       return false;
@@ -136,8 +136,8 @@ export const isConfigurationValid = (x: unknown): x is GlobalConfiguration => {
   return false;
 };
 
-export const parseConfiguration = (x: unknown): GlobalConfiguration | null => {
-  const result = globalConfiguration.decode(x);
+export const parseConfiguration = (x: unknown): SmithConfiguration | null => {
+  const result = smithConfiguration.decode(x);
   switch (result._tag) {
     case "Left":
       console.error("Error parsing plugin config", result.left);
@@ -148,6 +148,6 @@ export const parseConfiguration = (x: unknown): GlobalConfiguration | null => {
   throw new Error("Not supposed to be here!");
 };
 
-export const parseConfigOrDefault = (x: unknown): GlobalConfiguration => {
-  return parseConfiguration(x) || emptyConfiguration;
+export const parseConfigOrDefault = (x: unknown): SmithConfiguration => {
+  return parseConfiguration(x) || emptySmithConfiguration;
 };

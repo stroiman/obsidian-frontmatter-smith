@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { isConfigurationValid } from "src/configuration-schema";
+import { isConfigurationValid } from "src/smith-configuration-schema";
 import { fullConfiguration } from "./fixtures";
 
 describe("Configuration schema", () => {

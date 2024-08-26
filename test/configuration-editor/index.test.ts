@@ -3,7 +3,7 @@ import sinon from "sinon";
 import userEvent, { UserEvent } from "@testing-library/user-event";
 // eslint-disable-next-line
 import { within, screen } from "@testing-library/dom";
-import { emptyConfiguration } from "src/configuration-schema.js";
+import { emptySmithConfiguration } from "src/smith-configuration-schema.js";
 import { OnConfigChanged, render } from "src/configuration-editor";
 import { expect } from "chai";
 import { QueryFunctions } from "./types";
@@ -18,7 +18,7 @@ import { fullConfiguration, parseConfigurationOrThrow } from "test/fixtures";
 let user: UserEvent;
 
 before(async () => {
-  deepFreeze(emptyConfiguration);
+  deepFreeze(emptySmithConfiguration);
 });
 
 describe("UI", () => {
@@ -44,7 +44,7 @@ describe("UI", () => {
   });
 
   it("Should allow adding a new forge", async () => {
-    render(root, emptyConfiguration, onConfigChanged);
+    render(root, emptySmithConfiguration, onConfigChanged);
     getForgeSections(scope).should.have.lengthOf(0);
     const button = scope.getByRole("button", { name: "New forge" });
     await user.click(button);
@@ -66,7 +66,7 @@ describe("UI", () => {
       render(
         root,
         {
-          ...emptyConfiguration,
+          ...emptySmithConfiguration,
           forges: [
             {
               name: "dummy",
@@ -104,7 +104,7 @@ describe("UI", () => {
 
   describe("Default settings for new forge", () => {
     beforeEach(async () => {
-      render(root, emptyConfiguration, onConfigChanged);
+      render(root, emptySmithConfiguration, onConfigChanged);
       getForgeSections(scope).should.have.lengthOf(0);
       const button = scope.getByRole("button", { name: "New forge" });
       await user.click(button);
@@ -134,7 +134,7 @@ describe("UI", () => {
 
   it("Can find the section for a forge", () => {
     const config = {
-      ...emptyConfiguration,
+      ...emptySmithConfiguration,
       forges: [
         {
           name: "Test forge",
@@ -149,7 +149,7 @@ describe("UI", () => {
 
   it("Should initialise the forge name input", () => {
     const config = {
-      ...emptyConfiguration,
+      ...emptySmithConfiguration,
       forges: [
         { name: "Forge 1", commands: [] },
         { name: "Forge 2", commands: [] },
@@ -164,7 +164,7 @@ describe("UI", () => {
 
   describe("Value options configuration", () => {
     it("Should set constant value", async () => {
-      render(root, emptyConfiguration, onConfigChanged);
+      render(root, emptySmithConfiguration, onConfigChanged);
       await user.click(scope.getByRole("button", { name: "New forge" }));
       const input = scope.getByRole("textbox", { name: "Value" });
       await user.clear(input);
@@ -187,7 +187,7 @@ describe("UI", () => {
       let input: HTMLElement;
 
       beforeEach(async () => {
-        render(root, emptyConfiguration, onConfigChanged);
+        render(root, emptySmithConfiguration, onConfigChanged);
         await user.click(scope.getByRole("button", { name: "New forge" }));
         input = scope.getByRole("textbox", { name: "Value" });
         await user.clear(input);
@@ -214,7 +214,7 @@ describe("UI", () => {
       render(
         root,
         {
-          ...emptyConfiguration,
+          ...emptySmithConfiguration,
           forges: [{ name: "Empty forge", commands: [] }],
         },
         onConfigChanged,

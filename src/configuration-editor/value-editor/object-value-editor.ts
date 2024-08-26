@@ -2,7 +2,7 @@ import van from "vanjs-core";
 import * as classNames from "./object-value-editor.module.css";
 import { State } from "vanjs-core";
 import { button, div, input, section, label } from "../tags";
-import { ObjectValue, ObjectValueItem } from "src/configuration-schema";
+import { ObjectValue, ObjectValueItem } from "src/smith-configuration-schema";
 import { deepState, genId, stateArray } from "../helpers";
 import { defaultValue } from "../defaults";
 import { renderValueEditor, ValueTypeEditor } from "./index";

@@ -5,7 +5,7 @@ import { Forge } from "../src/Forge";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
 import { configurationFromJson } from "src/ConfigurationFactory";
 import { TFile } from "./types";
-import { Command } from "src/configuration-schema";
+import { Command } from "src/smith-configuration-schema";
 
 describe("'dependent choices' case", () => {
   let fileManager: FakeMetadataFileManager;

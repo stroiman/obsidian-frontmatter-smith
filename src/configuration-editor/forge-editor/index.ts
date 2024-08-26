@@ -1,5 +1,5 @@
 import van, { State } from "vanjs-core";
-import { ForgeConfiguration } from "../../configuration-schema";
+import { ForgeConfiguration } from "../../smith-configuration-schema";
 
 import * as classNames from "./index.module.css";
 import { Setting } from "../obsidian-controls";

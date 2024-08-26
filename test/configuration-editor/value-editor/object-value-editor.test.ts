@@ -1,9 +1,9 @@
 import sinon from "sinon";
 import userEvent, { UserEvent } from "@testing-library/user-event";
 import {
-  emptyConfiguration,
-  GlobalConfiguration,
-} from "src/configuration-schema.js";
+  emptySmithConfiguration,
+  SmithConfiguration,
+} from "src/smith-configuration-schema.js";
 import { deepFreeze } from "../helpers";
 import { OnConfigChanged, render } from "src/configuration-editor";
 import { within } from "@testing-library/dom";
@@ -134,8 +134,8 @@ describe("Object configuration", () => {
   });
 });
 
-const testConfiguration: GlobalConfiguration = deepFreeze({
-  ...emptyConfiguration,
+const testConfiguration: SmithConfiguration = deepFreeze({
+  ...emptySmithConfiguration,
   forges: [
     {
       name: "Forge",
@@ -160,4 +160,4 @@ const testConfiguration: GlobalConfiguration = deepFreeze({
       ],
     },
   ],
-} satisfies GlobalConfiguration);
+} satisfies SmithConfiguration);

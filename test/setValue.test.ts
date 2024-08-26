@@ -4,7 +4,7 @@ import { Modals } from "../src/modals";
 import { TestFileManager, Forge } from "../src/Forge";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
 import { configurationFromJson, getResolver } from "src/ConfigurationFactory";
-import { Command } from "src/configuration-schema";
+import { Command } from "src/smith-configuration-schema";
 
 const { match } = sinon;
 
