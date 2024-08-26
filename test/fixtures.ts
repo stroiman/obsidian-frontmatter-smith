@@ -1,3 +1,13 @@
+import { parseConfiguration } from "../src/configuration-schema";
+
+export const parseConfigurationOrThrow = (x: unknown) => {
+  const result = parseConfiguration(x);
+  if (!result) {
+    throw new Error("Invalid configuration");
+  }
+  return result;
+};
+
 /**
  * A configuration containing all possible types.
  *

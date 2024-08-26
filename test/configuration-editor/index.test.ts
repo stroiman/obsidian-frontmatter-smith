@@ -13,8 +13,7 @@ import {
   getForgeSections,
 } from "./dom-queries";
 import { deepFreeze } from "./helpers";
-import { fullConfiguration } from "test/fixtures";
-import { parseConfigurationOrThrow } from "./value-editor/choice-value-editor.test";
+import { fullConfiguration, parseConfigurationOrThrow } from "test/fixtures";
 
 let user: UserEvent;
 

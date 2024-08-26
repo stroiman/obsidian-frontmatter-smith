@@ -3,15 +3,13 @@ import sinon from "sinon";
 import userEvent, { UserEvent } from "@testing-library/user-event";
 // eslint-disable-next-line
 import { within, screen } from "@testing-library/dom";
-import {
-  emptyConfiguration,
-  parseConfiguration,
-} from "src/configuration-schema.js";
+import { emptyConfiguration } from "src/configuration-schema";
 import { OnConfigChanged, render } from "src/configuration-editor";
 import { expect } from "chai";
 import { QueryFunctions } from "../types";
 import { getCommandSections, getOptions } from "../dom-queries";
 import { deepFreeze } from "../helpers";
+import { parseConfigurationOrThrow } from "test/fixtures";
 
 describe("Choice value configuration", () => {
   let user: UserEvent;
@@ -201,14 +199,6 @@ describe("Choice value configuration", () => {
     });
   });
 });
-
-export const parseConfigurationOrThrow = (x: unknown) => {
-  const result = parseConfiguration(x);
-  if (!result) {
-    throw new Error("Invalid configuration");
-  }
-  return result;
-};
 
 const testConfiguration = deepFreeze(
   parseConfigurationOrThrow({
