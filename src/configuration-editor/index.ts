@@ -3,7 +3,7 @@ import { SmithConfiguration } from "../smith-configuration-schema";
 import * as classNames from "./index.module.css";
 import { Setting } from "./obsidian-controls";
 import { ForgeEditor } from "./forge-editor";
-import { createDefaultValue } from "./defaults";
+import { createDefaultForgeConfiguration } from "./defaults";
 import { deepState, stateArray } from "./helpers";
 
 const { div, button } = van.tags;
@@ -32,17 +32,7 @@ const ConfigurationEditor = (props: {
         {
           onclick: (e) => {
             e.preventDefault();
-            const newForge = {
-              name: "Forge name ...",
-              commands: [
-                {
-                  $command: "set-value" as const,
-                  key: "key",
-                  value: createDefaultValue(),
-                },
-              ],
-            };
-            const forgeConfig = van.state(newForge);
+            const forgeConfig = van.state(createDefaultForgeConfiguration());
             forges.val = [...forges.val, forgeConfig];
             van.add(result, ForgeEditor({ forgeConfig, expand: true }));
           },

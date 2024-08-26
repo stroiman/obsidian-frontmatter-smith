@@ -4,6 +4,7 @@ import {
   Command,
   CommandType,
   ConstantValue,
+  ForgeConfiguration,
   ObjectValue,
   ObjectValueItem,
   StringInputValue,
@@ -19,6 +20,17 @@ export const createDefaultChoiceValueItem = (): ChoiceValueItem => ({
   text: "Value ...",
   value: "Value ...",
   commands: [],
+});
+
+export const createDefaultForgeConfiguration = (): ForgeConfiguration => ({
+  name: "Forge name ...",
+  commands: [
+    {
+      $command: "set-value" as const,
+      key: "key",
+      value: createDefaultValue(),
+    },
+  ],
 });
 
 export const createDefaultConstantValue = (): ConstantValue => ({
