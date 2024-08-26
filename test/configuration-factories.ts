@@ -10,11 +10,13 @@ import {
   ConstantValue,
   Value,
   ForgeConfiguration,
+  SmithConfiguration,
 } from "src/smith-configuration-schema";
 
 export const createForge = (input?: Partial<ForgeConfiguration>) => ({
   name: "",
   commands: [],
+  ...input,
 });
 
 export const createStringInput = (
@@ -227,12 +229,6 @@ class CommandBuilder {
   }
 }
 
-export const buildValue = () => new ChoiceValueBuilder();
-
-export const buildObjectValue = () => new ObjectValueBuilder();
-
-export const buildCommand = () => new CommandBuilder();
-
 interface Builder<T> {
   build(): T;
 }
@@ -248,3 +244,50 @@ class ValueBuilder {
     return { build: () => createStringInput({ prompt }) };
   }
 }
+
+class ForgeBuilder {
+  forge: ForgeConfiguration;
+  constructor() {
+    this.forge = createForge();
+  }
+
+  setName(name: string) {
+    this.forge.name = name;
+    return this;
+  }
+
+  addCommand(f: (x: CommandBuilder) => Builder<Command>): ForgeBuilder {
+    this.forge.commands.push(f(new CommandBuilder()).build());
+    return this;
+  }
+
+  build(): ForgeConfiguration {
+    return this.forge;
+  }
+}
+
+export class SmithConfigurationBuilder {
+  config: SmithConfiguration;
+
+  constructor() {
+    this.config = { version: "1", forges: [] };
+  }
+
+  addForge(f: BuildAction<ForgeBuilder>) {
+    this.config.forges.push(f(new ForgeBuilder()).build());
+    return this;
+  }
+
+  build() {
+    return this.config;
+  }
+}
+
+export const buildValue = () => new ChoiceValueBuilder();
+export const buildObjectValue = () => new ObjectValueBuilder();
+export const buildCommand = () => new CommandBuilder();
+export const buildSmithConfiguration = (
+  f: BuildAction<SmithConfigurationBuilder>,
+) => {
+  return f(new SmithConfigurationBuilder()).build();
+};

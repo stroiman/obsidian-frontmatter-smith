@@ -14,6 +14,7 @@ import {
 } from "./dom-queries";
 import { deepFreeze } from "./helpers";
 import { fullConfiguration, parseConfigurationOrThrow } from "test/fixtures";
+import * as factories from "../configuration-factories";
 
 let user: UserEvent;
 
@@ -63,25 +64,10 @@ describe("UI", () => {
 
   describe("Changing value", () => {
     it("Should create a new value", async () => {
-      render(
-        root,
-        {
-          ...emptySmithConfiguration,
-          forges: [
-            {
-              name: "dummy",
-              commands: [
-                {
-                  $command: "set-value",
-                  key: "key",
-                  value: { $type: "constant", value: "123" },
-                },
-              ],
-            },
-          ],
-        },
-        onConfigChanged,
+      const config = factories.buildSmithConfiguration((s) =>
+        s.addForge((f) => f.addCommand((c) => c.setValue().setKey("key"))),
       );
+      render(root, config, onConfigChanged);
       const dropdown = scope.getByRole("combobox", { name: "Type of value" });
       await user.selectOptions(dropdown, "A text value");
       const input = scope.getByRole("textbox", { name: /Prompt/ });
@@ -133,28 +119,20 @@ describe("UI", () => {
   });
 
   it("Can find the section for a forge", () => {
-    const config = {
-      ...emptySmithConfiguration,
-      forges: [
-        {
-          name: "Test forge",
-          commands: [],
-        },
-      ],
-    };
+    const config = factories.buildSmithConfiguration((x) =>
+      x.addForge((f) => f.setName("Test forge")),
+    );
     render(root, config, onConfigChanged);
     const sections = getForgeSections(scope);
     expect(sections).to.have.lengthOf(1);
   });
 
   it("Should initialise the forge name input", () => {
-    const config = {
-      ...emptySmithConfiguration,
-      forges: [
-        { name: "Forge 1", commands: [] },
-        { name: "Forge 2", commands: [] },
-      ],
-    };
+    const config = factories.buildSmithConfiguration((c) =>
+      c
+        .addForge((f) => f.setName("Forge 1"))
+        .addForge((f) => f.setName("Forge 2")),
+    );
     render(root, config);
     const inputs = scope.getAllByRole("textbox", { name: "Forge name" });
     inputs.should.have.lengthOf(2);
@@ -211,14 +189,10 @@ describe("UI", () => {
 
   describe("Add/change/remove command", () => {
     beforeEach(() => {
-      render(
-        root,
-        {
-          ...emptySmithConfiguration,
-          forges: [{ name: "Empty forge", commands: [] }],
-        },
-        onConfigChanged,
+      const config = factories.buildSmithConfiguration((f) =>
+        f.addForge((f) => f.setName("Empty forge")),
       );
+      render(root, config, onConfigChanged);
     });
 
     describe("Add set-value command", () => {
