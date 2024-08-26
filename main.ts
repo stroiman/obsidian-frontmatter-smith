@@ -17,9 +17,16 @@ interface PluginConstructor {
 //  declare var Plugin: PluginConstructor;
 //}
 
+class SmithConfigurationAPI {
+  test() {
+    console.log("Test");
+  }
+}
+
 const createPluginClass = (baseClass: PluginConstructor) => {
   return class MyPlugin extends baseClass {
     settings: SmithConfiguration;
+    api: SmithConfigurationAPI;
 
     async loadSettings() {
       const storedSettings = await this.loadData();
@@ -28,6 +35,7 @@ const createPluginClass = (baseClass: PluginConstructor) => {
 
     async onload() {
       await this.loadSettings();
+      this.api = new SmithConfigurationAPI();
 
       const handleSettingChange = (newValue: SmithConfiguration) => {
         this.settings = newValue;
