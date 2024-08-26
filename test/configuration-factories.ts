@@ -30,6 +30,7 @@ export const createConstantValue = (
 ): ConstantValue => ({
   $type: "constant",
   value: "",
+  ...input,
 });
 
 export const createObjectValue = (
@@ -210,6 +211,11 @@ class SetValueCommandBuilder {
 
   setKey(key: string) {
     this.command.key = key;
+    return this;
+  }
+
+  setValue(v: Value) {
+    this.command.value = v;
     return this;
   }
 
