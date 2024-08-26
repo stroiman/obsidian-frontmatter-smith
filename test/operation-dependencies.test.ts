@@ -5,6 +5,7 @@ import { createForgeFromConfig, Forge } from "../src/Forge";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
 import { TFile } from "./types";
 import { Command } from "src/smith-configuration-schema";
+import * as factories from "./configuration-factories";
 
 describe("'dependent choices' case", () => {
   let fileManager: FakeMetadataFileManager;
@@ -44,30 +45,16 @@ describe("'dependent choices' case", () => {
 });
 
 const medConfig: Command[] = [
-  {
-    $command: "set-value",
-    key: "type",
-    value: {
-      $type: "choice-input",
-      prompt: "Choose type",
-      options: [
-        {
-          text: "Choice 1",
-          value: "[[Choice 1]]",
-          commands: [],
-        },
-        {
-          text: "Choice 2",
-          value: "[[Choice 2]]",
-          commands: [
-            {
-              $command: "set-value",
-              key: "sub-type",
-              value: { $type: "string-input", prompt: "Type something" },
-            },
-          ],
-        },
-      ],
-    },
-  },
+  factories.createSetValueCommand({
+    value: factories
+      .buildValue()
+      .addItem((x) => x.setText("Choice 1").setValue("[[Choice 1]]"))
+      .addItem((x) =>
+        x
+          .setText("Choice 2")
+          .setValue("[[Choice 2]]")
+          .addSetValueCommand((x) => x.setKey("sub-type")),
+      )
+      .build(),
+  }),
 ];
