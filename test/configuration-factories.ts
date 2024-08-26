@@ -13,7 +13,14 @@ import {
   SmithConfiguration,
 } from "src/smith-configuration-schema";
 
+let nextVal = 1;
+
+const genId = () => {
+  return "id-" + nextVal++;
+};
+
 export const createForge = (input?: Partial<ForgeConfiguration>) => ({
+  $id: genId(),
   name: "",
   commands: [],
   ...input,
@@ -53,6 +60,7 @@ export const createSetValueCommand = (
   input?: Partial<SetValueCommand>,
 ): SetValueCommand => {
   return {
+    $id: genId(),
     $command: "set-value",
     key: "type",
     value: createStringInput(),
@@ -64,6 +72,7 @@ export const createAddToArrayCommand = (
   input?: Partial<AddToArrayCommand>,
 ): AddToArrayCommand => {
   return {
+    $id: genId(),
     $command: "add-array-element",
     key: "type",
     value: createStringInput(),
@@ -71,6 +80,23 @@ export const createAddToArrayCommand = (
   };
 };
 type BuildAction<T> = (x: T) => T;
+
+export class ConstantValueBuilder {
+  value: any;
+
+  constructor() {
+    this.value = "";
+  }
+
+  setValue(v: any) {
+    this.value = v;
+    return this;
+  }
+
+  build() {
+    return createConstantValue({ value: this.value });
+  }
+}
 
 export class ChoiceValueBuilder {
   value: ChoiceValue;
@@ -127,6 +153,7 @@ export class ObjectValueBuilder {
 
   addConstItem(key: string, value: unknown) {
     this.value.values.push({
+      $id: genId(),
       key,
       value: createConstantValue({ value }),
     });
@@ -144,7 +171,7 @@ class ChoiceValueItemBuilder<TPop> {
 
   constructor(pop: TPop) {
     this.pop = pop;
-    this.item = { text: "", value: "", commands: [] };
+    this.item = { $id: genId(), text: "", value: "", commands: [] };
   }
 
   setText(text: string) {
@@ -179,7 +206,7 @@ class ObjectValueItemBuilder {
   item: ObjectValueItem;
 
   constructor() {
-    this.item = { key: "", value: createConstantValue() };
+    this.item = { $id: genId(), key: "", value: createConstantValue() };
   }
 
   setKey(key: string) {
@@ -240,6 +267,10 @@ interface Builder<T> {
 }
 
 class ValueBuilder {
+  constantValue() {
+    return new ConstantValueBuilder();
+  }
+
   choiceValue() {
     return new ChoiceValueBuilder();
   }

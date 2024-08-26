@@ -1,13 +1,35 @@
 import * as t from "io-ts";
+import reporter from "io-ts-reporters";
 import { withFallback } from "io-ts-types";
+import { withValidate } from "io-ts-types";
+import { orElse } from "fp-ts/lib/Either";
+import { nanoid } from "nanoid";
+
+const withFallbackFn = <C extends t.Any>(
+  codec: C,
+  a: () => t.TypeOf<C>,
+  name = `withFallback(${codec.name})`,
+): C => {
+  return withValidate(
+    codec,
+    (u, c) => orElse(() => t.success(a()))(codec.validate(u, c)),
+    name,
+  );
+};
+
+export const createId = nanoid;
+
+const $id = withFallbackFn(t.string, createId);
 
 export type AddToArrayCommand = {
+  $id: string;
   $command: "add-array-element";
   key: string;
   value: Value;
 };
 
 export type SetValueCommand = {
+  $id: string;
   $command: "set-value";
   key: string;
   value: Value;
@@ -21,6 +43,7 @@ export type StringInputValue = {
 };
 
 export type ChoiceValueItem = {
+  $id: string;
   text: string;
   value: string;
   commands: Command[];
@@ -32,7 +55,7 @@ export type ChoiceValue = {
   options: ChoiceValueItem[];
 };
 
-export type ObjectValueItem = { key: string; value: Value };
+export type ObjectValueItem = { $id: string; key: string; value: Value };
 
 export type ObjectValue = {
   $type: "object";
@@ -63,19 +86,21 @@ const value: t.Type<Value> = t.recursion("Value", () => {
     value: t.any,
   });
 
+  const choiceValueItem = t.type({
+    $id,
+    text: t.string,
+    value: t.string,
+    commands: withFallback(t.array(command), []),
+  });
+
   const choiceValue: t.Type<ChoiceValue> = t.type({
     $type: t.literal("choice-input"),
     prompt: t.string,
-    options: t.array(
-      t.type({
-        text: t.string,
-        value: t.string,
-        commands: withFallback(t.array(command), []),
-      }),
-    ),
+    options: t.array(choiceValueItem),
   });
 
-  const objectValueItem: t.Type<{ key: string; value: Value }> = t.type({
+  const objectValueItem: t.Type<ObjectValueItem> = t.type({
+    $id,
     key: t.string,
     value: value,
   });
@@ -90,12 +115,14 @@ const value: t.Type<Value> = t.recursion("Value", () => {
 
 const command: t.Type<Command> = t.recursion("Command", () => {
   const addToArrayCommand = t.strict({
+    $id,
     $command: t.literal("add-array-element"),
     key: t.string,
     value: value,
   });
 
   const setValueCommand = t.strict({
+    $id,
     $command: t.literal("set-value"),
     key: t.string,
     value: value,
@@ -105,6 +132,7 @@ const command: t.Type<Command> = t.recursion("Command", () => {
 });
 
 const forgeConfiguration = t.strict({
+  $id,
   name: t.string,
   commands: t.array(command),
 });
@@ -140,7 +168,7 @@ export const parseConfiguration = (x: unknown): SmithConfiguration | null => {
   const result = smithConfiguration.decode(x);
   switch (result._tag) {
     case "Left":
-      console.error("Error parsing plugin config", result.left);
+      console.error("Error parsing plugin config", reporter.report(result));
       return null;
     case "Right":
       return result.right;

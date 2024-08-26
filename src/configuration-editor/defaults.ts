@@ -5,6 +5,7 @@ import {
   CommandType,
   ConstantValue,
   ForgeConfiguration,
+  createId,
   ObjectValue,
   ObjectValueItem,
   StringInputValue,
@@ -12,25 +13,22 @@ import {
 } from "../smith-configuration-schema";
 
 export const createDefaultObjectValueItem = (): ObjectValueItem => ({
+  $id: createId(),
   key: "key ...",
   value: createDefaultValue(),
 });
 
 export const createDefaultChoiceValueItem = (): ChoiceValueItem => ({
+  $id: createId(),
   text: "Value ...",
   value: "Value ...",
   commands: [],
 });
 
 export const createDefaultForgeConfiguration = (): ForgeConfiguration => ({
+  $id: createId(),
   name: "Forge name ...",
-  commands: [
-    {
-      $command: "set-value" as const,
-      key: "key",
-      value: createDefaultValue(),
-    },
-  ],
+  commands: [createDefaultSetValueCommand()],
 });
 
 export const createDefaultConstantValue = (): ConstantValue => ({
@@ -62,12 +60,14 @@ export const createDefaultObjectValue = (): ObjectValue => ({
 export const createDefaultValue = (): Value => createDefaultConstantValue();
 
 export const createAddToArrayCommand = (): Command => ({
+  $id: createId(),
   $command: "add-array-element",
   key: "Key",
   value: createDefaultValue(),
 });
 
 export const createDefaultSetValueCommand = (): Command => ({
+  $id: createId(),
   $command: "set-value",
   key: "Key",
   value: createDefaultValue(),
