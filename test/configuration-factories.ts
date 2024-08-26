@@ -9,7 +9,13 @@ import {
   ObjectValueItem,
   ConstantValue,
   Value,
+  ForgeConfiguration,
 } from "src/smith-configuration-schema";
+
+export const createForge = (input?: Partial<ForgeConfiguration>) => ({
+  name: "",
+  commands: [],
+});
 
 export const createStringInput = (
   input?: Partial<StringInputValue>,
@@ -17,7 +23,9 @@ export const createStringInput = (
   return { $type: "string-input", prompt: "Type something", ...input };
 };
 
-export const createConstantValue = (): ConstantValue => ({
+export const createConstantValue = (
+  input?: Partial<ConstantValue>,
+): ConstantValue => ({
   $type: "constant",
   value: "",
 });
@@ -114,6 +122,14 @@ export class ObjectValueBuilder {
     return this;
   }
 
+  addConstItem(key: string, value: unknown) {
+    this.value.values.push({
+      key,
+      value: createConstantValue({ value }),
+    });
+    return this;
+  }
+
   build(): ObjectValue {
     return this.value;
   }
@@ -195,14 +211,27 @@ class SetValueCommandBuilder {
     return this;
   }
 
+  buildValue(f: (x: ValueBuilder) => Builder<Value>) {
+    this.command.value = f(new ValueBuilder()).build();
+    return this;
+  }
+
   build() {
     return this.command;
+  }
+}
+
+class CommandBuilder {
+  setValue(): SetValueCommandBuilder {
+    return new SetValueCommandBuilder();
   }
 }
 
 export const buildValue = () => new ChoiceValueBuilder();
 
 export const buildObjectValue = () => new ObjectValueBuilder();
+
+export const buildCommand = () => new CommandBuilder();
 
 interface Builder<T> {
   build(): T;

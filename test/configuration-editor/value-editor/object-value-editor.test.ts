@@ -10,6 +10,7 @@ import { within } from "@testing-library/dom";
 import { QueryFunctions } from "../types";
 import { getObjectKeys } from "../dom-queries";
 import { expect } from "chai";
+import * as factories from "test/configuration-factories";
 
 describe("Object configuration", () => {
   let user: UserEvent;
@@ -136,27 +137,22 @@ describe("Object configuration", () => {
 const testConfiguration: SmithConfiguration = deepFreeze({
   ...emptySmithConfiguration,
   forges: [
-    {
+    factories.createForge({
       name: "Forge",
       commands: [
-        {
-          $command: "set-value",
-          key: "key",
-          value: {
-            $type: "object",
-            values: [
-              {
-                key: "Option 1",
-                value: { $type: "constant", value: 123 },
-              },
-              {
-                key: "Option 2",
-                value: { $type: "constant", value: 123 },
-              },
-            ],
-          },
-        },
+        //factories.createSetValueCommand((x) => x.setKey("key")),
+        factories
+          .buildCommand()
+          .setValue()
+          .setKey("key")
+          .buildValue((x) =>
+            x
+              .objectValue()
+              .addConstItem("Option 1", 123)
+              .addConstItem("Option 2", 123),
+          )
+          .build(),
       ],
-    },
+    }),
   ],
 } satisfies SmithConfiguration);
