@@ -10,6 +10,7 @@ import {
   SimpleStateInput,
   StateInput,
 } from "../components";
+import { createDefaultChoiceValueItem } from "../defaults";
 
 const { section, label, div, h4, p, button } = van.tags;
 
@@ -113,11 +114,7 @@ const Choices = (props: { value: State<ChoiceValue> }) => {
       control: button(
         {
           onclick: (e) => {
-            const choice = van.state({
-              text: "Value ...",
-              value: "Value ...",
-              commands: [],
-            });
+            const choice = van.state(createDefaultChoiceValueItem());
             options.val = [...options.val, choice];
             van.add(
               optionsDiv,

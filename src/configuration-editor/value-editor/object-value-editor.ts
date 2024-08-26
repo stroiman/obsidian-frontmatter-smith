@@ -4,7 +4,7 @@ import { State } from "vanjs-core";
 import { button, div, input, section, label } from "../tags";
 import { ObjectValue, ObjectValueItem } from "src/smith-configuration-schema";
 import { deepState, genId, stateArray } from "../helpers";
-import { createDefaultValue } from "../defaults";
+import { createDefaultObjectValueItem, createDefaultValue } from "../defaults";
 import { renderValueEditor, ValueTypeEditor } from "./index";
 import { HeadingWithButton } from "../containers";
 import { ExpandCollapseButton } from "../components";
@@ -77,10 +77,7 @@ export const ObjectValueEditor = ({ value }: { value: State<ObjectValue> }) => {
       control: button(
         {
           onclick: () => {
-            const value = van.state({
-              key: "key ...",
-              value: createDefaultValue(),
-            });
+            const value = van.state(createDefaultObjectValueItem());
             values.val = [...values.val, value];
             van.add(items, ValueEditor({ value, keyLabelId, onRemoveClick }));
           },

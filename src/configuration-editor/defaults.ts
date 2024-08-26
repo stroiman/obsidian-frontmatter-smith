@@ -1,12 +1,25 @@
 import {
   ChoiceValue,
+  ChoiceValueItem,
   Command,
   CommandType,
   ConstantValue,
   ObjectValue,
+  ObjectValueItem,
   StringInputValue,
   Value,
 } from "../smith-configuration-schema";
+
+export const createDefaultObjectValueItem = (): ObjectValueItem => ({
+  key: "key ...",
+  value: createDefaultValue(),
+});
+
+export const createDefaultChoiceValueItem = (): ChoiceValueItem => ({
+  text: "Value ...",
+  value: "Value ...",
+  commands: [],
+});
 
 export const createDefaultConstantValue = (): ConstantValue => ({
   $type: "constant" as const,
