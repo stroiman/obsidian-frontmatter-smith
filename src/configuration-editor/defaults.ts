@@ -1,10 +1,10 @@
 import {
-  ChoiceInput,
+  ChoiceValue,
   Command,
   ConstantValue,
-  ObjectInput,
-  StringInput,
-  ValueOption,
+  ObjectValue,
+  StringInputValue,
+  Value,
 } from "../configuration-schema";
 
 export const defaultConstant: ConstantValue = {
@@ -12,28 +12,28 @@ export const defaultConstant: ConstantValue = {
   value: "value",
 };
 
-export const defaultChoice: ChoiceInput = {
+export const defaultChoice: ChoiceValue = {
   $type: "choice-input",
   prompt: "Choice ...",
   options: [],
 };
 
-export const defaultStringInput: StringInput = {
+export const defaultStringInput: StringInputValue = {
   $type: "string-input",
   prompt: "choice ...",
 };
 
-export const defaultNumberInput: StringInput = {
+export const defaultNumberInput: StringInputValue = {
   $type: "number-input",
   prompt: "choice ...",
 };
 
-export const defaultObjectInput: ObjectInput = {
+export const defaultObjectInput: ObjectValue = {
   $type: "object",
   values: [],
 };
 
-export const defaultValue: ValueOption = defaultConstant;
+export const defaultValue: Value = defaultConstant;
 
 export const defaultAddToArrayCommand: Command = {
   $command: "add-array-element",

@@ -5,7 +5,7 @@ import { Modals } from "src/modals";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
 import RootRunner from "src/RootRunner";
 import {
-  ConfigurationOption,
+  Command,
   GlobalConfiguration,
   isConfigurationValid,
 } from "src/configuration-schema";
@@ -72,12 +72,12 @@ describe("Choosing a mold", () => {
   });
 });
 
-const addFoo: ConfigurationOption = {
+const addFoo: Command = {
   $command: "set-value",
   key: "foo",
   value: { $type: "constant", value: "foo value" },
 };
-const addBar: ConfigurationOption = {
+const addBar: Command = {
   $command: "set-value",
   key: "bar",
   value: { $type: "constant", value: "bar value" },

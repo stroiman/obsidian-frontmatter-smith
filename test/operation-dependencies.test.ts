@@ -5,7 +5,7 @@ import { Forge } from "../src/Forge";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
 import { configurationFromJson } from "src/ConfigurationFactory";
 import { TFile } from "./types";
-import { ConfigurationOption } from "src/configuration-schema";
+import { Command } from "src/configuration-schema";
 
 describe("'dependent choices' case", () => {
   let fileManager: FakeMetadataFileManager;
@@ -40,7 +40,7 @@ describe("'dependent choices' case", () => {
   });
 });
 
-const medConfig: ConfigurationOption[] = [
+const medConfig: Command[] = [
   {
     $command: "set-value",
     key: "type",

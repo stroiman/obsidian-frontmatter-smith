@@ -5,7 +5,7 @@ import { Forge } from "../src/Forge";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
 import { configurationFromJson } from "src/ConfigurationFactory";
 import { TFile } from "./types";
-import { ConfigurationOption } from "src/configuration-schema";
+import { Command } from "src/configuration-schema";
 
 const { match } = sinon;
 
@@ -90,7 +90,7 @@ describe("'Add medicine' case", () => {
   });
 });
 
-const medConfig: ConfigurationOption[] = [
+const medConfig: Command[] = [
   {
     $command: "add-array-element",
     key: "medicine",

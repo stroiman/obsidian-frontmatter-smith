@@ -14,7 +14,7 @@ import { Modals } from "./modals";
 import * as schema from "./configuration-schema";
 
 export const getResolver = (
-  option: schema.ValueOption,
+  option: schema.Value,
 ): ValueResolver<Data, Modals> => {
   switch (option.$type) {
     case "number-input":
@@ -40,7 +40,7 @@ export const getResolver = (
   }
 };
 
-export const createOperations = (options: schema.ConfigurationOption[]) => {
+export const createOperations = (options: schema.Command[]) => {
   return options.map((option) => {
     switch (option.$command) {
       case "add-array-element":
@@ -52,7 +52,7 @@ export const createOperations = (options: schema.ConfigurationOption[]) => {
 };
 
 export const configurationFromJson = (
-  input: schema.ConfigurationOption[],
+  input: schema.Command[],
 ): ForgeConfiguration => {
   return new ForgeConfiguration(createOperations(input));
 };

@@ -4,7 +4,7 @@ import { Modals } from "../src/modals";
 import { TestFileManager, Forge } from "../src/Forge";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
 import { configurationFromJson, getResolver } from "src/ConfigurationFactory";
-import { ConfigurationOption } from "src/configuration-schema";
+import { Command } from "src/configuration-schema";
 
 const { match } = sinon;
 
@@ -61,7 +61,7 @@ describe("number-input values", () => {
   });
 });
 
-const config: ConfigurationOption[] = [
+const config: Command[] = [
   {
     $command: "set-value",
     key: "type",

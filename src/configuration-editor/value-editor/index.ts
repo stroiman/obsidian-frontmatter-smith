@@ -2,10 +2,10 @@ import van, { State } from "vanjs-core";
 import * as classNames from "./index.module.css";
 import {
   Command,
-  ValueOption,
+  Value,
   ValueType,
   ConstantValue,
-  StringInput,
+  StringInputValue,
   toSafeInput,
   CommandType,
 } from "../../configuration-schema";
@@ -104,7 +104,7 @@ const ConstValueConfiguration = (props: { value: State<ConstantValue> }) => {
   );
 };
 
-const ValueConfigurationInner = (props: { value: State<ValueOption> }) => {
+const ValueConfigurationInner = (props: { value: State<Value> }) => {
   const tmp = props.value.val;
   switch (tmp.$type) {
     case "constant": {
@@ -129,7 +129,7 @@ const ValueConfigurationInner = (props: { value: State<ValueOption> }) => {
   }
 };
 
-export const ValueTypeEditor = (props: { value: State<ValueOption> }) =>
+export const ValueTypeEditor = (props: { value: State<Value> }) =>
   select(
     {
       className: "dropdown",
@@ -160,7 +160,9 @@ export const ValueTypeEditor = (props: { value: State<ValueOption> }) =>
     ),
   );
 
-const StringInputConfiguration = (props: { value: State<StringInput> }) => {
+const StringInputConfiguration = (props: {
+  value: State<StringInputValue>;
+}) => {
   const { prompt } = deepState(props.value);
   return Setting({
     name: "Prompt",
@@ -233,10 +235,7 @@ export const CommandList = (props: { commands: State<Command[]> }) => {
  *
  * Note, the editor will be the last child of the passed parent.
  */
-export const renderValueEditor = (
-  parent: HTMLElement,
-  value: State<ValueOption>,
-) => {
+export const renderValueEditor = (parent: HTMLElement, value: State<Value>) => {
   const type = van.derive(() => value.val.$type);
   let editor: HTMLElement = ValueConfigurationInner({ value });
   van.add(parent, editor);
@@ -250,7 +249,7 @@ export const renderValueEditor = (
   return parent;
 };
 
-export const ValueConfiguration = (props: { value: State<ValueOption> }) => {
+export const ValueConfiguration = (props: { value: State<Value> }) => {
   const { value } = props;
 
   return renderValueEditor(div(ValueTypeEditor({ value })), value);

@@ -2,8 +2,8 @@ import { State } from "vanjs-core";
 import * as classNames from "./index.module.css";
 import {
   Command,
-  SetValueOption,
-  ArrayConfigurationOption,
+  SetValueCommand,
+  AddToArrayCommand,
 } from "../../configuration-schema";
 
 import { Setting } from "../obsidian-controls";
@@ -51,7 +51,7 @@ const CommandNameAndDesc = (props: {
 };
 
 const SetValueEditor = (props: {
-  command: State<SetValueOption>;
+  command: State<SetValueCommand>;
   headingId: string;
   onRemoveClick: () => void;
 }) => {
@@ -81,7 +81,7 @@ const SetValueEditor = (props: {
 
 const AddArrayElementEditor = (props: {
   headingId: string;
-  command: State<ArrayConfigurationOption>;
+  command: State<AddToArrayCommand>;
   onRemoveClick: () => void;
 }) => {
   const { headingId, onRemoveClick, command } = props;

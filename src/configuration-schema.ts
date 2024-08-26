@@ -1,45 +1,45 @@
 import * as t from "io-ts";
 
-export type ArrayConfigurationOption = {
+export type AddToArrayCommand = {
   $command: "add-array-element";
   key: string;
-  value: ValueOption;
+  value: Value;
 };
 
-export type SetValueOption = {
+export type SetValueCommand = {
   $command: "set-value";
   key: string;
-  value: ValueOption;
+  value: Value;
 };
 
-export type ConfigurationOption = ArrayConfigurationOption | SetValueOption;
+export type Command = AddToArrayCommand | SetValueCommand;
 
-export type StringInput = {
+export type StringInputValue = {
   $type: "string-input" | "number-input";
   prompt: string;
 };
 
-export type ChoiceValue = {
+export type ChoiceValueItem = {
   text: string;
   value: string;
-  commands?: ConfigurationOption[];
+  commands?: Command[];
 };
 
 export type SafeChoiceValue = {
   text: string;
   value: string;
-  commands: ConfigurationOption[];
+  commands: Command[];
 };
 
-export const toSafe = (v: ChoiceValue): SafeChoiceValue => ({
+export const toSafe = (v: ChoiceValueItem): SafeChoiceValue => ({
   ...v,
   commands: v.commands || [],
 });
 
-export type ChoiceInput = {
+export type ChoiceValue = {
   $type: "choice-input";
   prompt: string;
-  options: ChoiceValue[];
+  options: ChoiceValueItem[];
 };
 
 export type SafeChoiceInput = {
@@ -48,17 +48,16 @@ export type SafeChoiceInput = {
   options: SafeChoiceValue[];
 };
 
-export const toSafeInput = (x: ChoiceInput): SafeChoiceInput => ({
+export const toSafeInput = (x: ChoiceValue): SafeChoiceInput => ({
   ...x,
   options: x.options.map(toSafe),
 });
 
-export type ObjectValue = { key: string; value: ValueOption };
-export type ObjectValueInput = ObjectValue[];
+export type ObjectValueItem = { key: string; value: Value };
 
-export type ObjectInput = {
+export type ObjectValue = {
   $type: "object";
-  values: ObjectValueInput;
+  values: ObjectValueItem[];
 };
 
 export type ConstantValue = {
@@ -66,15 +65,15 @@ export type ConstantValue = {
   value: any;
 };
 
-export type ValueOption =
-  | ObjectInput
-  | ChoiceInput
-  | StringInput
+export type Value =
+  | ObjectValue
+  | ChoiceValue
+  | StringInputValue
   | ConstantValue;
 
-export type ValueType = ValueOption["$type"];
+export type ValueType = Value["$type"];
 
-const valueConfiguration: t.Type<ValueOption> = t.recursion("Value", () => {
+const value: t.Type<Value> = t.recursion("Value", () => {
   const stringInput = t.strict({
     $type: t.union([t.literal("string-input"), t.literal("number-input")]),
     prompt: t.string,
@@ -87,7 +86,7 @@ const valueConfiguration: t.Type<ValueOption> = t.recursion("Value", () => {
 
   const optional = <T extends t.Any>(codec: T) => t.union([t.undefined, codec]);
 
-  const choiceInputValue: t.Type<ChoiceInput> = t.type({
+  const choiceValue: t.Type<ChoiceValue> = t.type({
     $type: t.literal("choice-input"),
     prompt: t.string,
     options: t.array(
@@ -99,9 +98,9 @@ const valueConfiguration: t.Type<ValueOption> = t.recursion("Value", () => {
     ),
   });
 
-  const objectValueItem: t.Type<{ key: string; value: ValueOption }> = t.type({
+  const objectValueItem: t.Type<{ key: string; value: Value }> = t.type({
     key: t.string,
-    value: valueConfiguration,
+    value: value,
   });
 
   const objectValue = t.type({
@@ -109,20 +108,20 @@ const valueConfiguration: t.Type<ValueOption> = t.recursion("Value", () => {
     values: t.array(objectValueItem),
   });
 
-  return t.union([objectValue, stringInput, choiceInputValue, constantValue]);
+  return t.union([objectValue, stringInput, choiceValue, constantValue]);
 });
 
-const command: t.Type<ConfigurationOption> = t.recursion("Command", () => {
+const command: t.Type<Command> = t.recursion("Command", () => {
   const addToArrayCommand = t.strict({
     $command: t.literal("add-array-element"),
     key: t.string,
-    value: valueConfiguration,
+    value: value,
   });
 
   const setValueCommand = t.strict({
     $command: t.literal("set-value"),
     key: t.string,
-    value: valueConfiguration,
+    value: value,
   });
 
   return t.union([addToArrayCommand, setValueCommand]);
@@ -135,7 +134,6 @@ const forgeConfiguration = t.strict({
 
 export type ForgeConfiguration = t.TypeOf<typeof forgeConfiguration>;
 export type Commands = ForgeConfiguration["commands"];
-export type Command = t.TypeOf<typeof command>; // Commands[number];
 export type CommandType = Command["$command"];
 
 export const globalConfiguration = t.strict({

@@ -2,7 +2,7 @@ import van from "vanjs-core";
 import * as classNames from "./object-value-editor.module.css";
 import { State } from "vanjs-core";
 import { button, div, input, section, label } from "../tags";
-import { ObjectInput, ObjectValue } from "src/configuration-schema";
+import { ObjectValue, ObjectValueItem } from "src/configuration-schema";
 import { deepState, genId, stateArray } from "../helpers";
 import { defaultValue } from "../defaults";
 import { renderValueEditor, ValueTypeEditor } from "./index";
@@ -11,11 +11,11 @@ import { ExpandCollapseButton } from "../components";
 
 type OnRemoveClick = (x: {
   element: HTMLElement;
-  value: State<ObjectValue>;
+  value: State<ObjectValueItem>;
 }) => void;
 
 const ValueEditor = (props: {
-  value: State<ObjectValue>;
+  value: State<ObjectValueItem>;
   keyLabelId: string;
   onRemoveClick: OnRemoveClick;
 }): HTMLElement => {
@@ -53,7 +53,7 @@ const ValueEditor = (props: {
   return element;
 };
 
-export const ObjectValueEditor = ({ value }: { value: State<ObjectInput> }) => {
+export const ObjectValueEditor = ({ value }: { value: State<ObjectValue> }) => {
   const values = stateArray(deepState(value).values);
   const onRemoveClick: OnRemoveClick = ({ element, value }) => {
     values.val = values.val.filter((x) => x !== value);
