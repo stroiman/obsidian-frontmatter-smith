@@ -19,7 +19,7 @@ export const parseConfigurationOrThrow = (x: unknown) => {
  * This is also 'unknown', as this is passed to the `parse` function verifying
  * that migration of older formats work.
  */
-export const fullConfiguration: unknown = {
+export const fullConfiguration = {
   version: "1",
   forges: [
     {
