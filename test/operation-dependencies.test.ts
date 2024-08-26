@@ -1,28 +1,31 @@
 import * as sinon from "sinon";
 import { expect } from "chai";
 import { Modals } from "../src/modals";
-import { Forge } from "../src/Forge";
+import { createForgeFromConfig, Forge } from "../src/Forge";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
-import { configurationFromJson } from "src/ConfigurationFactory";
 import { TFile } from "./types";
 import { Command } from "src/smith-configuration-schema";
 
 describe("'dependent choices' case", () => {
   let fileManager: FakeMetadataFileManager;
   let forge: Forge<TFile, FakeMetadataFileManager>;
-  let modals: sinon.SinonStubbedInstance<Modals>;
+  let suggester: sinon.SinonStubbedInstance<Modals>;
 
   beforeEach(() => {
-    const configuration = configurationFromJson(medConfig);
+    const forgeConfiguration = { commands: medConfig };
     fileManager = new FakeMetadataFileManager();
-    modals = sinon.createStubInstance(Modals);
-    forge = new Forge({ fileManager, configuration, suggester: modals });
-    modals.prompt.onFirstCall().resolves("Foo");
+    suggester = sinon.createStubInstance(Modals);
+    forge = createForgeFromConfig({
+      fileManager,
+      forgeConfiguration,
+      suggester,
+    });
+    suggester.prompt.onFirstCall().resolves("Foo");
   });
 
   it("Should not add subtype if selecting first option", async () => {
     const file = fileManager.createFile();
-    modals.suggest.selectsOption("Choice 1");
+    suggester.suggest.selectsOption("Choice 1");
     await forge.run(file);
     expect(fileManager.getFrontmatter(file)).to.deep.equal({
       type: "[[Choice 1]]",
@@ -31,7 +34,7 @@ describe("'dependent choices' case", () => {
 
   it("Should add subtype if selecting second option", async () => {
     const file = fileManager.createFile();
-    modals.suggest.selectsOption("Choice 2");
+    suggester.suggest.selectsOption("Choice 2");
     await forge.run(file);
     expect(fileManager.getFrontmatter(file)).to.deep.equal({
       type: "[[Choice 2]]",

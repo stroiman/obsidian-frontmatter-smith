@@ -1,7 +1,6 @@
-import { configurationFromJson } from "./ConfigurationFactory";
 import type { TestFileManager } from "./Forge";
 import { Modals } from "./modals";
-import { Forge } from "./Forge";
+import { createForgeFromConfig, Forge } from "./Forge";
 import { SmithConfiguration } from "./smith-configuration-schema";
 
 export default class RootRunner<
@@ -28,9 +27,9 @@ export default class RootRunner<
     if (!forgeConfiguration) {
       return;
     }
-    const forge = new Forge({
+    const forge = createForgeFromConfig({
       fileManager: this.fileManager,
-      configuration: configurationFromJson(forgeConfiguration.commands),
+      forgeConfiguration,
       suggester: this.modals,
     });
     await forge.run(file);

@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { Modals } from "../src/modals";
 import { Forge } from "../src/Forge";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
-import { configurationFromJson } from "src/ConfigurationFactory";
+import { createOperations } from "src/ConfigurationFactory";
 import { TFile } from "./types";
 import { Command } from "src/smith-configuration-schema";
 
@@ -15,11 +15,13 @@ describe("'Add medicine' case", () => {
   let modals: sinon.SinonStubbedInstance<Modals>;
 
   beforeEach(() => {
-    const configuration = configurationFromJson(medConfig);
-
     fileManager = new FakeMetadataFileManager();
     modals = sinon.createStubInstance(Modals);
-    forge = new Forge({ fileManager, configuration, suggester: modals });
+    forge = new Forge({
+      fileManager,
+      commands: createOperations(medConfig),
+      suggester: modals,
+    });
     modals.suggest.selectsOption("Aspirin");
     modals.prompt.onFirstCall().resolves("500mg");
     modals.prompt.onSecondCall().resolves("12:00");

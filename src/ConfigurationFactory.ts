@@ -3,7 +3,6 @@ import {
   ChoiceResolver,
   ConstResolver,
   Data,
-  ForgeConfiguration,
   NumberResolver,
   ObjectResolver,
   PromtResolver,
@@ -49,10 +48,4 @@ export const createOperations = (options: schema.Command[]) => {
         return new SetValue(option.key, getResolver(option.value));
     }
   });
-};
-
-export const configurationFromJson = (
-  input: schema.Command[],
-): ForgeConfiguration => {
-  return new ForgeConfiguration(createOperations(input));
 };
