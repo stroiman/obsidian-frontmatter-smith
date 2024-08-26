@@ -48,7 +48,7 @@ const medConfig: Command[] = [
   factories.createSetValueCommand({
     value: factories
       .buildValue()
-      .addItem((x) => x.setText("Choice 1").setValue("[[Choice 1]]"))
+      .addItem("Choice 1", "[[Choice 1]]")
       .addItem((x) =>
         x
           .setText("Choice 2")

@@ -6,6 +6,7 @@ import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
 import { createOperations } from "src/ConfigurationFactory";
 import { TFile } from "./types";
 import { Command } from "src/smith-configuration-schema";
+import * as factories from "./configuration-factories";
 
 const { match } = sinon;
 
@@ -41,6 +42,13 @@ describe("'Add medicine' case", () => {
       ]),
       "Choose type",
     );
+  });
+
+  it("Should use the right prompt", async () => {
+    const file = fileManager.createFile();
+    await forge.run(file);
+    expect(modals.prompt).to.have.been.calledWith(match({ prompt: "Dose" }));
+    expect(modals.prompt).to.have.been.calledWith(match({ prompt: "Time" }));
   });
 
   it("Should add a 'medicine' entry if none exists", async () => {
@@ -93,40 +101,27 @@ describe("'Add medicine' case", () => {
 });
 
 const medConfig: Command[] = [
-  {
-    $command: "add-array-element",
+  factories.createAddToArrayCommand({
     key: "medicine",
-    value: {
-      $type: "object",
-      values: [
-        {
-          key: "type",
-          value: {
-            $type: "choice-input",
-            prompt: "Choose type",
-            options: [
-              {
-                text: "Aspirin",
-                value: "[[Aspirin]]",
-                commands: [],
-              },
-              {
-                text: "Paracetamol",
-                value: "[[Paracetamol]]",
-                commands: [],
-              },
-            ],
-          },
-        },
-        {
-          key: "dose",
-          value: { $type: "string-input", prompt: "Dose" },
-        },
-        {
-          key: "time",
-          value: { $type: "string-input", prompt: "Time" },
-        },
-      ],
-    },
-  },
+    value: factories
+      .buildObjectValue()
+      .addItem((x) =>
+        x
+          .setKey("type")
+          .setValueF((x) =>
+            x
+              .choiceValue()
+              .setPrompt("Choose type")
+              .addItem("Aspirin", "[[Aspirin]]")
+              .addItem("Paracetamol", "[[Paracetamol]]"),
+          ),
+      )
+      .addItem((x) =>
+        x.setKey("dose").setValueF((y) => y.stringInputWithPrompt("Dose")),
+      )
+      .addItem((x) =>
+        x.setKey("time").setValueF((y) => y.stringInputWithPrompt("Time")),
+      )
+      .build(),
+  }),
 ];
