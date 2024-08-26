@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "touch main.css && node esbuild.config.mjs",
     "typecheck": "tsc -noEmit -skipLibCheck",
+    "tsc-watch": "tsc -noEmit -skipLibCheck -w",
     "lint": "eslint .",
     "bundle": "touch main.css && node esbuild.config.mjs production && cp main.css styles.css",
     "build": "pnpm bundle && pnpm typecheck && pnpm lint && pnpm test",
