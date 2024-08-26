@@ -15,12 +15,11 @@ import { deepState, genId, stateArray, wrapState } from "../helpers";
 import { ChildGroup } from "../containers";
 import { ObjectValueEditor } from "./object-value-editor";
 import {
-  defaultChoice,
-  defaultCommandByType,
-  defaultConstant,
-  defaultNumberInput,
-  defaultObjectInput,
-  defaultStringInput,
+  createDefaultChoiceValue,
+  createDefaultCommandByType,
+  createDefaultNumberInputValue,
+  createDefaultObjectValue,
+  createDefaultStringInputValue,
 } from "../defaults";
 import { CommandEditor, OnRemoveCommandClick } from "../command-editor";
 import { button, div, form, input, option, p, select } from "../tags";
@@ -136,19 +135,19 @@ export const ValueTypeEditor = (props: { value: State<Value> }) =>
       onchange: (e) => {
         switch (e.target.value as ValueType) {
           case "constant":
-            props.value.val = defaultConstant;
+            props.value.val = createDefaultChoiceValue();
             break;
           case "string-input":
-            props.value.val = defaultStringInput;
+            props.value.val = createDefaultStringInputValue();
             break;
           case "number-input":
-            props.value.val = defaultNumberInput;
+            props.value.val = createDefaultNumberInputValue();
             break;
           case "object":
-            props.value.val = defaultObjectInput;
+            props.value.val = createDefaultObjectValue();
             break;
           case "choice-input":
-            props.value.val = defaultChoice;
+            props.value.val = createDefaultChoiceValue();
             break;
         }
         //console.log("CHANGE", e.target.value);
@@ -211,7 +210,7 @@ export const CommandList = (props: { commands: State<Command[]> }) => {
             onclick: (e) => {
               e.preventDefault();
               const command = van.state(
-                defaultCommandByType[dropdown.value as CommandType],
+                createDefaultCommandByType(dropdown.value as CommandType),
               );
               states.val = [...states.val, command];
               van.add(

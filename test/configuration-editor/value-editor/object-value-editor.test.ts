@@ -10,7 +10,6 @@ import { within } from "@testing-library/dom";
 import { QueryFunctions } from "../types";
 import { getObjectKeys } from "../dom-queries";
 import { expect } from "chai";
-import { defaultValue } from "src/configuration-editor/defaults";
 
 describe("Object configuration", () => {
   let user: UserEvent;
@@ -69,7 +68,7 @@ describe("Object configuration", () => {
                     { key: "Option 1" },
                     { key: "Option 2" },
                     {
-                      value: defaultValue,
+                      value: {},
                     },
                   ],
                 },
