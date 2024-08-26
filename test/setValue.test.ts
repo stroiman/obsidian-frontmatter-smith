@@ -4,7 +4,7 @@ import { Modals } from "../src/modals";
 import { TestFileManager, Forge } from "../src/Forge";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
 import { configurationFromJson, getResolver } from "src/ConfigurationFactory";
-import { Command } from "src/smith-configuration-schema";
+import * as factories from "./configuration-factories";
 
 const { match } = sinon;
 
@@ -19,7 +19,9 @@ describe("'Add value' case", () => {
   let modals: sinon.SinonStubbedInstance<Modals>;
 
   beforeEach(() => {
-    const configuration = configurationFromJson(config);
+    const configuration = configurationFromJson([
+      factories.createSetValueCommand(),
+    ]);
     fileManager = new FakeMetadataFileManager();
     modals = sinon.createStubInstance(Modals);
     forge = new Forge({ fileManager, configuration, suggester: modals });
@@ -60,11 +62,3 @@ describe("number-input values", () => {
     expect(result.value).to.equal(42);
   });
 });
-
-const config: Command[] = [
-  {
-    $command: "set-value",
-    key: "type",
-    value: { $type: "string-input", prompt: "Type something" },
-  },
-];
