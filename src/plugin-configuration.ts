@@ -1,5 +1,6 @@
 import * as t from "io-ts";
 import {
+  emptySmithConfiguration,
   SmithConfiguration,
   smithConfiguration,
 } from "./smith-configuration-schema";
@@ -12,7 +13,13 @@ const pluginConfiguration = t.type({
 
 const possibleRootConfig = t.union([pluginConfiguration, smithConfiguration]);
 
-type PluginConfiguration = t.TypeOf<typeof pluginConfiguration>;
+export type PluginConfiguration = t.TypeOf<typeof pluginConfiguration>;
+
+export const defaultConfiguration: PluginConfiguration = {
+  version: "1",
+  type: "plugin-config",
+  smithConfiguration: emptySmithConfiguration,
+};
 
 const createPluginConfigFromSmithConfig = (
   smithConfiguration: SmithConfiguration,
@@ -37,4 +44,10 @@ export const parseConfiguration = (
     }
   }
   throw new Error("Should not have arrived here");
+};
+
+export const parseConfigurationOrDefault = (
+  input: unknown,
+): PluginConfiguration => {
+  return parseConfiguration(input) || defaultConfiguration;
 };

@@ -4,9 +4,9 @@ import { ObsidianPromptModal } from "src/ObsidianPromptModal";
 import { Modals } from "src/modals";
 import SettingTab from "./PluginSettings";
 import {
-  SmithConfiguration,
-  parseConfigOrDefault,
-} from "src/smith-configuration-schema";
+  PluginConfiguration,
+  parseConfigurationOrDefault,
+} from "src/plugin-configuration";
 import RootRunner from "src/RootRunner";
 
 interface PluginConstructor {
@@ -25,19 +25,19 @@ class SmithConfigurationAPI {
 
 const createPluginClass = (baseClass: PluginConstructor) => {
   return class MyPlugin extends baseClass {
-    settings: SmithConfiguration;
+    settings: PluginConfiguration;
     api: SmithConfigurationAPI;
 
     async loadSettings() {
       const storedSettings = await this.loadData();
-      this.settings = parseConfigOrDefault(storedSettings);
+      this.settings = parseConfigurationOrDefault(storedSettings);
     }
 
     async onload() {
       await this.loadSettings();
       this.api = new SmithConfigurationAPI();
 
-      const handleSettingChange = (newValue: SmithConfiguration) => {
+      const handleSettingChange = (newValue: PluginConfiguration) => {
         this.settings = newValue;
         settingsTab.setValue(newValue);
         this.saveData(newValue);
@@ -54,7 +54,7 @@ const createPluginClass = (baseClass: PluginConstructor) => {
           const file = view.file;
           if (file) {
             const worker = new RootRunner(
-              this.settings,
+              this.settings.smithConfiguration,
               this.app.fileManager,
               new Modals(this.app, {
                 FuzzySuggester,

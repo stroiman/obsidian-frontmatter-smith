@@ -1,4 +1,4 @@
-import { parseConfiguration } from "../src/smith-configuration-schema";
+import { parseConfiguration } from "../src/plugin-configuration";
 
 export const parseConfigurationOrThrow = (x: unknown) => {
   const result = parseConfiguration(x);

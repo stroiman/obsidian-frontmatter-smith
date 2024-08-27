@@ -1,3 +1,4 @@
+import { PluginConfiguration } from "src/plugin-configuration";
 import {
   ChoiceValue,
   SetValueCommand,
@@ -320,6 +321,16 @@ export class SmithConfigurationBuilder {
   }
 }
 
+export class ConfigurationBuilder extends SmithConfigurationBuilder {
+  buildC(): PluginConfiguration {
+    return {
+      version: "1",
+      type: "plugin-config",
+      smithConfiguration: super.build(),
+    };
+  }
+}
+
 export const buildValue = () => new ChoiceValueBuilder();
 export const buildObjectValue = () => new ObjectValueBuilder();
 export const buildCommand = () => new CommandBuilder();
@@ -328,3 +339,6 @@ export const buildSmithConfiguration = (
 ) => {
   return f(new SmithConfigurationBuilder()).build();
 };
+export const buildPluginConfiguration = (
+  f: BuildAction<ConfigurationBuilder>,
+) => f(new ConfigurationBuilder()).buildC();

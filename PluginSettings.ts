@@ -1,19 +1,19 @@
 import { App, PluginSettingTab, Plugin } from "obsidian";
 import { render } from "src/configuration-editor";
-import { SmithConfiguration } from "src/smith-configuration-schema";
+import { PluginConfiguration } from "src/plugin-configuration";
 
 export default class FrontmatterSmithSettingTab extends PluginSettingTab {
-  private value: SmithConfiguration;
+  private value: PluginConfiguration;
 
   constructor(
     app: App,
     plugin: Plugin,
-    private onChange: (config: SmithConfiguration) => void,
+    private onChange: (config: PluginConfiguration) => void,
   ) {
     super(app, plugin);
   }
 
-  setValue(value: SmithConfiguration) {
+  setValue(value: PluginConfiguration) {
     this.value = value;
   }
 

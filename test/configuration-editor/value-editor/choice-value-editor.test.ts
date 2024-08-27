@@ -25,6 +25,9 @@ describe("Choice value configuration", () => {
     ReturnType<OnConfigChanged>
   >;
 
+  const getCurrentSmithConfig = () =>
+    onConfigChanged.lastCall.lastArg.smithConfiguration;
+
   beforeEach(() => {
     root = document.body.appendChild(document.createElement("div"));
     scope = within(root);
@@ -70,7 +73,7 @@ describe("Choice value configuration", () => {
         await user.clear(textInput);
         await user.type(textInput, "PROMPT");
 
-        const actualConfig = onConfigChanged.lastCall.firstArg;
+        const actualConfig = getCurrentSmithConfig();
         expect(actualConfig).to.be.like({
           forges: [
             {
@@ -102,7 +105,7 @@ describe("Choice value configuration", () => {
       });
       await user.clear(valueInput);
       await user.type(valueInput, "New value");
-      const actualConfig = onConfigChanged.lastCall.firstArg;
+      const actualConfig = getCurrentSmithConfig();
       expect(actualConfig).to.be.like({
         forges: [
           {
@@ -132,7 +135,7 @@ describe("Choice value configuration", () => {
       await user.click(removeButton);
       options = getOptions(scope);
       expect(options).to.have.lengthOf(1);
-      const actualConfig = onConfigChanged.lastCall.firstArg;
+      const actualConfig = getCurrentSmithConfig();
       expect(actualConfig).to.be.like({
         forges: [
           { commands: [{ value: { options: [{ text: "Option 2" }] } }] },
@@ -149,7 +152,7 @@ describe("Choice value configuration", () => {
       });
       await user.clear(textInput);
       await user.type(textInput, "New text value");
-      const actualConfig = onConfigChanged.lastCall.firstArg;
+      const actualConfig = getCurrentSmithConfig();
       expect(actualConfig).to.be.like({
         forges: [
           {
@@ -177,7 +180,7 @@ describe("Choice value configuration", () => {
       });
       await user.clear(textInput);
       await user.type(textInput, "New value");
-      const actualConfig = onConfigChanged.lastCall.firstArg;
+      const actualConfig = getCurrentSmithConfig();
       expect(actualConfig).to.be.like({
         forges: [
           {

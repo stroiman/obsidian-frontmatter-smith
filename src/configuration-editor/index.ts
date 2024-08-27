@@ -1,21 +1,22 @@
 import van from "vanjs-core";
-import { SmithConfiguration } from "../smith-configuration-schema";
 import * as classNames from "./index.module.css";
 import { Setting } from "./obsidian-controls";
 import { ForgeEditor } from "./forge-editor";
 import { createDefaultForgeConfiguration } from "./defaults";
 import { deepState, stateArray } from "./helpers";
+import { PluginConfiguration } from "src/plugin-configuration";
 
 const { div, button } = van.tags;
 
-export type OnConfigChanged = (config: SmithConfiguration) => void;
+export type OnConfigChanged = (config: PluginConfiguration) => void;
 
 const ConfigurationEditor = (props: {
-  config: SmithConfiguration;
+  config: PluginConfiguration;
   onConfigChanged?: OnConfigChanged;
 }) => {
   const s = van.state(props.config);
-  const forges = stateArray(deepState(s).forges);
+  const { smithConfiguration } = deepState(s);
+  const forges = stateArray(deepState(smithConfiguration).forges);
   van.derive(() => {
     const newState = s.val;
     if (newState !== s.oldVal && props.onConfigChanged) {
@@ -47,7 +48,7 @@ const ConfigurationEditor = (props: {
 
 export const render = (
   root: HTMLElement,
-  config: SmithConfiguration,
+  config: PluginConfiguration,
   onConfigChanged?: OnConfigChanged,
 ) => {
   van.add(root, ConfigurationEditor({ config, onConfigChanged }));
