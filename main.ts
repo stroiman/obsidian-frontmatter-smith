@@ -1,4 +1,4 @@
-import { Editor, MarkdownView, Plugin } from "obsidian";
+import { Editor, FileManager, MarkdownView, Plugin, TFile } from "obsidian";
 import { FuzzySuggester } from "src/FuzzySuggester";
 import { ObsidianPromptModal } from "src/ObsidianPromptModal";
 import { Modals } from "src/modals";
@@ -8,16 +8,11 @@ import {
   parseConfigurationOrDefault,
 } from "src/plugin-configuration";
 import RootRunner from "src/RootRunner";
-
-class FrontmatterSmithAPI {
-  test() {
-    console.log("Test");
-  }
-}
+import FrontmatterSmithAPI from "src/public-api";
 
 export default class FrontmatterSmithPlugin extends Plugin {
   settings: PluginConfiguration;
-  api: FrontmatterSmithAPI;
+  api: FrontmatterSmithAPI<TFile, FileManager>;
 
   async loadSettings() {
     const storedSettings = await this.loadData();
@@ -26,7 +21,14 @@ export default class FrontmatterSmithPlugin extends Plugin {
 
   async onload() {
     await this.loadSettings();
-    this.api = new FrontmatterSmithAPI();
+    this.api = new FrontmatterSmithAPI({
+      fileManager: this.app.fileManager,
+      modals: new Modals(this.app, {
+        FuzzySuggester,
+        ObsidianPromptModal,
+      }),
+      getConfig: () => this.settings,
+    });
 
     const handleSettingChange = (newValue: PluginConfiguration) => {
       this.settings = newValue;
