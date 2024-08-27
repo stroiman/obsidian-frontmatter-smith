@@ -151,6 +151,19 @@ to set the `author` property.
                 type: "string-input"
 ```
 
+## API
+
+There is a simple API that can be accessed by other scripts, or by custom script
+code in [Templater](https://silentvoid13.github.io/Templater/) tempaltes.
+
+```javascript
+const frontmatterSmithApi = app.plugins.plugins['frontmatter-smith'].api;
+const forge = frontmatterSmithApi.findForgeByName('FORGE NAME')
+if (forge) {
+  await forge.runOnFile(file) // This must be an Obsidian TFile instance.
+}
+```
+
 ## Planned features
 
 - Better UX in the editor. Maybe a more "modal" approach
@@ -162,8 +175,6 @@ to set the `author` property.
 - Support a "reusable" commands. 
   - E.g. if you want to have two choices to both trigger the same command, you have to duplicate the command right now.
 - Add support for adding tags
-- Add API support. E.g., this will allow you to run a forge automatically from a
-  [Templater](https://silentvoid13.github.io/Templater/) template
 - Allow forge to run automatically on file creation (? maybe the API feature makes this less necessary)
 - Allow folder specific forges, i.e. a forge is only relevant for notes in a
   specific folder.
