@@ -8,12 +8,7 @@ import {
   parseConfigurationOrDefault,
 } from "src/plugin-configuration";
 import RootRunner from "src/RootRunner";
-
-class FrontmatterSmithAPI {
-  test() {
-    console.log("Test");
-  }
-}
+import FrontmatterSmithAPI from "src/public-api";
 
 export default class FrontmatterSmithPlugin extends Plugin {
   settings: PluginConfiguration;
