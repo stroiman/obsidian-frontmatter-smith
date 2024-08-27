@@ -29,7 +29,12 @@ export function ForgeEditor(props: {
       ["aria-labelledBy"]: id,
     },
     div(
-      { className: classNames.forgeConfigHeader },
+      {
+        className: classNames.forgeConfigHeader,
+        onclick: () => {
+          visible.val = !visible.val;
+        },
+      },
       ExpandCollapseButton({ visible }),
       h3(
         {
