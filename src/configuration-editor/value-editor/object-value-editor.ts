@@ -4,7 +4,7 @@ import { State } from "vanjs-core";
 import { button, div, input, section, label } from "../tags";
 import { ObjectValue, ObjectValueItem } from "src/smith-configuration-schema";
 import { deepState, genId, stateArray } from "../helpers";
-import { createDefaultObjectValueItem, createDefaultValue } from "../defaults";
+import { createDefaultObjectValueItem } from "../defaults";
 import { renderValueEditor, ValueTypeEditor } from "./index";
 import { HeadingWithButton } from "../containers";
 import { ExpandCollapseButton } from "../components";

@@ -1,6 +1,6 @@
 import type { TestFileManager } from "./Forge";
 import { Modals } from "./modals";
-import { createForgeFromConfig, Forge } from "./Forge";
+import { createForgeFromConfig } from "./Forge";
 import { SmithConfiguration } from "./smith-configuration-schema";
 
 export default class RootRunner<
