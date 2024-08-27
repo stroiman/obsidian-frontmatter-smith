@@ -14,6 +14,12 @@ importers:
       io-ts:
         specifier: ^2.2.21
         version: 2.2.21(fp-ts@2.16.8)
+      io-ts-types:
+        specifier: ^0.5.19
+        version: 0.5.19(fp-ts@2.16.8)(io-ts@2.2.21(fp-ts@2.16.8))(monocle-ts@2.3.13(fp-ts@2.16.8))(newtype-ts@0.3.5(fp-ts@2.16.8)(monocle-ts@2.3.13(fp-ts@2.16.8)))
+      nanoid:
+        specifier: ^5.0.7
+        version: 5.0.7
       vanjs-core:
         specifier: ^1.5.1
         version: 1.5.1
@@ -93,6 +99,9 @@ importers:
       happy-dom:
         specifier: ^14.12.3
         version: 14.12.3
+      io-ts-reporters:
+        specifier: ^2.0.1
+        version: 2.0.1(fp-ts@2.16.8)(io-ts@2.2.21(fp-ts@2.16.8))
       mocha:
         specifier: ^10.7.0
         version: 10.7.0
@@ -586,6 +595,9 @@ packages:
     hasBin: true
     peerDependencies:
       source-map-support: ^0.5.21
+
+  '@scarf/scarf@1.3.0':
+    resolution: {integrity: sha512-lHKK8M5CTcpFj2hZDB3wIjb0KAbEOgDmiJGDv1WBRfQgRm/a8/XMEkG/N1iM01xgbUDsPQwi42D+dFo1XPAKew==}
 
   '@sinonjs/commons@2.0.0':
     resolution: {integrity: sha512-uLa0j859mMrg2slwQYdO/AkrOfmH+X6LTVmNTS9CqexuE2IvVORIkSpJLqePAbEnKJ77aMmCwr1NUZ57120Xcg==}
@@ -1192,6 +1204,20 @@ packages:
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
 
+  io-ts-reporters@2.0.1:
+    resolution: {integrity: sha512-RVpLstYBsmTGgCW9wJ5KVyN/eRnRUDp87Flt4D1O3aJ7oAnd8csq8aXuu7ZeNK8qEDKmjUl9oUuzfwikaNAMKQ==}
+    peerDependencies:
+      fp-ts: ^2.10.5
+      io-ts: ^2.2.16
+
+  io-ts-types@0.5.19:
+    resolution: {integrity: sha512-kQOYYDZG5vKre+INIDZbLeDJe+oM+4zLpUkjXyTMyUfoCpjJNyi29ZLkuEAwcPufaYo3yu/BsemZtbdD+NtRfQ==}
+    peerDependencies:
+      fp-ts: ^2.0.0
+      io-ts: ^2.0.0
+      monocle-ts: ^2.0.0
+      newtype-ts: ^0.3.2
+
   io-ts@2.2.21:
     resolution: {integrity: sha512-zz2Z69v9ZIC3mMLYWIeoUcwWD6f+O7yP92FMVVaXEOSZH1jnVBmET/urd/uoarD1WGBY4rCj8TAyMPzsGNzMFQ==}
     peerDependencies:
@@ -1382,6 +1408,11 @@ packages:
   moment@2.29.4:
     resolution: {integrity: sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==}
 
+  monocle-ts@2.3.13:
+    resolution: {integrity: sha512-D5Ygd3oulEoAm3KuGO0eeJIrhFf1jlQIoEVV2DYsZUMz42j4tGxgct97Aq68+F8w4w4geEnwFa8HayTS/7lpKQ==}
+    peerDependencies:
+      fp-ts: ^2.5.0
+
   ms@2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
 
@@ -1393,8 +1424,19 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
+  nanoid@5.0.7:
+    resolution: {integrity: sha512-oLxFY2gd2IqnjcYyOXD8XGCftpGtZP2AbHbOkthDkvRywH5ayNtPVy9YlOPcHckXzbLTCHpkb7FB+yuxKV13pQ==}
+    engines: {node: ^18 || >=20}
+    hasBin: true
+
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
+
+  newtype-ts@0.3.5:
+    resolution: {integrity: sha512-v83UEQMlVR75yf1OUdoSFssjitxzjZlqBAjiGQ4WJaML8Jdc68LJ+BaSAXUmKY4bNzp7hygkKLYTsDi14PxI2g==}
+    peerDependencies:
+      fp-ts: ^2.0.0
+      monocle-ts: ^2.0.0
 
   nise@6.0.0:
     resolution: {integrity: sha512-K8ePqo9BFvN31HXwEtTNGzgrPpmvgciDsFz8aztFjt4LqKO/JeFD8tBOeuDiCMXrIl/m1YvfH8auSpxfaD09wg==}
@@ -2077,6 +2119,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@scarf/scarf@1.3.0': {}
+
   '@sinonjs/commons@2.0.0':
     dependencies:
       type-detect: 4.0.8
@@ -2746,6 +2790,19 @@ snapshots:
 
   inherits@2.0.4: {}
 
+  io-ts-reporters@2.0.1(fp-ts@2.16.8)(io-ts@2.2.21(fp-ts@2.16.8)):
+    dependencies:
+      '@scarf/scarf': 1.3.0
+      fp-ts: 2.16.8
+      io-ts: 2.2.21(fp-ts@2.16.8)
+
+  io-ts-types@0.5.19(fp-ts@2.16.8)(io-ts@2.2.21(fp-ts@2.16.8))(monocle-ts@2.3.13(fp-ts@2.16.8))(newtype-ts@0.3.5(fp-ts@2.16.8)(monocle-ts@2.3.13(fp-ts@2.16.8))):
+    dependencies:
+      fp-ts: 2.16.8
+      io-ts: 2.2.21(fp-ts@2.16.8)
+      monocle-ts: 2.3.13(fp-ts@2.16.8)
+      newtype-ts: 0.3.5(fp-ts@2.16.8)(monocle-ts@2.3.13(fp-ts@2.16.8))
+
   io-ts@2.2.21(fp-ts@2.16.8):
     dependencies:
       fp-ts: 2.16.8
@@ -2913,13 +2970,24 @@ snapshots:
 
   moment@2.29.4: {}
 
+  monocle-ts@2.3.13(fp-ts@2.16.8):
+    dependencies:
+      fp-ts: 2.16.8
+
   ms@2.1.2: {}
 
   ms@2.1.3: {}
 
   nanoid@3.3.7: {}
 
+  nanoid@5.0.7: {}
+
   natural-compare@1.4.0: {}
+
+  newtype-ts@0.3.5(fp-ts@2.16.8)(monocle-ts@2.3.13(fp-ts@2.16.8)):
+    dependencies:
+      fp-ts: 2.16.8
+      monocle-ts: 2.3.13(fp-ts@2.16.8)
 
   nise@6.0.0:
     dependencies:

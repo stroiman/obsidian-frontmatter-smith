@@ -100,7 +100,6 @@ export class ChoiceResolver implements ValueResolver<string | null, Suggest> {
           ? pipe(resolveResult.ret(result.value), addCommands(result.commands))
           : resolveResult.ret(null);
       });
-    // pipe(resolveResult.ret(result?.value || null)));
   }
 }
 
@@ -136,7 +135,7 @@ export class ObjectResolver implements ValueResolver<Data, Modals> {
 
 export type MetadataOperation = (input: FrontMatter) => void;
 
-interface MetadataCommand<TDeps> {
+export interface MetadataCommand<TDeps> {
   run(deps: TDeps): Promise<ValueResolverResult<MetadataOperation[]>>;
 }
 
@@ -186,13 +185,5 @@ export class AddToArray<TDeps> implements MetadataCommand<TDeps> {
         ];
       }),
     );
-  }
-}
-
-export class ForgeConfiguration {
-  constructor(private commands: MetadataCommand<Modals>[]) {}
-
-  getOptions() {
-    return this.commands;
   }
 }

@@ -3,9 +3,10 @@ import { expect } from "chai";
 import { Modals } from "../src/modals";
 import { Forge } from "../src/Forge";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
-import { configurationFromJson } from "src/ConfigurationFactory";
+import { createOperations } from "src/ConfigurationFactory";
 import { TFile } from "./types";
-import { Command } from "src/configuration-schema";
+import { Command } from "src/smith-configuration-schema";
+import * as factories from "./configuration-factories";
 
 const { match } = sinon;
 
@@ -15,11 +16,13 @@ describe("'Add medicine' case", () => {
   let modals: sinon.SinonStubbedInstance<Modals>;
 
   beforeEach(() => {
-    const configuration = configurationFromJson(medConfig);
-
     fileManager = new FakeMetadataFileManager();
     modals = sinon.createStubInstance(Modals);
-    forge = new Forge({ fileManager, configuration, suggester: modals });
+    forge = new Forge({
+      fileManager,
+      commands: createOperations(medConfig),
+      suggester: modals,
+    });
     modals.suggest.selectsOption("Aspirin");
     modals.prompt.onFirstCall().resolves("500mg");
     modals.prompt.onSecondCall().resolves("12:00");
@@ -39,6 +42,13 @@ describe("'Add medicine' case", () => {
       ]),
       "Choose type",
     );
+  });
+
+  it("Should use the right prompt", async () => {
+    const file = fileManager.createFile();
+    await forge.run(file);
+    expect(modals.prompt).to.have.been.calledWith(match({ prompt: "Dose" }));
+    expect(modals.prompt).to.have.been.calledWith(match({ prompt: "Time" }));
   });
 
   it("Should add a 'medicine' entry if none exists", async () => {
@@ -91,38 +101,27 @@ describe("'Add medicine' case", () => {
 });
 
 const medConfig: Command[] = [
-  {
-    $command: "add-array-element",
+  factories.createAddToArrayCommand({
     key: "medicine",
-    value: {
-      $type: "object",
-      values: [
-        {
-          key: "type",
-          value: {
-            $type: "choice-input",
-            prompt: "Choose type",
-            options: [
-              {
-                text: "Aspirin",
-                value: "[[Aspirin]]",
-              },
-              {
-                text: "Paracetamol",
-                value: "[[Paracetamol]]",
-              },
-            ],
-          },
-        },
-        {
-          key: "dose",
-          value: { $type: "string-input", prompt: "Dose" },
-        },
-        {
-          key: "time",
-          value: { $type: "string-input", prompt: "Time" },
-        },
-      ],
-    },
-  },
+    value: factories
+      .buildObjectValue()
+      .addItem((x) =>
+        x
+          .setKey("type")
+          .setValueF((x) =>
+            x
+              .choiceValue()
+              .setPrompt("Choose type")
+              .addItem("Aspirin", "[[Aspirin]]")
+              .addItem("Paracetamol", "[[Paracetamol]]"),
+          ),
+      )
+      .addItem((x) =>
+        x.setKey("dose").setValueF((y) => y.stringInputWithPrompt("Dose")),
+      )
+      .addItem((x) =>
+        x.setKey("time").setValueF((y) => y.stringInputWithPrompt("Time")),
+      )
+      .build(),
+  }),
 ];

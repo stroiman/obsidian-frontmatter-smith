@@ -1,17 +1,27 @@
 import van, { State } from "vanjs-core";
 import { button, input } from "./tags";
 
-export const ExpandCollapseButton = (props: { visible: State<boolean> }) => {
-  const { visible } = props;
+export const ExpandCollapseButton = (props: {
+  visible: State<boolean>;
+  type: string;
+  controlledContainerId: string;
+}) => {
+  const { visible, type, controlledContainerId } = props;
   const expandCollapseLabel = van.derive(() =>
-    visible.val ? "Collapse value editor" : "Expend value editor",
+    visible.val ? `Collapse ${type}` : `Expand ${type}`,
   );
   const expendButtonContent = van.derive(() => (visible.val ? "▼" : "▲"));
   return button(
     {
       className: "clickable-icon",
       "aria-label": expandCollapseLabel,
-      onclick: () => {
+      "aria-expanded": visible,
+      "aria-controls": controlledContainerId,
+      onclick: (e) => {
+        // Stop propagation as the parent _may_ also handle click. The button in
+        // e.g. the forge header exists only for accessibiliy/UX reasons. You
+        // can _see_ there's exapandability; and you have labels for the button
+        e.stopPropagation();
         visible.val = !visible.val;
       },
     },

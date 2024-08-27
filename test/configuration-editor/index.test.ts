@@ -3,7 +3,7 @@ import sinon from "sinon";
 import userEvent, { UserEvent } from "@testing-library/user-event";
 // eslint-disable-next-line
 import { within, screen } from "@testing-library/dom";
-import { emptyConfiguration } from "src/configuration-schema.js";
+import { emptySmithConfiguration } from "src/smith-configuration-schema.js";
 import { OnConfigChanged, render } from "src/configuration-editor";
 import { expect } from "chai";
 import { QueryFunctions } from "./types";
@@ -13,12 +13,15 @@ import {
   getForgeSections,
 } from "./dom-queries";
 import { deepFreeze } from "./helpers";
-import { fullConfiguration } from "test/fixtures";
+import { fullConfiguration, parseConfigurationOrThrow } from "test/fixtures";
+import * as factories from "../configuration-factories";
+import { defaultConfiguration } from "src/plugin-configuration";
 
 let user: UserEvent;
 
 before(async () => {
-  deepFreeze(emptyConfiguration);
+  deepFreeze(emptySmithConfiguration);
+  deepFreeze(defaultConfiguration);
 });
 
 describe("UI", () => {
@@ -33,6 +36,9 @@ describe("UI", () => {
     ReturnType<OnConfigChanged>
   >;
 
+  const getCurrentSmithConfig = () =>
+    onConfigChanged.lastCall.lastArg.smithConfiguration;
+
   beforeEach(() => {
     root = document.body.appendChild(document.createElement("div"));
     scope = within(root);
@@ -44,50 +50,35 @@ describe("UI", () => {
   });
 
   it("Should allow adding a new forge", async () => {
-    render(root, emptyConfiguration, onConfigChanged);
+    render(root, defaultConfiguration, onConfigChanged);
     getForgeSections(scope).should.have.lengthOf(0);
     const button = scope.getByRole("button", { name: "New forge" });
     await user.click(button);
 
     getForgeSections(scope).should.have.lengthOf(1);
-    onConfigChanged.lastCall.firstArg.should.be.like({ forges: [{}] });
+    getCurrentSmithConfig().should.be.like({ forges: [{}] });
     await user.clear(scope.getByRole("textbox", { name: "Forge name" }));
     await user.type(
       scope.getByRole("textbox", { name: "Forge name" }),
       "New name",
     );
-    onConfigChanged.lastCall.firstArg.should.be.like({
+    getCurrentSmithConfig().should.be.like({
       forges: [{ name: "New name" }],
     });
   });
 
   describe("Changing value", () => {
     it("Should create a new value", async () => {
-      render(
-        root,
-        {
-          ...emptyConfiguration,
-          forges: [
-            {
-              name: "dummy",
-              commands: [
-                {
-                  $command: "set-value",
-                  key: "key",
-                  value: { $type: "constant", value: "123" },
-                },
-              ],
-            },
-          ],
-        },
-        onConfigChanged,
+      const config = factories.buildPluginConfiguration((s) =>
+        s.addForge((f) => f.addCommand((c) => c.setValue().setKey("key"))),
       );
+      render(root, config, onConfigChanged);
       const dropdown = scope.getByRole("combobox", { name: "Type of value" });
       await user.selectOptions(dropdown, "A text value");
       const input = scope.getByRole("textbox", { name: /Prompt/ });
       await user.clear(input);
       await user.type(input, "The prompt!");
-      const lastConfig = onConfigChanged.lastCall.firstArg;
+      const lastConfig = getCurrentSmithConfig();
       expect(lastConfig).to.be.like({
         forges: [
           {
@@ -104,7 +95,7 @@ describe("UI", () => {
 
   describe("Default settings for new forge", () => {
     beforeEach(async () => {
-      render(root, emptyConfiguration, onConfigChanged);
+      render(root, defaultConfiguration, onConfigChanged);
       getForgeSections(scope).should.have.lengthOf(0);
       const button = scope.getByRole("button", { name: "New forge" });
       await user.click(button);
@@ -112,7 +103,7 @@ describe("UI", () => {
 
     it("Should have name, 'Forge name ...'", () => {
       getForgeSections(scope).should.have.lengthOf(1);
-      onConfigChanged.lastCall.firstArg.should.be.like({
+      getCurrentSmithConfig().should.be.like({
         forges: [
           {
             name: "Forge name ...",
@@ -133,28 +124,20 @@ describe("UI", () => {
   });
 
   it("Can find the section for a forge", () => {
-    const config = {
-      ...emptyConfiguration,
-      forges: [
-        {
-          name: "Test forge",
-          commands: [],
-        },
-      ],
-    };
+    const config = factories.buildPluginConfiguration((x) =>
+      x.addForge((f) => f.setName("Test forge")),
+    );
     render(root, config, onConfigChanged);
     const sections = getForgeSections(scope);
     expect(sections).to.have.lengthOf(1);
   });
 
   it("Should initialise the forge name input", () => {
-    const config = {
-      ...emptyConfiguration,
-      forges: [
-        { name: "Forge 1", commands: [] },
-        { name: "Forge 2", commands: [] },
-      ],
-    };
+    const config = factories.buildPluginConfiguration((c) =>
+      c
+        .addForge((f) => f.setName("Forge 1"))
+        .addForge((f) => f.setName("Forge 2")),
+    );
     render(root, config);
     const inputs = scope.getAllByRole("textbox", { name: "Forge name" });
     inputs.should.have.lengthOf(2);
@@ -164,12 +147,12 @@ describe("UI", () => {
 
   describe("Value options configuration", () => {
     it("Should set constant value", async () => {
-      render(root, emptyConfiguration, onConfigChanged);
+      render(root, defaultConfiguration, onConfigChanged);
       await user.click(scope.getByRole("button", { name: "New forge" }));
       const input = scope.getByRole("textbox", { name: "Value" });
       await user.clear(input);
       await user.type(input, '"THE VALUE"');
-      onConfigChanged.lastCall.firstArg.should.be.like({
+      getCurrentSmithConfig().should.be.like({
         forges: [
           {
             commands: [
@@ -187,7 +170,7 @@ describe("UI", () => {
       let input: HTMLElement;
 
       beforeEach(async () => {
-        render(root, emptyConfiguration, onConfigChanged);
+        render(root, defaultConfiguration, onConfigChanged);
         await user.click(scope.getByRole("button", { name: "New forge" }));
         input = scope.getByRole("textbox", { name: "Value" });
         await user.clear(input);
@@ -211,14 +194,10 @@ describe("UI", () => {
 
   describe("Add/change/remove command", () => {
     beforeEach(() => {
-      render(
-        root,
-        {
-          ...emptyConfiguration,
-          forges: [{ name: "Empty forge", commands: [] }],
-        },
-        onConfigChanged,
+      const config = factories.buildPluginConfiguration((f) =>
+        f.addForge((f) => f.setName("Empty forge")),
       );
+      render(root, config, onConfigChanged);
     });
 
     describe("Add set-value command", () => {
@@ -234,7 +213,7 @@ describe("UI", () => {
         });
         await user.clear(input);
         await user.type(input, "field-name");
-        onConfigChanged.lastCall.firstArg.should.be.like({
+        getCurrentSmithConfig().should.be.like({
           forges: [
             {
               name: "Empty forge",
@@ -254,7 +233,7 @@ describe("UI", () => {
       });
 
       it("Should add to the configuration", async () => {
-        expect(onConfigChanged.lastCall.lastArg).to.be.like({
+        expect(getCurrentSmithConfig()).to.be.like({
           forges: [{ commands: [{ $command: "set-value" }] }],
         });
       });
@@ -274,7 +253,7 @@ describe("UI", () => {
         });
 
         it("Should remove the command from the configuration", async () => {
-          expect(onConfigChanged.lastCall.lastArg).to.be.like({
+          expect(getCurrentSmithConfig()).to.be.like({
             forges: [{ commands: [] }],
           });
         });
@@ -293,7 +272,7 @@ describe("UI", () => {
       });
 
       it("Should add to the configuration", async () => {
-        expect(onConfigChanged.lastCall.lastArg).to.be.like({
+        expect(getCurrentSmithConfig()).to.be.like({
           forges: [{ commands: [{ $command: "add-array-element" }] }],
         });
       });
@@ -304,7 +283,7 @@ describe("UI", () => {
         await user.clear(input);
         await user.type(input, "new-key");
 
-        expect(onConfigChanged.lastCall.lastArg).to.be.like({
+        expect(getCurrentSmithConfig()).to.be.like({
           forges: [
             { commands: [{ $command: "add-array-element", key: "new-key" }] },
           ],
@@ -326,7 +305,7 @@ describe("UI", () => {
         });
 
         it("Should remove the command from the configuration", async () => {
-          expect(onConfigChanged.lastCall.lastArg).to.be.like({
+          expect(getCurrentSmithConfig()).to.be.like({
             forges: [{ commands: [] }],
           });
         });
@@ -337,7 +316,11 @@ describe("UI", () => {
   describe("Sensible behaviour", () => {
     it("Should not call the update function on render", async () => {
       //onConfigChanged.throws();
-      render(root, fullConfiguration, onConfigChanged);
+      render(
+        root,
+        parseConfigurationOrThrow(fullConfiguration),
+        onConfigChanged,
+      );
       await new Promise((r) => setImmediate(r));
       onConfigChanged.should.not.have.been.called;
     });

@@ -1,10 +1,10 @@
 import * as sinon from "sinon";
 import { expect } from "chai";
 import { Modals } from "../src/modals";
-import { TestFileManager, Forge } from "../src/Forge";
+import { TestFileManager, Forge, createForgeFromConfig } from "../src/Forge";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
-import { configurationFromJson, getResolver } from "src/ConfigurationFactory";
-import { Command } from "src/configuration-schema";
+import { getResolver } from "src/ConfigurationFactory";
+import * as factories from "./configuration-factories";
 
 const { match } = sinon;
 
@@ -19,10 +19,16 @@ describe("'Add value' case", () => {
   let modals: sinon.SinonStubbedInstance<Modals>;
 
   beforeEach(() => {
-    const configuration = configurationFromJson(config);
+    const forgeConfiguration = {
+      commands: [factories.createSetValueCommand()],
+    };
     fileManager = new FakeMetadataFileManager();
     modals = sinon.createStubInstance(Modals);
-    forge = new Forge({ fileManager, configuration, suggester: modals });
+    forge = createForgeFromConfig({
+      fileManager,
+      forgeConfiguration,
+      suggester: modals,
+    });
     modals.prompt.onFirstCall().resolves("Value");
   });
 
@@ -60,11 +66,3 @@ describe("number-input values", () => {
     expect(result.value).to.equal(42);
   });
 });
-
-const config: Command[] = [
-  {
-    $command: "set-value",
-    key: "type",
-    value: { $type: "string-input", prompt: "Type something" },
-  },
-];

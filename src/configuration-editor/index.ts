@@ -1,21 +1,22 @@
 import van from "vanjs-core";
-import { GlobalConfiguration } from "../configuration-schema";
 import * as classNames from "./index.module.css";
 import { Setting } from "./obsidian-controls";
 import { ForgeEditor } from "./forge-editor";
-import { defaultValue } from "./defaults";
+import { createDefaultForgeConfiguration } from "./defaults";
 import { deepState, stateArray } from "./helpers";
+import { PluginConfiguration } from "src/plugin-configuration";
 
 const { div, button } = van.tags;
 
-export type OnConfigChanged = (config: GlobalConfiguration) => void;
+export type OnConfigChanged = (config: PluginConfiguration) => void;
 
 const ConfigurationEditor = (props: {
-  config: GlobalConfiguration;
+  config: PluginConfiguration;
   onConfigChanged?: OnConfigChanged;
 }) => {
   const s = van.state(props.config);
-  const forges = stateArray(deepState(s).forges);
+  const { editorConfiguration, smithConfiguration } = deepState(s);
+  const forges = stateArray(deepState(smithConfiguration).forges);
   van.derive(() => {
     const newState = s.val;
     if (newState !== s.oldVal && props.onConfigChanged) {
@@ -32,32 +33,27 @@ const ConfigurationEditor = (props: {
         {
           onclick: (e) => {
             e.preventDefault();
-            const newForge = {
-              name: "Forge name ...",
-              commands: [
-                {
-                  $command: "set-value" as const,
-                  key: "key",
-                  value: defaultValue,
-                },
-              ],
-            };
-            const forgeConfig = van.state(newForge);
+            const forgeConfig = van.state(createDefaultForgeConfiguration());
             forges.val = [...forges.val, forgeConfig];
-            van.add(result, ForgeEditor({ forgeConfig, expand: true }));
+            van.add(
+              result,
+              ForgeEditor({ forgeConfig, expand: true, editorConfiguration }),
+            );
           },
         },
         "New forge",
       ),
     }),
-    ...forges.val.map((forgeConfig) => ForgeEditor({ forgeConfig })),
+    ...forges.val.map((forgeConfig) =>
+      ForgeEditor({ forgeConfig, editorConfiguration }),
+    ),
   );
   return result;
 };
 
 export const render = (
   root: HTMLElement,
-  config: GlobalConfiguration,
+  config: PluginConfiguration,
   onConfigChanged?: OnConfigChanged,
 ) => {
   van.add(root, ConfigurationEditor({ config, onConfigChanged }));

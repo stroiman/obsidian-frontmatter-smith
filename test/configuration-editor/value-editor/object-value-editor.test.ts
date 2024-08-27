@@ -1,16 +1,11 @@
 import sinon from "sinon";
 import userEvent, { UserEvent } from "@testing-library/user-event";
-import {
-  emptyConfiguration,
-  GlobalConfiguration,
-} from "src/configuration-schema.js";
-import { deepFreeze } from "../helpers";
 import { OnConfigChanged, render } from "src/configuration-editor";
 import { within } from "@testing-library/dom";
 import { QueryFunctions } from "../types";
 import { getObjectKeys } from "../dom-queries";
 import { expect } from "chai";
-import { defaultValue } from "src/configuration-editor/defaults";
+import * as factories from "test/configuration-factories";
 
 describe("Object configuration", () => {
   let user: UserEvent;
@@ -25,6 +20,9 @@ describe("Object configuration", () => {
     Parameters<OnConfigChanged>,
     ReturnType<OnConfigChanged>
   >;
+
+  const getCurrentSmithConfig = () =>
+    onConfigChanged.lastCall.lastArg.smithConfiguration;
 
   beforeEach(() => {
     root = document.body.appendChild(document.createElement("div"));
@@ -58,7 +56,7 @@ describe("Object configuration", () => {
     });
 
     it("Should update the config with a new key", () => {
-      const actualConfig = onConfigChanged.lastCall.firstArg;
+      const actualConfig = getCurrentSmithConfig();
       expect(actualConfig).to.be.like({
         forges: [
           {
@@ -69,7 +67,7 @@ describe("Object configuration", () => {
                     { key: "Option 1" },
                     { key: "Option 2" },
                     {
-                      value: defaultValue,
+                      value: {},
                     },
                   ],
                 },
@@ -93,7 +91,7 @@ describe("Object configuration", () => {
     });
 
     it("Should remove the option from the config", () => {
-      const actualConfig = onConfigChanged.lastCall.firstArg;
+      const actualConfig = getCurrentSmithConfig();
       expect(actualConfig).to.be.like({
         forges: [
           {
@@ -116,7 +114,7 @@ describe("Object configuration", () => {
       const input = within(keys[0]).getByRole("textbox", { name: "Key" });
       await user.clear(input);
       await user.type(input, "new key");
-      const actualConfig = onConfigChanged.lastCall.firstArg;
+      const actualConfig = getCurrentSmithConfig();
       expect(actualConfig).to.be.like({
         forges: [
           {
@@ -134,30 +132,18 @@ describe("Object configuration", () => {
   });
 });
 
-const testConfiguration: GlobalConfiguration = deepFreeze({
-  ...emptyConfiguration,
-  forges: [
-    {
-      name: "Forge",
-      commands: [
-        {
-          $command: "set-value",
-          key: "key",
-          value: {
-            $type: "object",
-            values: [
-              {
-                key: "Option 1",
-                value: { $type: "constant", value: 123 },
-              },
-              {
-                key: "Option 2",
-                value: { $type: "constant", value: 123 },
-              },
-            ],
-          },
-        },
-      ],
-    },
-  ],
-} satisfies GlobalConfiguration);
+const testConfiguration = factories.buildPluginConfiguration((p) =>
+  p.addForge((f) =>
+    f.setName("Forge").addCommand((c) =>
+      c
+        .setValue()
+        .setKey("key")
+        .buildValue((x) =>
+          x
+            .objectValue()
+            .addConstItem("Option 1", 123)
+            .addConstItem("Option 2", 123),
+        ),
+    ),
+  ),
+);

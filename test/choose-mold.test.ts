@@ -5,10 +5,13 @@ import { Modals } from "src/modals";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
 import RootRunner from "src/RootRunner";
 import {
-  Command,
-  GlobalConfiguration,
+  SmithConfiguration,
   isConfigurationValid,
-} from "src/configuration-schema";
+} from "src/smith-configuration-schema";
+import {
+  buildSmithConfiguration,
+  createConstantValue,
+} from "./configuration-factories";
 
 describe("Choosing a mold", () => {
   let fileManager: FakeMetadataFileManager;
@@ -72,34 +75,33 @@ describe("Choosing a mold", () => {
   });
 });
 
-const addFoo: Command = {
-  $command: "set-value",
-  key: "foo",
-  value: { $type: "constant", value: "foo value" },
-};
-const addBar: Command = {
-  $command: "set-value",
-  key: "bar",
-  value: { $type: "constant", value: "bar value" },
-};
+const config: SmithConfiguration = buildSmithConfiguration((s) =>
+  s
+    .addForge((f) =>
+      f.setName("Add foo").addCommand((c) =>
+        c
+          .setValue()
+          .setKey("foo")
+          .setValue(createConstantValue({ value: "foo value" })),
+      ),
+    )
+    .addForge((f) =>
+      f.setName("Add bar").addCommand((c) =>
+        c
+          .setValue()
+          .setKey("bar")
+          .setValue(createConstantValue({ value: "bar value" })),
+      ),
+    ),
+);
 
-const config: GlobalConfiguration = {
-  version: "1",
-  forges: [
-    {
-      name: "Add foo",
-      commands: [addFoo],
-    },
-    { name: "Add bar", commands: [addBar] },
-  ],
-};
-
-const singleMoldConfig: GlobalConfiguration = {
-  version: "1",
-  forges: [
-    {
-      name: "Add foo",
-      commands: [addFoo],
-    },
-  ],
-};
+const singleMoldConfig: SmithConfiguration = buildSmithConfiguration((s) =>
+  s.addForge((f) =>
+    f.setName("Add foo").addCommand((c) =>
+      c
+        .setValue()
+        .setKey("foo")
+        .setValue(createConstantValue({ value: "foo value" })),
+    ),
+  ),
+);

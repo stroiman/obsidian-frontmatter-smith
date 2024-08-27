@@ -1,4 +1,12 @@
-import { GlobalConfiguration } from "src/configuration-schema";
+import { parseConfiguration } from "../src/plugin-configuration";
+
+export const parseConfigurationOrThrow = (x: unknown) => {
+  const result = parseConfiguration(x);
+  if (!result) {
+    throw new Error("Invalid configuration");
+  }
+  return result;
+};
 
 /**
  * A configuration containing all possible types.
@@ -7,8 +15,11 @@ import { GlobalConfiguration } from "src/configuration-schema";
  * tests, where we want to be sure that every case is covered, e.g. rendering a
  * test configuration in a test UI, or verifying that loading the configuration
  * does not result in "updated" events.
+ *
+ * This is also 'unknown', as this is passed to the `parse` function verifying
+ * that migration of older formats work.
  */
-export const fullConfiguration: GlobalConfiguration = {
+export const fullConfiguration = {
   version: "1",
   forges: [
     {

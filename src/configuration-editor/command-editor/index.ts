@@ -4,7 +4,7 @@ import {
   Command,
   SetValueCommand,
   AddToArrayCommand,
-} from "../../configuration-schema";
+} from "../../smith-configuration-schema";
 
 import { Setting } from "../obsidian-controls";
 import { deepState, genId, wrapState } from "../helpers";

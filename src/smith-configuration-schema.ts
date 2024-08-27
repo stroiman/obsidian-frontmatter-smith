@@ -1,12 +1,35 @@
 import * as t from "io-ts";
+import reporter from "io-ts-reporters";
+import { withFallback } from "io-ts-types";
+import { withValidate } from "io-ts-types";
+import { orElse } from "fp-ts/lib/Either";
+import { nanoid } from "nanoid";
+
+const withFallbackFn = <C extends t.Any>(
+  codec: C,
+  a: () => t.TypeOf<C>,
+  name = `withFallback(${codec.name})`,
+): C => {
+  return withValidate(
+    codec,
+    (u, c) => orElse(() => t.success(a()))(codec.validate(u, c)),
+    name,
+  );
+};
+
+export const createId = nanoid;
+
+const $id = withFallbackFn(t.string, createId);
 
 export type AddToArrayCommand = {
+  $id: string;
   $command: "add-array-element";
   key: string;
   value: Value;
 };
 
 export type SetValueCommand = {
+  $id: string;
   $command: "set-value";
   key: string;
   value: Value;
@@ -20,21 +43,11 @@ export type StringInputValue = {
 };
 
 export type ChoiceValueItem = {
-  text: string;
-  value: string;
-  commands?: Command[];
-};
-
-export type SafeChoiceValue = {
+  $id: string;
   text: string;
   value: string;
   commands: Command[];
 };
-
-export const toSafe = (v: ChoiceValueItem): SafeChoiceValue => ({
-  ...v,
-  commands: v.commands || [],
-});
 
 export type ChoiceValue = {
   $type: "choice-input";
@@ -42,18 +55,7 @@ export type ChoiceValue = {
   options: ChoiceValueItem[];
 };
 
-export type SafeChoiceInput = {
-  $type: "choice-input";
-  prompt: string;
-  options: SafeChoiceValue[];
-};
-
-export const toSafeInput = (x: ChoiceValue): SafeChoiceInput => ({
-  ...x,
-  options: x.options.map(toSafe),
-});
-
-export type ObjectValueItem = { key: string; value: Value };
+export type ObjectValueItem = { $id: string; key: string; value: Value };
 
 export type ObjectValue = {
   $type: "object";
@@ -84,21 +86,21 @@ const value: t.Type<Value> = t.recursion("Value", () => {
     value: t.any,
   });
 
-  const optional = <T extends t.Any>(codec: T) => t.union([t.undefined, codec]);
+  const choiceValueItem = t.type({
+    $id,
+    text: t.string,
+    value: t.string,
+    commands: withFallback(t.array(command), []),
+  });
 
   const choiceValue: t.Type<ChoiceValue> = t.type({
     $type: t.literal("choice-input"),
     prompt: t.string,
-    options: t.array(
-      t.type({
-        text: t.string,
-        value: t.string,
-        commands: optional(t.array(command)),
-      }),
-    ),
+    options: t.array(choiceValueItem),
   });
 
-  const objectValueItem: t.Type<{ key: string; value: Value }> = t.type({
+  const objectValueItem: t.Type<ObjectValueItem> = t.type({
+    $id,
     key: t.string,
     value: value,
   });
@@ -113,12 +115,14 @@ const value: t.Type<Value> = t.recursion("Value", () => {
 
 const command: t.Type<Command> = t.recursion("Command", () => {
   const addToArrayCommand = t.strict({
+    $id,
     $command: t.literal("add-array-element"),
     key: t.string,
     value: value,
   });
 
   const setValueCommand = t.strict({
+    $id,
     $command: t.literal("set-value"),
     key: t.string,
     value: value,
@@ -128,6 +132,7 @@ const command: t.Type<Command> = t.recursion("Command", () => {
 });
 
 const forgeConfiguration = t.strict({
+  $id,
   name: t.string,
   commands: t.array(command),
 });
@@ -136,20 +141,20 @@ export type ForgeConfiguration = t.TypeOf<typeof forgeConfiguration>;
 export type Commands = ForgeConfiguration["commands"];
 export type CommandType = Command["$command"];
 
-export const globalConfiguration = t.strict({
+export const smithConfiguration = t.strict({
   version: t.literal("1"),
   forges: t.array(forgeConfiguration),
 });
 
-export type GlobalConfiguration = t.TypeOf<typeof globalConfiguration>;
+export type SmithConfiguration = t.TypeOf<typeof smithConfiguration>;
 
-export const emptyConfiguration: GlobalConfiguration = {
+export const emptySmithConfiguration: SmithConfiguration = {
   version: "1",
   forges: [],
 };
 
-export const isConfigurationValid = (x: unknown): x is GlobalConfiguration => {
-  const result = globalConfiguration.decode(x);
+export const isConfigurationValid = (x: unknown): x is SmithConfiguration => {
+  const result = smithConfiguration.decode(x);
   switch (result._tag) {
     case "Left":
       return false;
@@ -157,4 +162,20 @@ export const isConfigurationValid = (x: unknown): x is GlobalConfiguration => {
       return true;
   }
   return false;
+};
+
+export const parseConfiguration = (x: unknown): SmithConfiguration | null => {
+  const result = smithConfiguration.decode(x);
+  switch (result._tag) {
+    case "Left":
+      console.error("Error parsing plugin config", reporter.report(result));
+      return null;
+    case "Right":
+      return result.right;
+  }
+  throw new Error("Not supposed to be here!");
+};
+
+export const parseConfigOrDefault = (x: unknown): SmithConfiguration => {
+  return parseConfiguration(x) || emptySmithConfiguration;
 };

@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "touch main.css && node esbuild.config.mjs",
     "typecheck": "tsc -noEmit -skipLibCheck",
+    "tsc-watch": "tsc -noEmit -skipLibCheck -w",
     "lint": "eslint .",
     "bundle": "touch main.css && node esbuild.config.mjs production && cp main.css styles.css",
     "build": "pnpm bundle && pnpm typecheck && pnpm lint && pnpm test",
@@ -43,6 +44,7 @@
     "eslint": "^9.7.0",
     "globals": "^15.8.0",
     "happy-dom": "^14.12.3",
+    "io-ts-reporters": "^2.0.1",
     "mocha": "^10.7.0",
     "nodemon": "^3.1.4",
     "obsidian": "latest",
@@ -56,6 +58,8 @@
   "dependencies": {
     "fp-ts": "^2.16.8",
     "io-ts": "^2.2.21",
+    "io-ts-types": "^0.5.19",
+    "nanoid": "^5.0.7",
     "vanjs-core": "^1.5.1"
   }
 }

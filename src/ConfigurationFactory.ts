@@ -3,7 +3,6 @@ import {
   ChoiceResolver,
   ConstResolver,
   Data,
-  ForgeConfiguration,
   NumberResolver,
   ObjectResolver,
   PromtResolver,
@@ -11,7 +10,7 @@ import {
   ValueResolver,
 } from "./ForgeConfiguration";
 import { Modals } from "./modals";
-import * as schema from "./configuration-schema";
+import * as schema from "./smith-configuration-schema";
 
 export const getResolver = (
   option: schema.Value,
@@ -49,10 +48,4 @@ export const createOperations = (options: schema.Command[]) => {
         return new SetValue(option.key, getResolver(option.value));
     }
   });
-};
-
-export const configurationFromJson = (
-  input: schema.Command[],
-): ForgeConfiguration => {
-  return new ForgeConfiguration(createOperations(input));
 };

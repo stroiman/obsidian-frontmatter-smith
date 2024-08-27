@@ -3,15 +3,13 @@ import sinon from "sinon";
 import userEvent, { UserEvent } from "@testing-library/user-event";
 // eslint-disable-next-line
 import { within, screen } from "@testing-library/dom";
-import {
-  emptyConfiguration,
-  GlobalConfiguration,
-} from "src/configuration-schema.js";
+import { emptySmithConfiguration } from "src/smith-configuration-schema.js";
 import { OnConfigChanged, render } from "src/configuration-editor";
 import { expect } from "chai";
 import { QueryFunctions } from "../types";
 import { getCommandSections, getOptions } from "../dom-queries";
 import { deepFreeze } from "../helpers";
+import { parseConfigurationOrThrow } from "test/fixtures";
 
 describe("Choice value configuration", () => {
   let user: UserEvent;
@@ -26,6 +24,9 @@ describe("Choice value configuration", () => {
     Parameters<OnConfigChanged>,
     ReturnType<OnConfigChanged>
   >;
+
+  const getCurrentSmithConfig = () =>
+    onConfigChanged.lastCall.lastArg.smithConfiguration;
 
   beforeEach(() => {
     root = document.body.appendChild(document.createElement("div"));
@@ -72,7 +73,7 @@ describe("Choice value configuration", () => {
         await user.clear(textInput);
         await user.type(textInput, "PROMPT");
 
-        const actualConfig = onConfigChanged.lastCall.firstArg;
+        const actualConfig = getCurrentSmithConfig();
         expect(actualConfig).to.be.like({
           forges: [
             {
@@ -104,7 +105,7 @@ describe("Choice value configuration", () => {
       });
       await user.clear(valueInput);
       await user.type(valueInput, "New value");
-      const actualConfig = onConfigChanged.lastCall.firstArg;
+      const actualConfig = getCurrentSmithConfig();
       expect(actualConfig).to.be.like({
         forges: [
           {
@@ -134,7 +135,7 @@ describe("Choice value configuration", () => {
       await user.click(removeButton);
       options = getOptions(scope);
       expect(options).to.have.lengthOf(1);
-      const actualConfig = onConfigChanged.lastCall.firstArg;
+      const actualConfig = getCurrentSmithConfig();
       expect(actualConfig).to.be.like({
         forges: [
           { commands: [{ value: { options: [{ text: "Option 2" }] } }] },
@@ -151,7 +152,7 @@ describe("Choice value configuration", () => {
       });
       await user.clear(textInput);
       await user.type(textInput, "New text value");
-      const actualConfig = onConfigChanged.lastCall.firstArg;
+      const actualConfig = getCurrentSmithConfig();
       expect(actualConfig).to.be.like({
         forges: [
           {
@@ -179,7 +180,7 @@ describe("Choice value configuration", () => {
       });
       await user.clear(textInput);
       await user.type(textInput, "New value");
-      const actualConfig = onConfigChanged.lastCall.firstArg;
+      const actualConfig = getCurrentSmithConfig();
       expect(actualConfig).to.be.like({
         forges: [
           {
@@ -202,31 +203,33 @@ describe("Choice value configuration", () => {
   });
 });
 
-const testConfiguration: GlobalConfiguration = deepFreeze({
-  ...emptyConfiguration,
-  forges: [
-    {
-      name: "Forge",
-      commands: [
-        {
-          $command: "set-value",
-          key: "key",
-          value: {
-            $type: "choice-input",
-            prompt: "Choice",
-            options: [
-              {
-                text: "Option 1",
-                value: "Value 1",
-              },
-              {
-                text: "Option 2",
-                value: "Value 2",
-              },
-            ],
+const testConfiguration = deepFreeze(
+  parseConfigurationOrThrow({
+    ...emptySmithConfiguration,
+    forges: [
+      {
+        name: "Forge",
+        commands: [
+          {
+            $command: "set-value",
+            key: "key",
+            value: {
+              $type: "choice-input",
+              prompt: "Choice",
+              options: [
+                {
+                  text: "Option 1",
+                  value: "Value 1",
+                },
+                {
+                  text: "Option 2",
+                  value: "Value 2",
+                },
+              ],
+            },
           },
-        },
-      ],
-    },
-  ],
-});
+        ],
+      },
+    ],
+  }),
+);

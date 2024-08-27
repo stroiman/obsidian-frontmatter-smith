@@ -2,9 +2,9 @@ import van from "vanjs-core";
 import * as classNames from "./object-value-editor.module.css";
 import { State } from "vanjs-core";
 import { button, div, input, section, label } from "../tags";
-import { ObjectValue, ObjectValueItem } from "src/configuration-schema";
+import { ObjectValue, ObjectValueItem } from "src/smith-configuration-schema";
 import { deepState, genId, stateArray } from "../helpers";
-import { defaultValue } from "../defaults";
+import { createDefaultObjectValueItem } from "../defaults";
 import { renderValueEditor, ValueTypeEditor } from "./index";
 import { HeadingWithButton } from "../containers";
 import { ExpandCollapseButton } from "../components";
@@ -25,9 +25,14 @@ const ValueEditor = (props: {
   const style = van.derive(() =>
     visible.val ? "display: block" : "display: none",
   );
+  const valueContainerId = genId("value-container");
   const element = section(
     { "aria-labelledBy": keyLabelId, className: classNames.property },
-    ExpandCollapseButton({ visible }),
+    ExpandCollapseButton({
+      visible,
+      type: "value editor",
+      controlledContainerId: valueContainerId,
+    }),
     input({
       type: "text",
       value: key.val,
@@ -46,7 +51,7 @@ const ValueEditor = (props: {
       "Remove",
     ),
     renderValueEditor(
-      div({ className: classNames.propertyValue, style }),
+      div({ id: valueContainerId, className: classNames.propertyValue, style }),
       value,
     ),
   );
@@ -77,10 +82,7 @@ export const ObjectValueEditor = ({ value }: { value: State<ObjectValue> }) => {
       control: button(
         {
           onclick: () => {
-            const value = van.state({
-              key: "key ...",
-              value: defaultValue,
-            });
+            const value = van.state(createDefaultObjectValueItem());
             values.val = [...values.val, value];
             van.add(items, ValueEditor({ value, keyLabelId, onRemoveClick }));
           },
