@@ -1,10 +1,11 @@
-import van from "vanjs-core";
+import van, { State } from "vanjs-core";
 import * as classNames from "./index.module.css";
 import { Setting } from "./obsidian-controls";
 import { ForgeEditor } from "./forge-editor";
 import { createDefaultForgeConfiguration } from "./defaults";
 import { deepState, stateArray } from "./helpers";
 import { PluginConfiguration } from "src/plugin-configuration";
+import { ForgeConfiguration } from "src/smith-configuration-schema";
 
 const { div, button } = van.tags;
 
@@ -23,6 +24,17 @@ const ConfigurationEditor = (props: {
       props.onConfigChanged(newState);
     }
   });
+  const onRemoveClick = (
+    elm: HTMLElement,
+    forge: State<ForgeConfiguration>,
+  ) => {
+    result.removeChild(elm);
+    forges.val = forges.val.filter((x) => x !== forge);
+    const expanded = { ...editorConfiguration.val.expanded };
+    delete expanded[forge.val.$id];
+    editorConfiguration.val = { ...editorConfiguration.val, expanded };
+    //editorConfiguration.val
+  };
   const result = div(
     { className: classNames.forgeConfig },
     Setting({
@@ -37,7 +49,12 @@ const ConfigurationEditor = (props: {
             forges.val = [...forges.val, forgeConfig];
             van.add(
               result,
-              ForgeEditor({ forgeConfig, expand: true, editorConfiguration }),
+              ForgeEditor({
+                forgeConfig,
+                expand: true,
+                editorConfiguration,
+                onRemoveClick,
+              }),
             );
           },
         },
@@ -45,7 +62,7 @@ const ConfigurationEditor = (props: {
       ),
     }),
     ...forges.val.map((forgeConfig) =>
-      ForgeEditor({ forgeConfig, editorConfiguration }),
+      ForgeEditor({ forgeConfig, editorConfiguration, onRemoveClick }),
     ),
   );
   return result;

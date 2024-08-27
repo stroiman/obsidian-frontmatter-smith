@@ -5,7 +5,7 @@ import * as classNames from "./index.module.css";
 import { Setting } from "../obsidian-controls";
 import { deepState, deepState2way, genId } from "../helpers";
 import { CommandList } from "../value-editor";
-import { div } from "../tags";
+import { button, div } from "../tags";
 import { ExpandCollapseButton } from "../components";
 import { EditorConfiguration } from "src/plugin-configuration";
 
@@ -21,6 +21,10 @@ export function ForgeEditor(props: {
   forgeConfig: State<ForgeConfiguration>;
   expand?: boolean;
   editorConfiguration: State<EditorConfiguration>;
+  onRemoveClick: (
+    elm: HTMLElement,
+    forgeConfig: State<ForgeConfiguration>,
+  ) => void;
 }) {
   const { forgeConfig, expand, editorConfiguration } = props;
   const { expanded } = deepState2way(editorConfiguration);
@@ -37,7 +41,7 @@ export function ForgeEditor(props: {
       expanded.val = { ...expanded.val, [$id]: newVal };
     }
   });
-  return section(
+  const elm = section(
     {
       className: classNames.forgeConfigBlock,
       ["aria-labelledBy"]: id,
@@ -61,6 +65,16 @@ export function ForgeEditor(props: {
           ["aria-label"]: `Forge: ${name.val}`,
         },
         name,
+      ),
+      button(
+        {
+          onclick: (e) => {
+            e.stopPropagation();
+            props.onRemoveClick(elm, props.forgeConfig);
+          },
+          ["aria-label"]: "Remove forge",
+        },
+        "Remove",
       ),
     ),
     div(
@@ -86,4 +100,5 @@ export function ForgeEditor(props: {
       CommandList({ commands }),
     ),
   );
+  return elm;
 }

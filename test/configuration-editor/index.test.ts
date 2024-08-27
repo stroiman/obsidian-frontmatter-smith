@@ -242,7 +242,7 @@ describe("UI", () => {
         beforeEach(async () => {
           const lastSection = getForgeSections(scope).at(-1)!;
           const removeButton = within(lastSection).getByRole("button", {
-            name: /^Remove/,
+            name: /^Remove command/,
           });
           await user.click(removeButton);
         });
@@ -294,7 +294,7 @@ describe("UI", () => {
         beforeEach(async () => {
           const lastSection = getForgeSections(scope).at(-1)!;
           const removeButton = within(lastSection).getByRole("button", {
-            name: /^Remove/,
+            name: /^Remove command/,
           });
           await user.click(removeButton);
         });

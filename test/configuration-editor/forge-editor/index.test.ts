@@ -116,10 +116,10 @@ describe("Forge editor", () => {
         const sections = getForgeSections(scope);
         await user.click(getExpandCollapseButton(within(sections[0])));
         await user.click(getExpandCollapseButton(within(sections[2])));
+        rerender();
       });
 
       it("Remember both settings", async () => {
-        rerender();
         const sections = getForgeSections(scope);
         const button1 = getExpandCollapseButton(within(sections[0]));
         const button2 = getExpandCollapseButton(within(sections[1]));
@@ -130,6 +130,32 @@ describe("Forge editor", () => {
           "true",
         );
         expect(button3, "button3").to.have.attribute("aria-expanded", "true");
+      });
+
+      describe("Remove a forge", () => {
+        let firstForgeId: string;
+
+        beforeEach(async () => {
+          const sections = getForgeSections(scope);
+          firstForgeId = pluginConfig.smithConfiguration.forges[0].$id;
+          await user.click(
+            within(sections[0]).getByRole("button", { name: /^Remove forge/ }),
+          );
+        });
+
+        it("Removes the element in the UI", () => {
+          expect(getForgeSections(scope)).to.have.lengthOf(2);
+        });
+
+        it("Removes the forge from the smith configuration", () => {
+          expect(pluginConfig.smithConfiguration.forges).to.have.lengthOf(2);
+        });
+
+        it("Removes the element from editor state", async () => {
+          expect(
+            pluginConfig.editorConfiguration.expanded,
+          ).to.not.have.ownProperty(firstForgeId);
+        });
       });
     });
   });
