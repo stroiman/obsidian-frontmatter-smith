@@ -33,12 +33,17 @@ const Choice = (props: {
       : classNames.choiceCommands + " " + classNames.hidden,
   );
   const { commands, text, value } = deepState(choice);
+  const optionContainerId = genId("option-container");
   const element = section(
     {
       "aria-label": "Option: " + choice.val.value,
       className: classNames.choiceSection,
     },
-    ExpandCollapseButton({ visible: showChildren, type: "choice" }),
+    ExpandCollapseButton({
+      visible: showChildren,
+      type: "choice",
+      controlledContainerId: optionContainerId,
+    }),
     SimpleStateInput({ labelId: textLabelId, value: text }),
     SimpleStateInput({ labelId: valueLabelId, value }),
     div(
@@ -48,7 +53,7 @@ const Choice = (props: {
       ),
     ),
     div(
-      { className: childCls },
+      { id: optionContainerId, className: childCls },
 
       h4("Commands"),
       p(

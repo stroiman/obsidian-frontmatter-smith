@@ -1,4 +1,7 @@
-import { PluginConfiguration } from "src/plugin-configuration";
+import {
+  defaultConfiguration,
+  PluginConfiguration,
+} from "src/plugin-configuration";
 import {
   ChoiceValue,
   SetValueCommand,
@@ -13,6 +16,9 @@ import {
   ForgeConfiguration,
   SmithConfiguration,
 } from "src/smith-configuration-schema";
+import { deepFreeze } from "./configuration-editor/helpers";
+
+const id = <T>(x: T): T => x;
 
 let nextVal = 1;
 
@@ -311,8 +317,8 @@ export class SmithConfigurationBuilder {
     this.config = { version: "1", forges: [] };
   }
 
-  addForge(f: BuildAction<ForgeBuilder>) {
-    this.config.forges.push(f(new ForgeBuilder()).build());
+  addForge(f?: BuildAction<ForgeBuilder>) {
+    this.config.forges.push((f || id)(new ForgeBuilder()).build());
     return this;
   }
 
@@ -323,11 +329,10 @@ export class SmithConfigurationBuilder {
 
 export class ConfigurationBuilder extends SmithConfigurationBuilder {
   buildC(): PluginConfiguration {
-    return {
-      version: "1",
-      type: "plugin-config",
+    return deepFreeze({
+      ...defaultConfiguration,
       smithConfiguration: super.build(),
-    };
+    });
   }
 }
 
@@ -339,6 +344,7 @@ export const buildSmithConfiguration = (
 ) => {
   return f(new SmithConfigurationBuilder()).build();
 };
+
 export const buildPluginConfiguration = (
   f: BuildAction<ConfigurationBuilder>,
 ) => f(new ConfigurationBuilder()).buildC();

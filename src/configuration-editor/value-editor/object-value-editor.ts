@@ -25,9 +25,14 @@ const ValueEditor = (props: {
   const style = van.derive(() =>
     visible.val ? "display: block" : "display: none",
   );
+  const valueContainerId = genId("value-container");
   const element = section(
     { "aria-labelledBy": keyLabelId, className: classNames.property },
-    ExpandCollapseButton({ visible, type: "value editor" }),
+    ExpandCollapseButton({
+      visible,
+      type: "value editor",
+      controlledContainerId: valueContainerId,
+    }),
     input({
       type: "text",
       value: key.val,
@@ -46,7 +51,7 @@ const ValueEditor = (props: {
       "Remove",
     ),
     renderValueEditor(
-      div({ className: classNames.propertyValue, style }),
+      div({ id: valueContainerId, className: classNames.propertyValue, style }),
       value,
     ),
   );

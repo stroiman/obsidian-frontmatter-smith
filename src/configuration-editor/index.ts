@@ -15,7 +15,7 @@ const ConfigurationEditor = (props: {
   onConfigChanged?: OnConfigChanged;
 }) => {
   const s = van.state(props.config);
-  const { smithConfiguration } = deepState(s);
+  const { editorConfiguration, smithConfiguration } = deepState(s);
   const forges = stateArray(deepState(smithConfiguration).forges);
   van.derive(() => {
     const newState = s.val;
@@ -35,13 +35,18 @@ const ConfigurationEditor = (props: {
             e.preventDefault();
             const forgeConfig = van.state(createDefaultForgeConfiguration());
             forges.val = [...forges.val, forgeConfig];
-            van.add(result, ForgeEditor({ forgeConfig, expand: true }));
+            van.add(
+              result,
+              ForgeEditor({ forgeConfig, expand: true, editorConfiguration }),
+            );
           },
         },
         "New forge",
       ),
     }),
-    ...forges.val.map((forgeConfig) => ForgeEditor({ forgeConfig })),
+    ...forges.val.map((forgeConfig) =>
+      ForgeEditor({ forgeConfig, editorConfiguration }),
+    ),
   );
   return result;
 };

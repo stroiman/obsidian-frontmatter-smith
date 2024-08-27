@@ -5,7 +5,8 @@ render(
   document.getElementById("app")!,
   parseConfigurationOrThrow(fullConfiguration),
   (config) => {
-    console.log({ config });
-    console.log(new Error());
+    //console.log({ config });
+    console.log(config.editorConfiguration.expanded);
+    //console.log(new Error());
   },
 );
