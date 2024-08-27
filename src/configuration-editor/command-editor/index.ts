@@ -56,8 +56,7 @@ const SetValueEditor = (props: {
   onRemoveClick: () => void;
 }) => {
   const { command, headingId } = props;
-  const { key } = deepState(command);
-  const { value } = deepState(props.command);
+  const { key, value } = deepState(command);
   return [
     CommandNameAndDesc({
       name: "Set Value",
@@ -85,8 +84,7 @@ const AddArrayElementEditor = (props: {
   onRemoveClick: () => void;
 }) => {
   const { headingId, onRemoveClick, command } = props;
-  const { value } = deepState(props.command);
-  const { key } = deepState(command);
+  const { value, key } = deepState(command);
   return [
     CommandNameAndDesc({
       headingId,

@@ -93,6 +93,9 @@ describe("Choice value configuration", () => {
 
   describe("Add value", () => {
     it("Should add a new value", async () => {
+      const commandKeyInput = scope.getByRole("textbox", { name: /Key/ });
+      await user.clear(commandKeyInput);
+      await user.type(commandKeyInput, "target-key");
       await user.click(scope.getByRole("button", { name: "Add choice" }));
       const options = getOptions(scope);
       const textInput = within(options.at(-1)!).getByRole("textbox", {
@@ -111,6 +114,7 @@ describe("Choice value configuration", () => {
           {
             commands: [
               {
+                key: "target-key",
                 value: {
                   options: [
                     { text: "Option 1", value: "Value 1" },
