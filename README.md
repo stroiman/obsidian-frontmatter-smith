@@ -164,6 +164,25 @@ if (forge) {
 }
 ```
 
+### Example, integration with Templater
+
+In one vault, I have segregated data by folders, and I have a forge for each
+folder. The forge is named after the folder it is related to. The following
+script in my Templater template will check if there is a forge for the directory
+of the file, _and automatically run it after a file has been created_.
+
+```
+<%*
+const file = tp.config.target_file
+const folder = file.parent.name;
+const api = app.plugins.plugins['frontmatter-smith'].api
+const forge = api.findForgeByName(folder)
+if (forge) {
+  await forge.runOnFile(file)
+}
+-%>
+```
+
 ## Planned features
 
 - Better UX in the editor. Maybe a more "modal" approach
