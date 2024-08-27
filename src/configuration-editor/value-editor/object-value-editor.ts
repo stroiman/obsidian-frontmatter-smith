@@ -27,7 +27,7 @@ const ValueEditor = (props: {
   );
   const element = section(
     { "aria-labelledBy": keyLabelId, className: classNames.property },
-    ExpandCollapseButton({ visible }),
+    ExpandCollapseButton({ visible, type: "value editor" }),
     input({
       type: "text",
       value: key.val,

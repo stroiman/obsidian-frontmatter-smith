@@ -35,7 +35,7 @@ export function ForgeEditor(props: {
           visible.val = !visible.val;
         },
       },
-      ExpandCollapseButton({ visible }),
+      ExpandCollapseButton({ visible, type: "Forge" }),
       h3(
         {
           id,

@@ -1,10 +1,13 @@
 import van, { State } from "vanjs-core";
 import { button, input } from "./tags";
 
-export const ExpandCollapseButton = (props: { visible: State<boolean> }) => {
-  const { visible } = props;
+export const ExpandCollapseButton = (props: {
+  visible: State<boolean>;
+  type: string;
+}) => {
+  const { visible, type } = props;
   const expandCollapseLabel = van.derive(() =>
-    visible.val ? "Collapse value editor" : "Expend value editor",
+    visible.val ? `Collapse ${type}` : `Expand ${type}`,
   );
   const expendButtonContent = van.derive(() => (visible.val ? "▼" : "▲"));
   return button(

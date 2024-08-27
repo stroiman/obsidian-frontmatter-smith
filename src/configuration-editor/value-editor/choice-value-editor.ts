@@ -38,7 +38,7 @@ const Choice = (props: {
       "aria-label": "Option: " + choice.val.value,
       className: classNames.choiceSection,
     },
-    ExpandCollapseButton({ visible: showChildren }),
+    ExpandCollapseButton({ visible: showChildren, type: "choice" }),
     SimpleStateInput({ labelId: textLabelId, value: text }),
     SimpleStateInput({ labelId: valueLabelId, value }),
     div(
