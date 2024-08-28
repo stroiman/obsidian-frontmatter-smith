@@ -178,7 +178,10 @@ const folder = file.parent.name;
 const api = app.plugins.plugins['frontmatter-smith'].api
 const forge = api.findForgeByName(folder)
 if (forge) {
-  await forge.runOnFile(file)
+  // runOnFile returns a promise, but don't `await` it here. Then templater
+  // will not complete until _after_ we modified the file, and a race condition 
+  // will cause the one's changes overwritten by the other.
+  forge.runOnFile(file)
 }
 -%>
 ```
