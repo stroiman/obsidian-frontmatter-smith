@@ -78,7 +78,8 @@ export const ObjectValueEditor = ({ value }: { value: State<ObjectValue> }) => {
   return section(
     HeadingWithButton({
       name: "Object value",
-      description: "",
+      description:
+        "Hint: Remember to expand each choice after creating it to allow editing the value configuration. This will be improved in a future version",
       control: button(
         {
           onclick: () => {

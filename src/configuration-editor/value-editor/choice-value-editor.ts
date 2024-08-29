@@ -115,7 +115,8 @@ const Choices = (props: { value: State<ChoiceValue> }) => {
   return [
     HeadingWithButton({
       name: "Choices",
-      description: "",
+      description:
+        "Hint: To add new commands on selecting a value, expand the value to see the options. This will improved in a future version",
       control: button(
         {
           onclick: (e) => {

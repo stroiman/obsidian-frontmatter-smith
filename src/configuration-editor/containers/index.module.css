@@ -1,6 +1,8 @@
 .value-list {
-  border-left: 1px solid black;
-  padding-left: 1rem;
+  /*border-left: 1px solid black;*/
+  display: flex;
+  flex-direction: column;
+  gap: var(--list-gap);
 }
 
 .command-block {

@@ -2,6 +2,11 @@
   color: var(--text-error);
 }
 
+.command-wrapper {
+  border-left: 1px solid black;
+  padding-left: 1rem;
+}
+
 .new-command-form {
   display: flex;
   flex-direction: row;

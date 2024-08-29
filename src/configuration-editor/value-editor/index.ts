@@ -191,7 +191,10 @@ export const CommandList = (props: { commands: State<Command[]> }) => {
   };
   const children = ChildGroup(
     states.val.map((command, i) =>
-      CommandEditor({ command, onRemoveCommandClick }),
+      div(
+        { className: classNames.commandWrapper },
+        CommandEditor({ command, onRemoveCommandClick }),
+      ),
     ),
   );
   return [

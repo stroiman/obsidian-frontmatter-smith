@@ -61,16 +61,14 @@ const CommandNameAndDesc = (props: {
       ),
       p({ className: classNames.commandDescription }, description),
     ),
-    div(
-      dropdown,
-      button(
-        {
-          onclick: () => {
-            onRemoveClick();
-          },
+    dropdown,
+    button(
+      {
+        onclick: () => {
+          onRemoveClick();
         },
-        "Remove command",
-      ),
+      },
+      "Remove command",
     ),
   );
 };

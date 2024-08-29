@@ -1,5 +1,6 @@
 .command-block {
   display: flex;
+  gap: var(--grid-gap);
 }
 
 .command-block-left {
