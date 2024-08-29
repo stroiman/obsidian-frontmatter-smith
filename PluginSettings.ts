@@ -40,7 +40,7 @@ export default class FrontmatterSmithSettingTab extends PluginSettingTab {
       href: "https://github.com/stroiman/obsidian-frontmatter-smith",
     });
 
-    const newEditor = containerEl.createDiv();
-    render(newEditor, this.value, (config) => this.onChange(config));
+    const editorContainer = containerEl.createDiv();
+    render(editorContainer, this.value, (config) => this.onChange(config));
   }
 }
