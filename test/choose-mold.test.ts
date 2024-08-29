@@ -13,10 +13,10 @@ import {
   createConstantValue,
 } from "./configuration-factories";
 
-describe("Choosing a mold", () => {
+describe("Choosing a forge", () => {
   let fileManager: FakeMetadataFileManager;
   let modals: sinon.SinonStubbedInstance<Modals>;
-  let rootRunnerToBeRenamed: RootRunner<TFile, FakeMetadataFileManager>;
+  let rootRunner: RootRunner<TFile, FakeMetadataFileManager>;
 
   beforeEach(() => {
     modals = sinon.createStubInstance(Modals);
@@ -27,23 +27,23 @@ describe("Choosing a mold", () => {
     expect(isConfigurationValid(config)).to.be.true;
   });
 
-  describe("Config has two molds", () => {
+  describe("Config has two forges", () => {
     beforeEach(() => {
-      rootRunnerToBeRenamed = new RootRunner(config, fileManager, modals);
+      rootRunner = new RootRunner(config, fileManager, modals);
     });
 
     it("Should query the user", async () => {
       // Test explicitly what is implicitly tested, as both options are covered
       modals.suggest.selectsOption("Add foo");
       const file = fileManager.createFile();
-      await rootRunnerToBeRenamed.run(file);
+      await rootRunner.run(file);
       expect(modals.suggest).to.have.been.calledOnce;
     });
 
     it("Should add a Foo when that is selected", async () => {
       modals.suggest.selectsOption("Add foo");
       const file = fileManager.createFile();
-      await rootRunnerToBeRenamed.run(file);
+      await rootRunner.run(file);
 
       expect(fileManager.getFrontmatter(file)).to.deep.equal({
         foo: "foo value",
@@ -53,7 +53,7 @@ describe("Choosing a mold", () => {
     it("Should add a Bar when that is selected", async () => {
       modals.suggest.selectsOption("Add bar");
       const file = fileManager.createFile();
-      await rootRunnerToBeRenamed.run(file);
+      await rootRunner.run(file);
 
       expect(fileManager.getFrontmatter(file)).to.deep.equal({
         bar: "bar value",
@@ -61,10 +61,13 @@ describe("Choosing a mold", () => {
     });
   });
 
-  describe("Config has two molds", () => {
-    it("Should set the right option without UI input", async () => {
+  describe("Config has a single forge", () => {
+    beforeEach(() => {
+      rootRunner = new RootRunner(singleForgeConfig, fileManager, modals);
+    });
+
+    it("Should select the forge without user input", async () => {
       const file = fileManager.createFile();
-      const rootRunner = new RootRunner(singleMoldConfig, fileManager, modals);
       await rootRunner.run(file);
 
       expect(fileManager.getFrontmatter(file)).to.deep.equal({
@@ -95,7 +98,7 @@ const config: SmithConfiguration = buildSmithConfiguration((s) =>
     ),
 );
 
-const singleMoldConfig: SmithConfiguration = buildSmithConfiguration((s) =>
+const singleForgeConfig: SmithConfiguration = buildSmithConfiguration((s) =>
   s.addForge((f) =>
     f.setName("Add foo").addCommand((c) =>
       c
