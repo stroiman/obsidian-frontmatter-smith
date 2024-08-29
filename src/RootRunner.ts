@@ -13,17 +13,22 @@ export default class RootRunner<
     private modals: Modals,
   ) {}
 
-  async run(file: TFile) {
+  async selectForge() {
     const forges = this.config.forges;
-    if (!forges.length) {
-      return;
+    switch (forges.length) {
+      case 0:
+        return null;
+      case 1:
+        return forges[0];
+      default:
+        return await this.modals.suggest(
+          this.config.forges.map((x) => ({ ...x, text: x.name })),
+        );
     }
-    const forgeConfiguration =
-      forges.length === 1
-        ? forges[0]
-        : await this.modals.suggest(
-            this.config.forges.map((x) => ({ ...x, text: x.name })),
-          );
+  }
+
+  async run(file: TFile) {
+    const forgeConfiguration = await this.selectForge();
     if (!forgeConfiguration) {
       return;
     }
