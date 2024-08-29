@@ -32,7 +32,6 @@ export default class FrontmatterSmithPlugin extends Plugin {
 
     const handleSettingChange = (newValue: PluginConfiguration) => {
       this.settings = newValue;
-      settingsTab.setValue(newValue);
       this.saveData(newValue);
     };
 
