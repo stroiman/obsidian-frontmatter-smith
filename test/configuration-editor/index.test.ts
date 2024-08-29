@@ -202,8 +202,18 @@ describe("UI", () => {
 
     describe("Add set-value command", () => {
       beforeEach(async () => {
-        await user.selectOptions(scope.getByRole("combobox"), "Set value");
         await user.click(scope.getByRole("button", { name: "Add command" }));
+        await user.selectOptions(
+          scope.getByRole("combobox", { name: "Type of command" }),
+          "Set value",
+        );
+      });
+
+      it("Should have changed the header to 'Set Value'", () => {
+        const section = getCommandSections(scope).at(-1)!;
+        const labelId = section.getAttribute("aria-labelledby");
+        const heading = document.getElementById(labelId);
+        expect(heading).to.have.text("Set Value");
       });
 
       it("Should allow modifying the key", async () => {
@@ -262,8 +272,11 @@ describe("UI", () => {
 
     describe("Add add-array-element command", () => {
       beforeEach(async () => {
-        await user.selectOptions(scope.getByRole("combobox"), "Add to array");
         await user.click(scope.getByRole("button", { name: "Add command" }));
+        await user.selectOptions(
+          scope.getByRole("combobox", { name: "Type of command" }),
+          "Add to array",
+        );
       });
 
       it("Should add a new UI element", async () => {

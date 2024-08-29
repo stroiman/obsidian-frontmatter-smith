@@ -1,4 +1,4 @@
-import { State } from "vanjs-core";
+import van, { State } from "vanjs-core";
 import * as classNames from "./index.module.css";
 import {
   Command,
@@ -8,10 +8,11 @@ import {
 
 import { Setting } from "../obsidian-controls";
 import { deepState, genId, wrapState } from "../helpers";
-import { button, div, h4, p, section } from "../tags";
+import { button, div, h4, p, section, select, option } from "../tags";
 import { renderValueEditor, ValueTypeEditor } from "../value-editor";
 import { ChildGroup } from "../containers";
 import { StateInput } from "../components";
+import { createDefaultCommandByType } from "../defaults";
 
 export type OnRemoveCommandClick = (x: {
   element: HTMLElement;
@@ -19,12 +20,33 @@ export type OnRemoveCommandClick = (x: {
 }) => void;
 
 const CommandNameAndDesc = (props: {
+  command: State<Command>;
   headingId: string;
   name: string;
   description: string;
   onRemoveClick: () => void;
 }) => {
-  const { headingId, name, description, onRemoveClick } = props;
+  const { headingId, name, command, description, onRemoveClick } = props;
+  const dropdown = select(
+    {
+      className: "dropdown",
+      ["aria-label"]: "Type of command",
+      onchange: (e) => {
+        command.val = createDefaultCommandByType(e.target.value);
+      },
+    },
+    option(
+      {
+        value: "add-array-element",
+        selected: command.val.$command === "add-array-element",
+      },
+      "Add to array",
+    ),
+    option(
+      { value: "set-value", selected: command.val.$command === "set-value" },
+      "Set value",
+    ),
+  );
   return div(
     { className: classNames.commandBlock },
     div(
@@ -39,13 +61,16 @@ const CommandNameAndDesc = (props: {
       ),
       p({ className: classNames.commandDescription }, description),
     ),
-    button(
-      {
-        onclick: () => {
-          onRemoveClick();
+    div(
+      dropdown,
+      button(
+        {
+          onclick: () => {
+            onRemoveClick();
+          },
         },
-      },
-      "Remove command",
+        "Remove command",
+      ),
     ),
   );
 };
@@ -59,6 +84,7 @@ const SetValueEditor = (props: {
   const { key, value } = deepState(command);
   return [
     CommandNameAndDesc({
+      command,
       name: "Set Value",
       description: "Sets a single property in the frontmatter",
       headingId,
@@ -87,6 +113,7 @@ const AddArrayElementEditor = (props: {
   const { value, key } = deepState(command);
   return [
     CommandNameAndDesc({
+      command,
       headingId,
       name: "Add element to array",
       description:
@@ -96,10 +123,9 @@ const AddArrayElementEditor = (props: {
     Setting({
       name: "Key",
       description:
-        "This is the name of the frontmatter field that will be created",
+        "This is the name of the frontmatter field that will be added to",
       control: StateInput({ type: "text", value: key, ["aria-label"]: "Key" }),
     }),
-    //ValueConfiguration({ value }),
     Setting({
       name: "Value",
       description: "How will the value be generated",
@@ -115,27 +141,43 @@ const UnknownCommandEditor = (props: { command: never }) =>
   );
 
 const renderEditor = (
+  parent: HTMLElement,
   command: State<Command>,
   headingId: string,
   onRemoveClick: () => void,
 ) => {
-  const tmp = command.val;
-  switch (tmp.$command) {
-    case "set-value": {
-      const result = wrapState(tmp, command);
-      return SetValueEditor({ command: result, headingId, onRemoveClick });
+  const commandType = van.derive(() => command.val.$command);
+  const createCommand = () => {
+    const tmp = command.val;
+    switch (tmp.$command) {
+      case "set-value": {
+        const result = wrapState(tmp, command);
+        return SetValueEditor({ command: result, headingId, onRemoveClick });
+      }
+      case "add-array-element": {
+        const result = wrapState(tmp, command);
+        return AddArrayElementEditor({
+          command: result,
+          headingId,
+          onRemoveClick,
+        });
+      }
+      default:
+        return UnknownCommandEditor({ command: tmp });
     }
-    case "add-array-element": {
-      const result = wrapState(tmp, command);
-      return AddArrayElementEditor({
-        command: result,
-        headingId,
-        onRemoveClick,
-      });
+  };
+  const renderCommand = () => {
+    van.add(parent, createCommand());
+  };
+  van.derive(() => {
+    if (commandType.val !== commandType.oldVal) {
+      while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+      }
+      renderCommand();
     }
-    default:
-      return UnknownCommandEditor({ command: tmp });
-  }
+  });
+  renderCommand();
 };
 
 export const CommandEditor = (props: {
@@ -144,11 +186,9 @@ export const CommandEditor = (props: {
 }) => {
   const { command } = props;
   const id = genId("command-section");
-  const element = section(
-    { "aria-labelledBy": id },
-    renderEditor(command, id, () => {
-      props.onRemoveCommandClick({ element, command });
-    }),
-  );
+  const element = section({ "aria-labelledBy": id });
+  renderEditor(element, command, id, () => {
+    props.onRemoveCommandClick({ element, command });
+  });
   return element;
 };

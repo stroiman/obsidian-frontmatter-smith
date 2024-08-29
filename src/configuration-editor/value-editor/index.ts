@@ -16,6 +16,7 @@ import { ChildGroup } from "../containers";
 import { ObjectValueEditor } from "./object-value-editor";
 import {
   createDefaultChoiceValue,
+  createDefaultCommand,
   createDefaultCommandByType,
   createDefaultNumberInputValue,
   createDefaultObjectValue,
@@ -193,34 +194,20 @@ export const CommandList = (props: { commands: State<Command[]> }) => {
       CommandEditor({ command, onRemoveCommandClick }),
     ),
   );
-  const dropdown = select(
-    { className: "dropdown" },
-    option({ value: "add-array-element" }, "Add to array"),
-    option({ value: "set-value" }, "Set value"),
-  );
   return [
     Setting({
       name: "Commands",
       description: "Enter the commands to run for this command",
-      control: form(
-        { className: classNames.newCommandForm },
-        dropdown,
-        button(
-          {
-            onclick: (e) => {
-              e.preventDefault();
-              const command = van.state(
-                createDefaultCommandByType(dropdown.value as CommandType),
-              );
-              states.val = [...states.val, command];
-              van.add(
-                children,
-                CommandEditor({ command, onRemoveCommandClick }),
-              );
-            },
+      control: button(
+        {
+          onclick: (e) => {
+            e.preventDefault();
+            const command = van.state(createDefaultCommand());
+            states.val = [...states.val, command];
+            van.add(children, CommandEditor({ command, onRemoveCommandClick }));
           },
-          "Add command",
-        ),
+        },
+        "Add command",
       ),
     }),
     children,

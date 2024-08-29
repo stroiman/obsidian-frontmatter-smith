@@ -73,6 +73,8 @@ export const createDefaultSetValueCommand = (): Command => ({
   value: createDefaultValue(),
 });
 
+export const createDefaultCommand = createAddToArrayCommand;
+
 export const createDefaultCommandByType = (type: CommandType): Command => {
   switch (type) {
     case "add-array-element":
