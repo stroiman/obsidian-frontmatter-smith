@@ -11,7 +11,6 @@ export const p = van.tags.p;
 export const div = van.tags.div;
 export const section = van.tags.section;
 
-export const form = van.tags.form;
 export const label = van.tags.label;
 export const input = van.tags.input;
 export const button = van.tags.button;

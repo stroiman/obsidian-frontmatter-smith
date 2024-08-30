@@ -12,7 +12,7 @@ import { button, div, h4, p, section, select, option } from "../tags";
 import { renderValueEditor, ValueTypeEditor } from "../value-editor";
 import { ChildGroup } from "../containers";
 import { StateInput } from "../components";
-import { createDefaultCommandByType, migrateCommandToType } from "../defaults";
+import { migrateCommandToType } from "../defaults";
 
 export type OnRemoveCommandClick = (x: {
   element: HTMLElement;

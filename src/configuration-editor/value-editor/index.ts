@@ -6,7 +6,6 @@ import {
   ValueType,
   ConstantValue,
   StringInputValue,
-  CommandType,
 } from "../../smith-configuration-schema";
 
 import { Setting } from "../obsidian-controls";
@@ -17,13 +16,12 @@ import { ObjectValueEditor } from "./object-value-editor";
 import {
   createDefaultChoiceValue,
   createDefaultCommand,
-  createDefaultCommandByType,
   createDefaultNumberInputValue,
   createDefaultObjectValue,
   createDefaultStringInputValue,
 } from "../defaults";
 import { CommandEditor, OnRemoveCommandClick } from "../command-editor";
-import { button, div, form, input, option, p, select } from "../tags";
+import { button, div, input, option, p, select } from "../tags";
 
 const Option = ({
   type,
