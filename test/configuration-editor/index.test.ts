@@ -215,7 +215,7 @@ describe("UI", () => {
 
       it("Should have changed the header to 'Set Value'", () => {
         const section = getCommandSections(scope).at(-1)!;
-        const labelId = section.getAttribute("aria-labelledby");
+        const labelId = section.getAttribute("aria-labelledby")!;
         const heading = document.getElementById(labelId);
         expect(heading).to.have.text("Set Value");
       });
