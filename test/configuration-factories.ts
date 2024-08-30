@@ -348,3 +348,6 @@ export const buildSmithConfiguration = (
 export const buildPluginConfiguration = (
   f: BuildAction<ConfigurationBuilder>,
 ) => f(new ConfigurationBuilder()).buildC();
+
+export const buildSingleForgeConfig = (f: BuildAction<ForgeBuilder>) =>
+  buildPluginConfiguration((p) => p.addForge(f));

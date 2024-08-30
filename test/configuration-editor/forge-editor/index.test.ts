@@ -2,7 +2,10 @@ import sinon from "sinon";
 import userEvent, { UserEvent } from "@testing-library/user-event";
 import { QueryFunctions } from "../types";
 import { OnConfigChanged, render } from "src/configuration-editor";
-import { buildPluginConfiguration } from "test/configuration-factories";
+import {
+  buildPluginConfiguration,
+  buildSingleForgeConfig,
+} from "test/configuration-factories";
 import { within } from "@testing-library/dom";
 import { getForgeSections } from "../dom-queries";
 import { expect } from "chai";
@@ -58,9 +61,7 @@ describe("Forge editor", () => {
 
   describe("A single forge", () => {
     beforeEach(() => {
-      pluginConfig = buildPluginConfiguration((x) =>
-        x.addForge((f) => f.setName("Test Forge")),
-      );
+      pluginConfig = buildSingleForgeConfig((f) => f.setName("Test Forge"));
       render(root, pluginConfig, onConfigChanged);
       button = getExpandCollapseButton(scope);
     });

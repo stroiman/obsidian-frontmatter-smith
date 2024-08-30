@@ -132,18 +132,16 @@ describe("Object configuration", () => {
   });
 });
 
-const testConfiguration = factories.buildPluginConfiguration((p) =>
-  p.addForge((f) =>
-    f.setName("Forge").addCommand((c) =>
-      c
-        .setValue()
-        .setKey("key")
-        .buildValue((x) =>
-          x
-            .objectValue()
-            .addConstItem("Option 1", 123)
-            .addConstItem("Option 2", 123),
-        ),
-    ),
+const testConfiguration = factories.buildSingleForgeConfig((f) =>
+  f.setName("Forge").addCommand((c) =>
+    c
+      .setValue()
+      .setKey("key")
+      .buildValue((x) =>
+        x
+          .objectValue()
+          .addConstItem("Option 1", 123)
+          .addConstItem("Option 2", 123),
+      ),
   ),
 );

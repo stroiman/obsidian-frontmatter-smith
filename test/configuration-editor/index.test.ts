@@ -69,8 +69,8 @@ describe("UI", () => {
 
   describe("Changing value", () => {
     it("Should create a new value", async () => {
-      const config = factories.buildPluginConfiguration((s) =>
-        s.addForge((f) => f.addCommand((c) => c.setValue().setKey("key"))),
+      const config = factories.buildSingleForgeConfig((f) =>
+        f.addCommand((c) => c.setValue().setKey("key")),
       );
       render(root, config, onConfigChanged);
       const dropdown = scope.getByRole("combobox", { name: "Type of value" });
@@ -124,8 +124,8 @@ describe("UI", () => {
   });
 
   it("Can find the section for a forge", () => {
-    const config = factories.buildPluginConfiguration((x) =>
-      x.addForge((f) => f.setName("Test forge")),
+    const config = factories.buildSingleForgeConfig((f) =>
+      f.setName("Test forge"),
     );
     render(root, config, onConfigChanged);
     const sections = getForgeSections(scope);
@@ -194,8 +194,8 @@ describe("UI", () => {
 
   describe("Add/change/remove command", () => {
     beforeEach(() => {
-      const config = factories.buildPluginConfiguration((f) =>
-        f.addForge((f) => f.setName("Empty forge")),
+      const config = factories.buildSingleForgeConfig((f) =>
+        f.setName("Empty forge"),
       );
       render(root, config, onConfigChanged);
     });
