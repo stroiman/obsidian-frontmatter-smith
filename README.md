@@ -4,6 +4,11 @@ This is a plugin for Obsidian to help add frontmatter to markdown files,
 particularly when you want to have more complex types, such as objects, or
 arrays of objects.
 
+> [!WARNING]
+> There is currently _NO_ input validation. So if "key" properties are not valid
+> frontmatter keys, things will probably just fail for weird reasons. This is
+> something that I intent to look into.
+
 ## Use cases
 
 One use case is that I make a record of medicine I take. For each entry I want
@@ -112,21 +117,20 @@ object. For each key, you must specify a value, which is a `Value` in itself
 ####  Choice input
 
 For a choice input, the user must select from a list of predefined choices. Each
-choice has a "Text" - that the user will see, and a value that is inserted in
-the frontmatter. E.g. if you want to add a link in the frontmatter, you can set
+choice has a "Text" - that the user will see, and a "value" that is inserted in
+the frontmatter. 
 
-```yaml
-- options:
-  - text: Book
-    type: [[Book]]
-  - text: Movie
-    type: [[Movie]]
-```
+You wrap the value in `[[ ]]` to insert a link.
 
-NOTE: If you rename the file being linked to, Obsidian will automatically update
-the links in your frontmatter if you use this approach. However, Obsidian
-doesn't know anything about the plugin configuration for Frontmatter Smith; so
-it is up to you to update those yourself.
+> [!NOTE]
+> You must specify both 'text' and 'value', even if they are the same. That is
+> on the TODO list.
+
+> [!NOTE]
+> If you rename the file being linked to, Obsidian will automatically update
+> the links in your frontmatter if you use this approach. However, Obsidian
+> doesn't know anything about the plugin configuration for Frontmatter Smith; so
+> it is up to you to update those yourself.
 
 ##### Sub commands
 
