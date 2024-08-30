@@ -170,17 +170,22 @@ if (forge) {
 
 ### Example, integration with Templater
 
-In one vault, I have segregated data by folders, and I have a forge for each
-folder. The forge is named after the folder it is related to. The following
-script in my Templater template will check if there is a forge for the directory
-of the file, _and automatically run it after a file has been created_.
+In one vault, I have segregated data by directory and I have a forge for each
+directory. The forge is named after the directory it is related to. The
+following script in my Templater template will check if there is a forge for the
+directory of the file, _and automatically run it after a file has been created_.
 
 ```
+---
+date: <% tp.file.now() %>
+---
+# <% tp.file.title %>
+
 <%*
 const file = tp.config.target_file
-const folder = file.parent.name;
+const directory = file.parent.name;
 const api = app.plugins.plugins['frontmatter-smith'].api
-const forge = api.findForgeByName(folder)
+const forge = api.findForgeByName(directory)
 if (forge) {
   // runOnFile returns a promise, but don't `await` it here. Then templater
   // will not complete until _after_ we modified the file, and a race condition 
@@ -202,8 +207,8 @@ if (forge) {
   - E.g. if you want to have two choices to both trigger the same command, you have to duplicate the command right now.
 - Add support for adding tags
 - Allow forge to run automatically on file creation (? maybe the API feature makes this less necessary)
-- Allow folder specific forges, i.e. a forge is only relevant for notes in a
-  specific folder.
+- Allow directory specific forges, i.e. a forge is only relevant for notes in a
+  specific directory.
 - Handle error bad user input, or escape key more sensibly. I.e., if you press
   <kbd>esc</kbd> in a subcommand of a subcommand, do we abort everything, or just
   the innermost command. This should be configuratble
