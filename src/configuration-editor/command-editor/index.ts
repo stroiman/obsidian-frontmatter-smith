@@ -12,7 +12,7 @@ import { button, div, h4, p, section, select, option } from "../tags";
 import { renderValueEditor, ValueTypeEditor } from "../value-editor";
 import { ChildGroup } from "../containers";
 import { StateInput } from "../components";
-import { createDefaultCommandByType } from "../defaults";
+import { createDefaultCommandByType, migrateCommandToType } from "../defaults";
 
 export type OnRemoveCommandClick = (x: {
   element: HTMLElement;
@@ -32,7 +32,7 @@ const CommandNameAndDesc = (props: {
       className: "dropdown",
       ["aria-label"]: "Type of command",
       onchange: (e) => {
-        command.val = createDefaultCommandByType(e.target.value);
+        command.val = migrateCommandToType(command.val, e.target.value);
       },
     },
     option(

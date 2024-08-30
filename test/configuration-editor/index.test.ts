@@ -3,7 +3,10 @@ import sinon from "sinon";
 import userEvent, { UserEvent } from "@testing-library/user-event";
 // eslint-disable-next-line
 import { within, screen } from "@testing-library/dom";
-import { emptySmithConfiguration } from "src/smith-configuration-schema.js";
+import {
+  emptySmithConfiguration,
+  Value,
+} from "src/smith-configuration-schema.js";
 import { OnConfigChanged, render } from "src/configuration-editor";
 import { expect } from "chai";
 import { QueryFunctions } from "./types";
@@ -16,6 +19,7 @@ import { deepFreeze } from "./helpers";
 import { fullConfiguration, parseConfigurationOrThrow } from "test/fixtures";
 import * as factories from "../configuration-factories";
 import { defaultConfiguration } from "src/plugin-configuration";
+import { createDefaultChoiceValue } from "src/configuration-editor/defaults";
 
 let user: UserEvent;
 
@@ -336,6 +340,43 @@ describe("UI", () => {
       );
       await new Promise((r) => setImmediate(r));
       onConfigChanged.should.not.have.been.called;
+    });
+  });
+
+  describe("Changing command type", () => {
+    describe("From set-value to add-array-element", () => {
+      let value: Value;
+      beforeEach(() => {
+        value = createDefaultChoiceValue();
+        const config = factories.buildSingleForgeConfig((x) =>
+          x.addCommand((c) =>
+            c.setValue().setKey("target-key").setValue(value),
+          ),
+        );
+        render(root, config, onConfigChanged);
+      });
+
+      it("Keeps the key and type when converting to array command", async () => {
+        const combo = scope.getByRole("combobox", {
+          name: "Type of command",
+        });
+        await user.selectOptions(combo, "Add to array");
+        const lastConfig = onConfigChanged.lastCall.firstArg;
+        expect(lastConfig).to.be.like({
+          smithConfiguration: {
+            forges: [
+              {
+                commands: [
+                  {
+                    key: "target-key",
+                    value,
+                  },
+                ],
+              },
+            ],
+          },
+        });
+      });
     });
   });
 });

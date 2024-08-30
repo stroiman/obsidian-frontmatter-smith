@@ -11,6 +11,7 @@ import {
   StringInputValue,
   Value,
 } from "../smith-configuration-schema";
+import { genId } from "./helpers";
 
 export const createDefaultObjectValueItem = (): ObjectValueItem => ({
   $id: createId(),
@@ -74,6 +75,18 @@ export const createDefaultSetValueCommand = (): Command => ({
 });
 
 export const createDefaultCommand = createAddToArrayCommand;
+
+export const migrateCommandToType = (
+  command: Command,
+  type: CommandType,
+): Command => {
+  return {
+    $id: genId(),
+    $command: type,
+    key: command.key,
+    value: command.value,
+  };
+};
 
 export const createDefaultCommandByType = (type: CommandType): Command => {
   switch (type) {
