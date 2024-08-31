@@ -4,6 +4,16 @@ This is a plugin for Obsidian to help add frontmatter to markdown files,
 particularly when you want to have more complex types, such as objects, or
 arrays of objects.
 
+> [!CAUTION]
+> There is currently a bug where changes to the configuration ARE saved, but not
+> shown when reopening the configuration. After making changes, you need to
+> quit and restart Obsidian for the change to take effect. If you make further
+> changes without restart; the previous changes will be discarded. Reloading the
+> plugin does not appear to be enough (which is _very_ odd)
+>
+> How could this happen? This is most probably in the part of the code that
+> cannot be tested :(
+
 > [!WARNING]
 > There is currently _NO_ input validation. So if "key" properties are not valid
 > frontmatter keys, things will probably just fail for weird reasons. This is
