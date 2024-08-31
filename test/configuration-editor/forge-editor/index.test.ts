@@ -1,7 +1,4 @@
-import sinon from "sinon";
-import userEvent, { UserEvent } from "@testing-library/user-event";
 import { QueryFunctions } from "../types";
-import { OnConfigChanged, render } from "src/configuration-editor";
 import {
   buildPluginConfiguration,
   buildSingleForgeConfig,
@@ -9,7 +6,7 @@ import {
 import { within } from "@testing-library/dom";
 import { getForgeSections } from "../dom-queries";
 import { expect } from "chai";
-import { PluginConfiguration } from "src/plugin-configuration";
+import { uiTest } from "../ui-test-helpers";
 
 const getControlledElement = (element: HTMLElement): HTMLElement | null => {
   const id = element.getAttribute("aria-controls");
@@ -17,41 +14,15 @@ const getControlledElement = (element: HTMLElement): HTMLElement | null => {
 };
 
 describe("Forge editor", () => {
-  let user: UserEvent;
-
-  before(() => {
-    user = userEvent.setup(global);
-  });
-
-  let scope: QueryFunctions;
-  let root: HTMLElement;
-  let onConfigChanged: sinon.SinonStub<
-    Parameters<OnConfigChanged>,
-    ReturnType<OnConfigChanged>
-  >;
-  let pluginConfig: PluginConfiguration;
-
-  beforeEach(() => {
-    root = document.body.appendChild(document.createElement("div"));
-    scope = within(root);
-    onConfigChanged = sinon.stub();
-    onConfigChanged.callsFake((x) => {
-      pluginConfig = x;
-    });
-  });
-
-  afterEach(() => {
-    window.document.body.removeChild(root);
-  });
+  const data = uiTest();
 
   let button: HTMLElement;
 
-  const rerender = () => {
-    window.document.body.removeChild(root);
-    root = document.body.appendChild(document.createElement("div"));
-    scope = within(root);
-    render(root, pluginConfig, onConfigChanged);
-  };
+  let rerender: () => void;
+
+  beforeEach(() => {
+    rerender = data.rerender;
+  });
 
   const getExpandCollapseButton = (scope: QueryFunctions) => {
     return scope.getByRole("button", {
@@ -61,9 +32,12 @@ describe("Forge editor", () => {
 
   describe("A single forge", () => {
     beforeEach(() => {
-      pluginConfig = buildSingleForgeConfig((f) => f.setName("Test Forge"));
-      render(root, pluginConfig, onConfigChanged);
-      button = getExpandCollapseButton(scope);
+      data.pluginConfig = buildSingleForgeConfig((f) =>
+        f.setName("Test Forge"),
+      );
+      //render(data.root, data.pluginConfig, data.onConfigChanged);
+      data.render();
+      button = getExpandCollapseButton(data.scope);
     });
 
     describe("Expand/collape", () => {
@@ -75,7 +49,7 @@ describe("Forge editor", () => {
 
       describe("User has clicked expand", () => {
         beforeEach(async () => {
-          await user.click(button);
+          await data.user.click(button);
         });
 
         it("Should set aria-expanded on the button", async () => {
@@ -93,7 +67,7 @@ describe("Forge editor", () => {
           });
 
           it("Should have the forge expanded", () => {
-            const button = getExpandCollapseButton(scope);
+            const button = getExpandCollapseButton(data.scope);
             button.should.have.attribute("aria-expanded", "true");
           });
         });
@@ -103,7 +77,7 @@ describe("Forge editor", () => {
 
   describe("Multiple forges exist", () => {
     beforeEach(() => {
-      pluginConfig = buildPluginConfiguration((p) =>
+      data.pluginConfig = buildPluginConfiguration((p) =>
         p
           .addForge((f) => f.setName("f1"))
           .addForge((f) => f.setName("f2"))
@@ -114,14 +88,14 @@ describe("Forge editor", () => {
 
     describe("First and last section has been expanded", () => {
       beforeEach(async () => {
-        const sections = getForgeSections(scope);
-        await user.click(getExpandCollapseButton(within(sections[0])));
-        await user.click(getExpandCollapseButton(within(sections[2])));
+        const sections = getForgeSections(data.scope);
+        await data.user.click(getExpandCollapseButton(within(sections[0])));
+        await data.user.click(getExpandCollapseButton(within(sections[2])));
         rerender();
       });
 
       it("Remember both settings", async () => {
-        const sections = getForgeSections(scope);
+        const sections = getForgeSections(data.scope);
         const button1 = getExpandCollapseButton(within(sections[0]));
         const button2 = getExpandCollapseButton(within(sections[1]));
         const button3 = getExpandCollapseButton(within(sections[2]));
@@ -137,24 +111,26 @@ describe("Forge editor", () => {
         let firstForgeId: string;
 
         beforeEach(async () => {
-          const sections = getForgeSections(scope);
-          firstForgeId = pluginConfig.smithConfiguration.forges[0].$id;
-          await user.click(
+          const sections = getForgeSections(data.scope);
+          firstForgeId = data.pluginConfig.smithConfiguration.forges[0].$id;
+          await data.user.click(
             within(sections[0]).getByRole("button", { name: /^Remove forge/ }),
           );
         });
 
         it("Removes the element in the UI", () => {
-          expect(getForgeSections(scope)).to.have.lengthOf(2);
+          expect(getForgeSections(data.scope)).to.have.lengthOf(2);
         });
 
         it("Removes the forge from the smith configuration", () => {
-          expect(pluginConfig.smithConfiguration.forges).to.have.lengthOf(2);
+          expect(data.pluginConfig.smithConfiguration.forges).to.have.lengthOf(
+            2,
+          );
         });
 
         it("Removes the element from editor state", async () => {
           expect(
-            pluginConfig.editorConfiguration.expanded,
+            data.pluginConfig.editorConfiguration.expanded,
           ).to.not.have.ownProperty(firstForgeId);
         });
       });
