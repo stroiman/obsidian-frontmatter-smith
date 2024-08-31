@@ -24,6 +24,11 @@ export default class FrontmatterSmithSettingTab extends PluginSettingTab {
     }
   }
 
+  handleChange(settings: PluginConfiguration) {
+    this.setValue(settings);
+    this.onChange(settings);
+  }
+
   display() {
     const { containerEl } = this;
     containerEl.setCssStyles({
@@ -41,6 +46,6 @@ export default class FrontmatterSmithSettingTab extends PluginSettingTab {
     });
 
     const editorContainer = containerEl.createDiv();
-    render(editorContainer, this.value, (config) => this.onChange(config));
+    render(editorContainer, this.value, this.handleChange.bind(this));
   }
 }
