@@ -1,4 +1,3 @@
-import { QueryFunctions } from "../types";
 import {
   buildPluginConfiguration,
   buildSingleForgeConfig,
@@ -6,7 +5,7 @@ import {
 import { within } from "@testing-library/dom";
 import { getForgeSections } from "../dom-queries";
 import { expect } from "chai";
-import { uiTest } from "../ui-test-helpers";
+import { getExpandCollapseButton, uiTest } from "../ui-test-helpers";
 
 const getControlledElement = (element: HTMLElement): HTMLElement | null => {
   const id = element.getAttribute("aria-controls");
@@ -15,27 +14,13 @@ const getControlledElement = (element: HTMLElement): HTMLElement | null => {
 
 describe("Forge editor", () => {
   const data = uiTest();
-
   let button: HTMLElement;
-
-  let rerender: () => void;
-
-  beforeEach(() => {
-    rerender = data.rerender;
-  });
-
-  const getExpandCollapseButton = (scope: QueryFunctions) => {
-    return scope.getByRole("button", {
-      name: /Expand|Collapse/,
-    });
-  };
 
   describe("A single forge", () => {
     beforeEach(() => {
       data.pluginConfig = buildSingleForgeConfig((f) =>
         f.setName("Test Forge"),
       );
-      //render(data.root, data.pluginConfig, data.onConfigChanged);
       data.render();
       button = getExpandCollapseButton(data.scope);
     });
@@ -63,7 +48,7 @@ describe("Forge editor", () => {
 
         describe("Editor is opened again", () => {
           beforeEach(() => {
-            rerender();
+            data.rerender();
           });
 
           it("Should have the forge expanded", () => {
@@ -83,7 +68,7 @@ describe("Forge editor", () => {
           .addForge((f) => f.setName("f2"))
           .addForge((f) => f.setName("f3")),
       );
-      rerender();
+      data.rerender();
     });
 
     describe("First and last section has been expanded", () => {
@@ -91,7 +76,7 @@ describe("Forge editor", () => {
         const sections = getForgeSections(data.scope);
         await data.user.click(getExpandCollapseButton(within(sections[0])));
         await data.user.click(getExpandCollapseButton(within(sections[2])));
-        rerender();
+        data.rerender();
       });
 
       it("Remember both settings", async () => {

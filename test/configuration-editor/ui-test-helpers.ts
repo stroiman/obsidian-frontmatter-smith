@@ -49,3 +49,9 @@ export const uiTest = () => {
 
   return result;
 };
+
+export const getExpandCollapseButton = (scope: QueryFunctions) => {
+  return scope.getByRole("button", {
+    name: /Expand|Collapse/,
+  });
+};
