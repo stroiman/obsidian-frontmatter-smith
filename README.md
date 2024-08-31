@@ -13,6 +13,9 @@ arrays of objects.
 >
 > How could this happen? This is most probably in the part of the code that
 > cannot be tested :(
+>
+> p.s. I don't think version 8.1 has this bug, but I'd rather fix it than
+> discovering when it was introduced.
 
 > [!WARNING]
 > There is currently _NO_ input validation. So if "key" properties are not valid
