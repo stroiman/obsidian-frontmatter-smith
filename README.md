@@ -6,8 +6,9 @@ arrays of objects.
 
 > [!WARNING]
 > There is currently _NO_ input validation. So if "key" properties are not valid
-> frontmatter keys, things will probably just fail for weird reasons. This is
-> something that I intent to look into.
+> frontmatter keys, things will probably just fail for weird reasons. Also,
+> duplicate keys for object entries will _probably_ just result in the last
+> instance overwriting the first. This is something that I intent to look into.
 
 ## Use cases
 
