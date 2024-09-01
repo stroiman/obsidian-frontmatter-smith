@@ -97,7 +97,7 @@ export function ForgeEditor(props: {
           },
         }),
       }),
-      CommandList({ commands }),
+      CommandList({ commands, editorConfiguration }),
     ),
   );
   return elm;

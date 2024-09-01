@@ -13,6 +13,7 @@ import { renderValueEditor, ValueTypeEditor } from "../value-editor";
 import { ChildGroup } from "../containers";
 import { StateInput } from "../components";
 import { migrateCommandToType } from "../defaults";
+import { EditorConfiguration } from "src/plugin-configuration";
 
 export type OnRemoveCommandClick = (x: {
   element: HTMLElement;
@@ -77,8 +78,9 @@ const SetValueEditor = (props: {
   command: State<SetValueCommand>;
   headingId: string;
   onRemoveClick: () => void;
+  editorConfiguration: State<EditorConfiguration>;
 }) => {
-  const { command, headingId } = props;
+  const { command, headingId, editorConfiguration } = props;
   const { key, value } = deepState(command);
   return [
     CommandNameAndDesc({
@@ -98,7 +100,7 @@ const SetValueEditor = (props: {
       description: "How will the value be generated",
       control: ValueTypeEditor({ value }),
     }),
-    renderValueEditor(ChildGroup(), value),
+    renderValueEditor(ChildGroup(), value, editorConfiguration),
   ];
 };
 
@@ -106,8 +108,9 @@ const AddArrayElementEditor = (props: {
   headingId: string;
   command: State<AddToArrayCommand>;
   onRemoveClick: () => void;
+  editorConfiguration: State<EditorConfiguration>;
 }) => {
-  const { headingId, onRemoveClick, command } = props;
+  const { headingId, onRemoveClick, command, editorConfiguration } = props;
   const { value, key } = deepState(command);
   return [
     CommandNameAndDesc({
@@ -129,7 +132,7 @@ const AddArrayElementEditor = (props: {
       description: "How will the value be generated",
       control: ValueTypeEditor({ value }),
     }),
-    renderValueEditor(ChildGroup(), value),
+    renderValueEditor(ChildGroup(), value, editorConfiguration),
   ];
 };
 
@@ -143,6 +146,7 @@ const renderEditor = (
   command: State<Command>,
   headingId: string,
   onRemoveClick: () => void,
+  editorConfiguration: State<EditorConfiguration>,
 ) => {
   const commandType = van.derive(() => command.val.$command);
   const createCommand = () => {
@@ -150,7 +154,12 @@ const renderEditor = (
     switch (tmp.$command) {
       case "set-value": {
         const result = wrapState(tmp, command);
-        return SetValueEditor({ command: result, headingId, onRemoveClick });
+        return SetValueEditor({
+          command: result,
+          headingId,
+          onRemoveClick,
+          editorConfiguration,
+        });
       }
       case "add-array-element": {
         const result = wrapState(tmp, command);
@@ -158,6 +167,7 @@ const renderEditor = (
           command: result,
           headingId,
           onRemoveClick,
+          editorConfiguration,
         });
       }
       default:
@@ -181,12 +191,19 @@ const renderEditor = (
 export const CommandEditor = (props: {
   command: State<Command>;
   onRemoveCommandClick: OnRemoveCommandClick;
+  editorConfiguration: State<EditorConfiguration>;
 }) => {
-  const { command } = props;
+  const { command, editorConfiguration } = props;
   const id = genId("command-section");
   const element = section({ "aria-labelledBy": id });
-  renderEditor(element, command, id, () => {
-    props.onRemoveCommandClick({ element, command });
-  });
+  renderEditor(
+    element,
+    command,
+    id,
+    () => {
+      props.onRemoveCommandClick({ element, command });
+    },
+    editorConfiguration,
+  );
   return element;
 };

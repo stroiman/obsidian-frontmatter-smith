@@ -8,6 +8,7 @@ import { createDefaultObjectValueItem } from "../defaults";
 import { renderValueEditor, ValueTypeEditor } from "./index";
 import { HeadingWithButton } from "../containers";
 import { ExpandCollapseButton } from "../components";
+import { EditorConfiguration } from "src/plugin-configuration";
 
 type OnRemoveClick = (x: {
   element: HTMLElement;
@@ -18,13 +19,29 @@ const ValueEditor = (props: {
   value: State<ObjectValueItem>;
   keyLabelId: string;
   onRemoveClick: OnRemoveClick;
+  expanded?: boolean;
+  editorConfiguration: State<EditorConfiguration>;
 }): HTMLElement => {
-  const { onRemoveClick, keyLabelId } = props;
+  const { onRemoveClick, keyLabelId, expanded, editorConfiguration } = props;
+  const id = props.value.val.$id;
   const { key, value } = deepState(props.value);
-  const visible = van.state(false);
-  const style = van.derive(() =>
-    visible.val ? "display: block" : "display: none",
+  const visible = van.state(
+    expanded || editorConfiguration.val.expanded[id] || false,
   );
+  const valueType = van.derive(() => value.val.$type);
+  van.derive(() => {
+    const val = valueType.val;
+    const config = editorConfiguration.val;
+    if (val !== valueType.oldVal) {
+      visible.val = true;
+      const expanded = { ...config.expanded, [id]: true };
+      editorConfiguration.val = { ...config, expanded };
+    }
+  });
+  const style = van.derive(() => {
+    const val = visible.val;
+    return val ? "display: block" : "display: none";
+  });
   const valueContainerId = genId("value-container");
   const element = section(
     { "aria-labelledBy": keyLabelId, className: classNames.property },
@@ -53,12 +70,19 @@ const ValueEditor = (props: {
     renderValueEditor(
       div({ id: valueContainerId, className: classNames.propertyValue, style }),
       value,
+      editorConfiguration,
     ),
   );
   return element;
 };
 
-export const ObjectValueEditor = ({ value }: { value: State<ObjectValue> }) => {
+export const ObjectValueEditor = ({
+  value,
+  editorConfiguration,
+}: {
+  value: State<ObjectValue>;
+  editorConfiguration: State<EditorConfiguration>;
+}) => {
   const values = stateArray(deepState(value).values);
   const onRemoveClick: OnRemoveClick = ({ element, value }) => {
     values.val = values.val.filter((x) => x !== value);
@@ -72,7 +96,7 @@ export const ObjectValueEditor = ({ value }: { value: State<ObjectValue> }) => {
     div("Value"),
     div(),
     values.val.map((value) =>
-      ValueEditor({ value, onRemoveClick, keyLabelId }),
+      ValueEditor({ value, onRemoveClick, keyLabelId, editorConfiguration }),
     ),
   );
   return section(
@@ -85,7 +109,16 @@ export const ObjectValueEditor = ({ value }: { value: State<ObjectValue> }) => {
           onclick: () => {
             const value = van.state(createDefaultObjectValueItem());
             values.val = [...values.val, value];
-            van.add(items, ValueEditor({ value, keyLabelId, onRemoveClick }));
+            van.add(
+              items,
+              ValueEditor({
+                value,
+                keyLabelId,
+                onRemoveClick,
+                expanded: true,
+                editorConfiguration,
+              }),
+            );
           },
         },
         "Add value",

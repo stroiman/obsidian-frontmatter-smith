@@ -11,6 +11,7 @@ import {
   StateInput,
 } from "../components";
 import { createDefaultChoiceValueItem } from "../defaults";
+import { EditorConfiguration } from "src/plugin-configuration";
 
 const { section, label, div, h4, p, button } = van.tags;
 
@@ -24,8 +25,9 @@ const Choice = (props: {
   onRemoveClick: OnRemoveClick;
   textLabelId: string;
   valueLabelId: string;
+  editorConfiguration: State<EditorConfiguration>;
 }) => {
-  const { choice, textLabelId, valueLabelId } = props;
+  const { choice, textLabelId, valueLabelId, editorConfiguration } = props;
   const showChildren = van.state(false);
   const childCls = van.derive(() =>
     showChildren.val
@@ -60,7 +62,7 @@ const Choice = (props: {
         { className: "text-muted" },
         "Add additional commands that are executed if this choice is selected",
       ),
-      CommandList({ commands }),
+      CommandList({ commands, editorConfiguration }),
     ),
   );
   return element;
@@ -68,6 +70,7 @@ const Choice = (props: {
 
 export const ChoiceInputConfiguration = (props: {
   value: State<ChoiceValue>;
+  editorConfiguration: State<EditorConfiguration>;
 }) => {
   const headingId = genId("choice-heading");
   const { prompt } = deepState(props.value);
@@ -91,7 +94,11 @@ export const ChoiceInputConfiguration = (props: {
   );
 };
 
-const Choices = (props: { value: State<ChoiceValue> }) => {
+const Choices = (props: {
+  value: State<ChoiceValue>;
+  editorConfiguration: State<EditorConfiguration>;
+}) => {
+  const { editorConfiguration } = props;
   const ds = deepState(props.value);
   const options = stateArray(ds.options);
   const onRemoveClick: OnRemoveClick = ({ element, choice }) => {
@@ -109,7 +116,13 @@ const Choices = (props: { value: State<ChoiceValue> }) => {
     label({ id: valueLabelId }, "Value"),
     div(),
     options.val.map((choice, i) => {
-      return Choice({ choice, onRemoveClick, textLabelId, valueLabelId });
+      return Choice({
+        choice,
+        onRemoveClick,
+        textLabelId,
+        valueLabelId,
+        editorConfiguration,
+      });
     }),
   );
   return [
@@ -124,7 +137,13 @@ const Choices = (props: { value: State<ChoiceValue> }) => {
             options.val = [...options.val, choice];
             van.add(
               optionsDiv,
-              Choice({ choice, onRemoveClick, textLabelId, valueLabelId }),
+              Choice({
+                choice,
+                onRemoveClick,
+                textLabelId,
+                valueLabelId,
+                editorConfiguration,
+              }),
             );
           },
         },

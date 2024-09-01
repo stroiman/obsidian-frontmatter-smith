@@ -22,6 +22,7 @@ import {
 } from "../defaults";
 import { CommandEditor, OnRemoveCommandClick } from "../command-editor";
 import { button, div, input, option, p, select } from "../tags";
+import { EditorConfiguration } from "src/plugin-configuration";
 
 const Option = ({
   type,
@@ -101,7 +102,11 @@ const ConstValueConfiguration = (props: { value: State<ConstantValue> }) => {
   );
 };
 
-const ValueConfigurationInner = (props: { value: State<Value> }) => {
+const ValueConfigurationInner = (props: {
+  value: State<Value>;
+  editorConfiguration: State<EditorConfiguration>;
+}) => {
+  const { editorConfiguration } = props;
   const tmp = props.value.val;
   switch (tmp.$type) {
     case "constant": {
@@ -115,11 +120,11 @@ const ValueConfigurationInner = (props: { value: State<Value> }) => {
     }
     case "choice-input": {
       const value = wrapState(tmp, props.value);
-      return ChoiceInputConfiguration({ value });
+      return ChoiceInputConfiguration({ value, editorConfiguration });
     }
     case "object": {
       const value = wrapState(tmp, props.value);
-      return ObjectValueEditor({ value });
+      return ObjectValueEditor({ value, editorConfiguration });
     }
     default:
       return UnrecognisedValue({ value: tmp });
@@ -180,8 +185,12 @@ const UnrecognisedValue = (props: { value: never }) =>
     "Your configuration contains an unrecognised value, and you will not be able to edit it",
   );
 
-export const CommandList = (props: { commands: State<Command[]> }) => {
+export const CommandList = (props: {
+  commands: State<Command[]>;
+  editorConfiguration: State<EditorConfiguration>;
+}) => {
   const states = stateArray(props.commands);
+  const { editorConfiguration } = props;
 
   const onRemoveCommandClick: OnRemoveCommandClick = ({ element, command }) => {
     states.val = states.val.filter((x) => x !== command);
@@ -191,7 +200,7 @@ export const CommandList = (props: { commands: State<Command[]> }) => {
     states.val.map((command, i) =>
       div(
         { className: classNames.commandWrapper },
-        CommandEditor({ command, onRemoveCommandClick }),
+        CommandEditor({ command, onRemoveCommandClick, editorConfiguration }),
       ),
     ),
   );
@@ -205,7 +214,14 @@ export const CommandList = (props: { commands: State<Command[]> }) => {
             e.preventDefault();
             const command = van.state(createDefaultCommand());
             states.val = [...states.val, command];
-            van.add(children, CommandEditor({ command, onRemoveCommandClick }));
+            van.add(
+              children,
+              CommandEditor({
+                command,
+                onRemoveCommandClick,
+                editorConfiguration,
+              }),
+            );
           },
         },
         "Add command",
@@ -221,22 +237,36 @@ export const CommandList = (props: { commands: State<Command[]> }) => {
  *
  * Note, the editor will be the last child of the passed parent.
  */
-export const renderValueEditor = (parent: HTMLElement, value: State<Value>) => {
+export const renderValueEditor = (
+  parent: HTMLElement,
+  value: State<Value>,
+  editorConfiguration: State<EditorConfiguration>,
+) => {
   const type = van.derive(() => value.val.$type);
-  let editor: HTMLElement = ValueConfigurationInner({ value });
+  let editor: HTMLElement = ValueConfigurationInner({
+    value,
+    editorConfiguration,
+  });
   van.add(parent, editor);
   van.derive(() => {
     if (type.val !== type.oldVal) {
       parent.removeChild(editor);
-      editor = ValueConfigurationInner({ value });
+      editor = ValueConfigurationInner({ value, editorConfiguration });
       van.add(parent, editor);
     }
   });
   return parent;
 };
 
-export const ValueConfiguration = (props: { value: State<Value> }) => {
-  const { value } = props;
+export const ValueConfiguration = (props: {
+  value: State<Value>;
+  editorConfiguration: State<EditorConfiguration>;
+}) => {
+  const { value, editorConfiguration } = props;
 
-  return renderValueEditor(div(ValueTypeEditor({ value })), value);
+  return renderValueEditor(
+    div(ValueTypeEditor({ value })),
+    value,
+    editorConfiguration,
+  );
 };
