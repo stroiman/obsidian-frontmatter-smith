@@ -8,7 +8,7 @@ import { createDefaultObjectValueItem } from "../defaults";
 import { renderValueEditor, ValueTypeEditor } from "./index";
 import { HeadingWithButton } from "../containers";
 import { ExpandCollapseButton } from "../components";
-import { EditorConfiguration } from "src/plugin-configuration";
+import { EditorConfigWrapper } from "../types";
 
 type OnRemoveClick = (x: {
   element: HTMLElement;
@@ -20,7 +20,7 @@ const ValueEditor = (props: {
   keyLabelId: string;
   onRemoveClick: OnRemoveClick;
   expanded?: boolean;
-  editorConfiguration: State<EditorConfiguration>;
+  editorConfiguration: EditorConfigWrapper;
 }): HTMLElement => {
   const { onRemoveClick, keyLabelId, expanded, editorConfiguration } = props;
   const id = props.value.val.$id;
@@ -81,7 +81,7 @@ export const ObjectValueEditor = ({
   editorConfiguration,
 }: {
   value: State<ObjectValue>;
-  editorConfiguration: State<EditorConfiguration>;
+  editorConfiguration: EditorConfigWrapper;
 }) => {
   const values = stateArray(deepState(value).values);
   const onRemoveClick: OnRemoveClick = ({ element, value }) => {

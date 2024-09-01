@@ -12,6 +12,7 @@ import {
 } from "../components";
 import { createDefaultChoiceValueItem } from "../defaults";
 import { EditorConfiguration } from "src/plugin-configuration";
+import { EditorConfigWrapper } from "../types";
 
 const { section, label, div, h4, p, button } = van.tags;
 
@@ -25,7 +26,7 @@ const Choice = (props: {
   onRemoveClick: OnRemoveClick;
   textLabelId: string;
   valueLabelId: string;
-  editorConfiguration: State<EditorConfiguration>;
+  editorConfiguration: EditorConfigWrapper;
 }) => {
   const { choice, textLabelId, valueLabelId, editorConfiguration } = props;
   const showChildren = van.state(false);
@@ -70,7 +71,7 @@ const Choice = (props: {
 
 export const ChoiceInputConfiguration = (props: {
   value: State<ChoiceValue>;
-  editorConfiguration: State<EditorConfiguration>;
+  editorConfiguration: EditorConfigWrapper;
 }) => {
   const headingId = genId("choice-heading");
   const { prompt } = deepState(props.value);
@@ -96,7 +97,7 @@ export const ChoiceInputConfiguration = (props: {
 
 const Choices = (props: {
   value: State<ChoiceValue>;
-  editorConfiguration: State<EditorConfiguration>;
+  editorConfiguration: EditorConfigWrapper;
 }) => {
   const { editorConfiguration } = props;
   const ds = deepState(props.value);

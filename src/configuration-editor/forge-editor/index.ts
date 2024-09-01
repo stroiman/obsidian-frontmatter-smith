@@ -7,7 +7,7 @@ import { deepState, deepState2way, genId } from "../helpers";
 import { CommandList } from "../value-editor";
 import { button, div } from "../tags";
 import { ExpandCollapseButton } from "../components";
-import { EditorConfiguration } from "src/plugin-configuration";
+import { EditorConfigWrapper } from "../types";
 
 const clsx = (...args: any[]): string => {
   return args
@@ -20,7 +20,7 @@ const { section, h3, input } = van.tags;
 export function ForgeEditor(props: {
   forgeConfig: State<ForgeConfiguration>;
   expand?: boolean;
-  editorConfiguration: State<EditorConfiguration>;
+  editorConfiguration: EditorConfigWrapper;
   onRemoveClick: (
     elm: HTMLElement,
     forgeConfig: State<ForgeConfiguration>,

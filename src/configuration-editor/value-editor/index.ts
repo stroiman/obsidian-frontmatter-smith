@@ -23,6 +23,7 @@ import {
 import { CommandEditor, OnRemoveCommandClick } from "../command-editor";
 import { button, div, input, option, p, select } from "../tags";
 import { EditorConfiguration } from "src/plugin-configuration";
+import { EditorConfigWrapper } from "../types";
 
 const Option = ({
   type,
@@ -104,7 +105,7 @@ const ConstValueConfiguration = (props: { value: State<ConstantValue> }) => {
 
 const ValueConfigurationInner = (props: {
   value: State<Value>;
-  editorConfiguration: State<EditorConfiguration>;
+  editorConfiguration: EditorConfigWrapper;
 }) => {
   const { editorConfiguration } = props;
   const tmp = props.value.val;
@@ -187,7 +188,7 @@ const UnrecognisedValue = (props: { value: never }) =>
 
 export const CommandList = (props: {
   commands: State<Command[]>;
-  editorConfiguration: State<EditorConfiguration>;
+  editorConfiguration: EditorConfigWrapper;
 }) => {
   const states = stateArray(props.commands);
   const { editorConfiguration } = props;
@@ -240,7 +241,7 @@ export const CommandList = (props: {
 export const renderValueEditor = (
   parent: HTMLElement,
   value: State<Value>,
-  editorConfiguration: State<EditorConfiguration>,
+  editorConfiguration: EditorConfigWrapper,
 ) => {
   const type = van.derive(() => value.val.$type);
   let editor: HTMLElement = ValueConfigurationInner({
@@ -260,7 +261,7 @@ export const renderValueEditor = (
 
 export const ValueConfiguration = (props: {
   value: State<Value>;
-  editorConfiguration: State<EditorConfiguration>;
+  editorConfiguration: EditorConfigWrapper;
 }) => {
   const { value, editorConfiguration } = props;
 

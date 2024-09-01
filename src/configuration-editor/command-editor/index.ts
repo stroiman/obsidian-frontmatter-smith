@@ -14,6 +14,7 @@ import { ChildGroup } from "../containers";
 import { StateInput } from "../components";
 import { migrateCommandToType } from "../defaults";
 import { EditorConfiguration } from "src/plugin-configuration";
+import { EditorConfigWrapper } from "../types";
 
 export type OnRemoveCommandClick = (x: {
   element: HTMLElement;
@@ -78,7 +79,7 @@ const SetValueEditor = (props: {
   command: State<SetValueCommand>;
   headingId: string;
   onRemoveClick: () => void;
-  editorConfiguration: State<EditorConfiguration>;
+  editorConfiguration: EditorConfigWrapper;
 }) => {
   const { command, headingId, editorConfiguration } = props;
   const { key, value } = deepState(command);
@@ -108,7 +109,7 @@ const AddArrayElementEditor = (props: {
   headingId: string;
   command: State<AddToArrayCommand>;
   onRemoveClick: () => void;
-  editorConfiguration: State<EditorConfiguration>;
+  editorConfiguration: EditorConfigWrapper;
 }) => {
   const { headingId, onRemoveClick, command, editorConfiguration } = props;
   const { value, key } = deepState(command);
@@ -146,7 +147,7 @@ const renderEditor = (
   command: State<Command>,
   headingId: string,
   onRemoveClick: () => void,
-  editorConfiguration: State<EditorConfiguration>,
+  editorConfiguration: EditorConfigWrapper,
 ) => {
   const commandType = van.derive(() => command.val.$command);
   const createCommand = () => {
@@ -191,7 +192,7 @@ const renderEditor = (
 export const CommandEditor = (props: {
   command: State<Command>;
   onRemoveCommandClick: OnRemoveCommandClick;
-  editorConfiguration: State<EditorConfiguration>;
+  editorConfiguration: EditorConfigWrapper;
 }) => {
   const { command, editorConfiguration } = props;
   const id = genId("command-section");
