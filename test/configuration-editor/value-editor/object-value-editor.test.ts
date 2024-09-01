@@ -1,57 +1,34 @@
-import sinon from "sinon";
-import userEvent, { UserEvent } from "@testing-library/user-event";
-import { OnConfigChanged, render } from "src/configuration-editor";
 import { within } from "@testing-library/dom";
-import { QueryFunctions } from "../types";
 import { getObjectKeys } from "../dom-queries";
 import { expect } from "chai";
 import * as factories from "test/configuration-factories";
+import { uiTest } from "../ui-test-helpers";
 
-describe("Object configuration", () => {
-  let user: UserEvent;
+describe("UI / Object configuration", () => {
+  const data = uiTest();
 
-  before(() => {
-    user = userEvent.setup(global);
-  });
-
-  let scope: QueryFunctions;
-  let root: HTMLElement;
-  let onConfigChanged: sinon.SinonStub<
-    Parameters<OnConfigChanged>,
-    ReturnType<OnConfigChanged>
-  >;
-
-  const getCurrentSmithConfig = () =>
-    onConfigChanged.lastCall.lastArg.smithConfiguration;
+  const getCurrentSmithConfig = () => data.pluginConfig.smithConfiguration;
 
   beforeEach(() => {
-    root = document.body.appendChild(document.createElement("div"));
-    scope = within(root);
-    onConfigChanged = sinon.stub();
-  });
-
-  afterEach(() => {
-    window.document.body.removeChild(root);
-  });
-
-  beforeEach(() => {
-    render(root, testConfiguration, onConfigChanged);
+    data.render(testConfiguration);
   });
 
   describe("Initial rendering", () => {
     it("Should renders two keys", () => {
-      const keys = getObjectKeys(scope);
+      const keys = getObjectKeys(data.scope);
       expect(keys, "No of rendered keys").to.have.lengthOf(2);
     });
   });
 
   describe("Add new key", () => {
     beforeEach(async () => {
-      await user.click(scope.getByRole("button", { name: "Add value" }));
+      await data.user.click(
+        data.scope.getByRole("button", { name: "Add value" }),
+      );
     });
 
     it("Should render another key", async () => {
-      const keys = getObjectKeys(scope);
+      const keys = getObjectKeys(data.scope);
       expect(keys, "No of rendered keys").to.have.lengthOf(3);
     });
 
@@ -81,12 +58,14 @@ describe("Object configuration", () => {
 
   describe("Remove key", () => {
     beforeEach(async () => {
-      const keys = getObjectKeys(scope);
-      await user.click(within(keys[1]).getByRole("button", { name: "Remove" }));
+      const keys = getObjectKeys(data.scope);
+      await data.user.click(
+        within(keys[1]).getByRole("button", { name: "Remove" }),
+      );
     });
 
     it("Should remove the option from the UI", () => {
-      const keys = getObjectKeys(scope);
+      const keys = getObjectKeys(data.scope);
       expect(keys).to.have.lengthOf(1);
     });
 
@@ -110,10 +89,10 @@ describe("Object configuration", () => {
 
   describe("Editing a key", () => {
     it("Updates the key", async () => {
-      const keys = getObjectKeys(scope);
+      const keys = getObjectKeys(data.scope);
       const input = within(keys[0]).getByRole("textbox", { name: "Key" });
-      await user.clear(input);
-      await user.type(input, "new key");
+      await data.user.clear(input);
+      await data.user.type(input, "new key");
       const actualConfig = getCurrentSmithConfig();
       expect(actualConfig).to.be.like({
         forges: [
