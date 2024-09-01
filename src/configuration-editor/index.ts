@@ -33,7 +33,6 @@ const ConfigurationEditor = (props: {
     const expanded = { ...editorConfiguration.val.expanded };
     delete expanded[forge.val.$id];
     editorConfiguration.val = { ...editorConfiguration.val, expanded };
-    //editorConfiguration.val
   };
   const result = div(
     { className: classNames.forgeConfig },

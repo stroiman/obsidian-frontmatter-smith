@@ -5,49 +5,54 @@ import { OnConfigChanged, render } from "src/configuration-editor";
 import { within } from "@testing-library/dom";
 import { PluginConfiguration } from "src/plugin-configuration";
 
+type Data = {
+  user: UserEvent;
+  scope: QueryFunctions;
+  root: HTMLElement;
+  onConfigChanged: sinon.SinonStub<
+    Parameters<OnConfigChanged>,
+    ReturnType<OnConfigChanged>
+  >;
+  pluginConfig: PluginConfiguration;
+  render: (configuration?: PluginConfiguration) => void;
+  rerender: () => void;
+};
+
 export const uiTest = () => {
-  const result: {
-    user: UserEvent;
-    scope: QueryFunctions;
-    root: HTMLElement;
-    onConfigChanged: sinon.SinonStub<
-      Parameters<OnConfigChanged>,
-      ReturnType<OnConfigChanged>
-    >;
-    pluginConfig: PluginConfiguration;
-    render: () => void;
-    rerender: () => void;
-  } = {} as any;
+  const data: Data = {} as any;
 
   before(() => {
-    result.user = userEvent.setup(global);
-    result.render = function () {
+    data.user = userEvent.setup(global);
+    data.render = function (configuration?: PluginConfiguration) {
+      if (configuration) {
+        this.pluginConfig = configuration;
+      }
       if (this.root) {
         window.document.body.removeChild(this.root);
       }
       this.root = document.body.appendChild(document.createElement("div"));
       this.scope = within(this.root);
       render(this.root, this.pluginConfig, this.onConfigChanged);
-    }.bind(result);
-    result.rerender = result.render;
+    }.bind(data);
+    data.rerender = data.render;
   });
 
   beforeEach(() => {
-    result.onConfigChanged = sinon.stub();
-    result.onConfigChanged.callsFake((x) => {
-      result.pluginConfig = x;
+    data.onConfigChanged = sinon.stub();
+    data.onConfigChanged.callsFake((x) => {
+      data.pluginConfig = x;
     });
   });
 
   afterEach(() => {
-    if (result.root) {
-      window.document.body.removeChild(result.root);
-      delete (result as any).root;
-      delete (result as any).scope;
+    if (data.root) {
+      window.document.body.removeChild(data.root);
+      delete (data as any).root;
+      delete (data as any).scope;
     }
   });
 
-  return result;
+  return data;
 };
 
 export const getExpandCollapseButton = (scope: QueryFunctions) => {
