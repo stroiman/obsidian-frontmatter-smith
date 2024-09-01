@@ -1,7 +1,7 @@
 import { State } from "vanjs-core";
 import { EditorConfiguration } from "src/plugin-configuration";
 
-export type EditorConfigWrapper = State<EditorConfiguration> & {
+export type EditorConfigWrapper = {
   getExpanded: (id: string) => boolean;
   setExpanded: (id: string, val: boolean) => void;
   remove: (id: string) => void;
@@ -10,10 +10,23 @@ export type EditorConfigWrapper = State<EditorConfiguration> & {
 export const wrapEditorConfig = (
   config: State<EditorConfiguration>,
 ): EditorConfigWrapper => {
-  (config as any).getExpanded = function (
-    this: EditorConfigWrapper,
-    id: string,
-  ) {
+  return {
+    getExpanded: function (id: string) {
+      return config.val.expanded[id] || false;
+    },
+    setExpanded: function (id: string, val: boolean) {
+      const expanded = config.val.expanded;
+      config.val = { ...config.val, expanded: { ...expanded, [id]: val } };
+    },
+    remove: function (id: string) {
+      const data = config.val;
+      const expanded = { ...data.expanded };
+      delete expanded[id];
+      config.val = { ...data, expanded };
+    },
+  };
+  /*
+  (config as any).getExpanded = function (id: string) {
     return config.val.expanded[id] || false;
   };
   (config as any).setExpanded = function (
@@ -31,4 +44,5 @@ export const wrapEditorConfig = (
     config.val = { ...data, expanded };
   };
   return config as EditorConfigWrapper;
+    */
 };

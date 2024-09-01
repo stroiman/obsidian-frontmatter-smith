@@ -26,7 +26,7 @@ const ValueEditor = (props: {
   const id = props.value.val.$id;
   const { key, value } = deepState(props.value);
   const visible = van.state(
-    expanded || editorConfiguration.val.expanded[id] || false,
+    expanded || editorConfiguration.getExpanded(id) || false,
   );
   const valueType = van.derive(() => value.val.$type);
   van.derive(() => {
