@@ -21,6 +21,13 @@ type Data = {
 export const uiTest = () => {
   const data: Data = {} as any;
 
+  const setupStub = () => {
+    data.onConfigChanged = sinon.stub();
+    data.onConfigChanged.callsFake((x) => {
+      data.pluginConfig = x;
+    });
+  };
+
   before(() => {
     data.user = userEvent.setup(global);
     data.render = function (configuration?: PluginConfiguration) {
@@ -29,6 +36,11 @@ export const uiTest = () => {
       }
       if (this.root) {
         window.document.body.removeChild(this.root);
+        data.onConfigChanged.callsFake(() => {
+          console.error("Test error, calls to old editor after reloading");
+          throw new Error();
+        });
+        setupStub();
       }
       this.root = document.body.appendChild(document.createElement("div"));
       this.scope = within(this.root);
@@ -38,10 +50,7 @@ export const uiTest = () => {
   });
 
   beforeEach(() => {
-    data.onConfigChanged = sinon.stub();
-    data.onConfigChanged.callsFake((x) => {
-      data.pluginConfig = x;
-    });
+    setupStub();
   });
 
   afterEach(() => {
