@@ -31,11 +31,9 @@ const ValueEditor = (props: {
   const valueType = van.derive(() => value.val.$type);
   van.derive(() => {
     const val = valueType.val;
-    const config = editorConfiguration.val;
     if (val !== valueType.oldVal) {
       visible.val = true;
-      const expanded = { ...config.expanded, [id]: true };
-      editorConfiguration.val = { ...config, expanded };
+      editorConfiguration.setExpanded(id, true);
     }
   });
   const style = van.derive(() => {

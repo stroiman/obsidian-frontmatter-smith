@@ -6,6 +6,7 @@ import { createDefaultForgeConfiguration } from "./defaults";
 import { deepState, stateArray } from "./helpers";
 import { PluginConfiguration } from "src/plugin-configuration";
 import { ForgeConfiguration } from "src/smith-configuration-schema";
+import { wrapEditorConfig } from "./types";
 
 const { div, button } = van.tags;
 
@@ -16,7 +17,10 @@ const ConfigurationEditor = (props: {
   onConfigChanged?: OnConfigChanged;
 }) => {
   const s = van.state(props.config);
-  const { editorConfiguration, smithConfiguration } = deepState(s);
+  const deepS = deepState(s);
+  const { smithConfiguration } = deepS;
+  const editorConfiguration = wrapEditorConfig(deepS.editorConfiguration);
+
   const forges = stateArray(deepState(smithConfiguration).forges);
   van.derive(() => {
     const newState = s.val;
@@ -30,9 +34,7 @@ const ConfigurationEditor = (props: {
   ) => {
     result.removeChild(elm);
     forges.val = forges.val.filter((x) => x !== forge);
-    const expanded = { ...editorConfiguration.val.expanded };
-    delete expanded[forge.val.$id];
-    editorConfiguration.val = { ...editorConfiguration.val, expanded };
+    editorConfiguration.remove(forge.val.$id);
   };
   const result = div(
     { className: classNames.forgeConfig },

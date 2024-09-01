@@ -176,7 +176,7 @@ describe("UI / Object configuration", () => {
           expect(button).to.have.attribute("aria-expanded", "true");
         });
 
-        it("Should remeber the expansion after rerender", () => {
+        it("Should remember the expansion after rerender", () => {
           data.rerender();
           valueElement = getObjectKeys(data.scope)[0]!;
           expect(valueElement.isConnected, "Connected").is.true;

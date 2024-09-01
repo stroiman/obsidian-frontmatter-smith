@@ -3,7 +3,8 @@ import { ForgeConfiguration } from "../../smith-configuration-schema";
 
 import * as classNames from "./index.module.css";
 import { Setting } from "../obsidian-controls";
-import { deepState, deepState2way, genId } from "../helpers";
+//const { expanded } = deepState2way(editorConfiguration);
+import { deepState, genId } from "../helpers";
 import { CommandList } from "../value-editor";
 import { button, div } from "../tags";
 import { ExpandCollapseButton } from "../components";
@@ -27,18 +28,17 @@ export function ForgeEditor(props: {
   ) => void;
 }) {
   const { forgeConfig, expand, editorConfiguration } = props;
-  const { expanded } = deepState2way(editorConfiguration);
   const id = genId("forge-config-heading");
   const $id = forgeConfig.val.$id;
   const { name, commands } = deepState(forgeConfig);
   const defaultVisible =
-    expand || editorConfiguration.val.expanded[$id] || false;
+    expand || editorConfiguration.getExpanded($id) || false;
   const visible = van.state(defaultVisible);
   const forgeContainerId = genId("forge-container");
   van.derive(() => {
     const newVal = visible.val;
     if (newVal != visible.oldVal) {
-      expanded.val = { ...expanded.val, [$id]: newVal };
+      editorConfiguration.setExpanded($id, newVal);
     }
   });
   const elm = section(
