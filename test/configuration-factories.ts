@@ -86,7 +86,7 @@ export const createAddToArrayCommand = (
     ...input,
   };
 };
-type BuildAction<T> = (x: T) => T;
+type BuildAction<T, U = T> = (x: T) => U;
 
 export class ConstantValueBuilder {
   value: any;
@@ -351,3 +351,7 @@ export const buildPluginConfiguration = (
 
 export const buildSingleForgeConfig = (f: BuildAction<ForgeBuilder>) =>
   buildPluginConfiguration((p) => p.addForge(f));
+
+export const buildSingleCommandConfig = (
+  fn: BuildAction<CommandBuilder, Builder<Command>>,
+) => buildSingleForgeConfig((b) => b.addCommand(fn));
