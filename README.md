@@ -135,26 +135,11 @@ You wrap the value in `[[ ]]` to insert a link.
 
 ##### Sub commands
 
-Each option in a choice value can have a list of commands. E.g. This pseudo
-configuration illustrates how choosing a "Book" adds a new "Command" configured
-to set the `author` property.
+Each option in a choice value can have a list of commands. E.g. This example
+shows how choosing the value "Book" adds a new "Command" configured to set the
+`author` property.
 
-```yaml
-- set-value:
-    key: "type"
-    value:
-      type: "Choice"
-      options:
-        - text: Movie
-          type: [[Movie]]
-        - text: Book
-          type: [[Book]]
-          commands:
-          - set-value:
-              key: "author"
-              value:
-                type: "string-input"
-```
+![Screenshot showing that 'book' is expanded, and below it is a new 'set value' command for triggering a user input to set the value of 'author', and a similar setup for the 'movie' value](documentation/sub-commands.png?raw=true)
 
 ## API
 
