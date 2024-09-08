@@ -67,6 +67,7 @@ const ConstValueConfiguration = (props: { value: State<ConstantValue> }) => {
     "aria-label": "Value",
     "aria-errormessage": id,
     "aria-invalid": van.derive(() => (showError.val ? "true" : "false")),
+    value: JSON.stringify(props.value.val.value),
     type: "text",
     onblur: () => {
       touched.val = true;
