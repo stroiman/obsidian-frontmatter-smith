@@ -20,6 +20,9 @@ importers:
       nanoid:
         specifier: ^5.0.7
         version: 5.0.7
+      sortablejs:
+        specifier: ^1.15.3
+        version: 1.15.3
       vanjs-core:
         specifier: ^1.5.1
         version: 1.5.1
@@ -63,6 +66,9 @@ importers:
       '@types/sinon-chai':
         specifier: ^3.2.12
         version: 3.2.12
+      '@types/sortablejs':
+        specifier: ^1.15.8
+        version: 1.15.8
       '@typescript-eslint/eslint-plugin':
         specifier: 7.17.0
         version: 7.17.0(@typescript-eslint/parser@7.17.0(eslint@9.7.0)(typescript@5.5.4))(eslint@9.7.0)(typescript@5.5.4)
@@ -656,6 +662,9 @@ packages:
 
   '@types/sinonjs__fake-timers@8.1.5':
     resolution: {integrity: sha512-mQkU2jY8jJEF7YHjHvsQO8+3ughTL1mcnn96igfhONmR+fUPSKIkefQYpSe8bsly2Ep7oQbn/6VG5/9/0qcArQ==}
+
+  '@types/sortablejs@1.15.8':
+    resolution: {integrity: sha512-b79830lW+RZfwaztgs1aVPgbasJ8e7AXtZYHTELNXZPsERt4ymJdjV4OccDbHQAvHrCcFpbF78jkm0R6h/pZVg==}
 
   '@types/tern@0.23.9':
     resolution: {integrity: sha512-ypzHFE/wBzh+BlH6rrBgS5I/Z7RD21pGhZ2rltb/+ZrVM1awdZwjx7hE5XfuYgHWk9uvV5HLZN3SloevCAp3Bw==}
@@ -1594,6 +1603,9 @@ packages:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
     engines: {node: '>=8'}
 
+  sortablejs@1.15.3:
+    resolution: {integrity: sha512-zdK3/kwwAK1cJgy1rwl1YtNTbRmc8qW/+vgXf75A7NHag5of4pyI6uK86ktmQETyWRH7IGaE73uZOOBcGxgqZg==}
+
   source-map-js@1.2.0:
     resolution: {integrity: sha512-itJW8lvSA0TXEphiRoawsCksnlf8SyvmFzIhltqAHluXd88pkCd+cXJVHTDwdCr0IzwptSm035IHQktUu1QUMg==}
     engines: {node: '>=0.10.0'}
@@ -2188,6 +2200,8 @@ snapshots:
       '@types/sinonjs__fake-timers': 8.1.5
 
   '@types/sinonjs__fake-timers@8.1.5': {}
+
+  '@types/sortablejs@1.15.8': {}
 
   '@types/tern@0.23.9':
     dependencies:
@@ -3157,6 +3171,8 @@ snapshots:
       supports-color: 7.2.0
 
   slash@3.0.0: {}
+
+  sortablejs@1.15.3: {}
 
   source-map-js@1.2.0: {}
 
