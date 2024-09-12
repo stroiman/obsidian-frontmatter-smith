@@ -1,14 +1,14 @@
 import van, { State } from "vanjs-core";
 import { ForgeConfiguration } from "../../smith-configuration-schema";
-
 import * as classNames from "./index.module.css";
 import { Setting } from "../obsidian-controls";
-//const { expanded } = deepState2way(editorConfiguration);
 import { deepState, genId } from "../helpers";
 import { CommandList } from "../value-editor";
 import { button, div } from "../tags";
 import { ExpandCollapseButton } from "../components";
 import { EditorConfigWrapper } from "../types";
+
+export const handleClassName = classNames.dragHandle;
 
 const clsx = (...args: any[]): string => {
   return args
@@ -53,6 +53,7 @@ export function ForgeEditor(props: {
           visible.val = !visible.val;
         },
       },
+      div({ className: handleClassName }, "x"),
       ExpandCollapseButton({
         visible,
         type: "Forge",
