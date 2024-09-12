@@ -1,4 +1,4 @@
-import { getExpandCollapseButton, uiTest } from "../ui-test-helpers";
+import { uiTest } from "../ui-test-helpers";
 import * as factories from "test/configuration-factories";
 
 describe("UI / Constant value", () => {

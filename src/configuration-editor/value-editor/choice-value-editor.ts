@@ -11,7 +11,6 @@ import {
   StateInput,
 } from "../components";
 import { createDefaultChoiceValueItem } from "../defaults";
-import { EditorConfiguration } from "src/plugin-configuration";
 import { EditorConfigWrapper } from "../types";
 
 const { section, label, div, h4, p, button } = van.tags;

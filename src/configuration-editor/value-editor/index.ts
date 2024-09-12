@@ -22,7 +22,6 @@ import {
 } from "../defaults";
 import { CommandEditor, OnRemoveCommandClick } from "../command-editor";
 import { button, div, input, option, p, select } from "../tags";
-import { EditorConfiguration } from "src/plugin-configuration";
 import { EditorConfigWrapper } from "../types";
 
 const Option = ({

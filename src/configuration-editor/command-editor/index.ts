@@ -13,7 +13,6 @@ import { renderValueEditor, ValueTypeEditor } from "../value-editor";
 import { ChildGroup } from "../containers";
 import { StateInput } from "../components";
 import { migrateCommandToType } from "../defaults";
-import { EditorConfiguration } from "src/plugin-configuration";
 import { EditorConfigWrapper } from "../types";
 
 export type OnRemoveCommandClick = (x: {
