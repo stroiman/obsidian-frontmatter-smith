@@ -1,30 +1,22 @@
 import van, { State } from "vanjs-core";
 import * as classNames from "./index.module.css";
 import { Setting } from "./obsidian-controls";
-import { ForgeEditor, handleClassName } from "./forge-editor";
+import { ForgeEditor } from "./forge-editor";
 import { createDefaultForgeConfiguration } from "./defaults";
 import { deepState, stateArray } from "./helpers";
 import { PluginConfiguration } from "src/plugin-configuration";
 import { ForgeConfiguration } from "src/smith-configuration-schema";
 import { wrapEditorConfig } from "./types";
 import Sortable from "sortablejs";
+import {
+  createDragEndHandler,
+  handleClassName,
+  initSortable,
+} from "./sortable";
 
 const { div, button } = van.tags;
 
 export type OnConfigChanged = (config: PluginConfiguration) => void;
-
-const createDragEndHandler =
-  <T extends State<any[]>>(list: T) =>
-  (e: Sortable.SortableEvent) => {
-    const { oldIndex, newIndex } = e;
-    if (typeof oldIndex === "number" && typeof newIndex === "number") {
-      const copy = [...list.val];
-      const moved = copy[oldIndex];
-      copy.splice(oldIndex, 1);
-      copy.splice(newIndex, 0, moved);
-      list.val = copy;
-    }
-  };
 
 const ConfigurationEditor = (props: {
   config: PluginConfiguration;
@@ -56,10 +48,7 @@ const ConfigurationEditor = (props: {
       ForgeEditor({ forgeConfig, editorConfiguration, onRemoveClick }),
     ),
   );
-  Sortable.create(forgeEditorsContainer, {
-    handle: `.${handleClassName}`,
-    onEnd: createDragEndHandler(forges),
-  });
+  initSortable(forgeEditorsContainer, forges);
   return div(
     { className: classNames.forgeConfig },
     Setting({

@@ -7,8 +7,7 @@ import { CommandList } from "../value-editor";
 import { button, div } from "../tags";
 import { ExpandCollapseButton } from "../components";
 import { EditorConfigWrapper } from "../types";
-
-export const handleClassName = classNames.dragHandle;
+import { DragHandle } from "../sortable";
 
 const clsx = (...args: any[]): string => {
   return args
@@ -53,7 +52,7 @@ export function ForgeEditor(props: {
           visible.val = !visible.val;
         },
       },
-      div({ className: handleClassName }, "x"),
+      DragHandle(),
       ExpandCollapseButton({
         visible,
         type: "Forge",
