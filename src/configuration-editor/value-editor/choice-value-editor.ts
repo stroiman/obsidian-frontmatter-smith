@@ -12,6 +12,7 @@ import {
 } from "../components";
 import { createDefaultChoiceValueItem } from "../defaults";
 import { EditorConfigWrapper } from "../types";
+import { DragHandle, initSortable, OptionsContainer } from "../sortable";
 
 const { section, label, div, h4, p, button } = van.tags;
 
@@ -39,23 +40,47 @@ const Choice = (props: {
   const element = section(
     {
       "aria-label": "Option: " + choice.val.value,
-      className: classNames.choiceSection,
     },
-    ExpandCollapseButton({
-      visible: showChildren,
-      type: "choice",
-      controlledContainerId: optionContainerId,
-    }),
-    SimpleStateInput({ labelId: textLabelId, value: text }),
-    SimpleStateInput({ labelId: valueLabelId, value }),
     div(
+      { className: classNames.optionRow },
+      div(
+        {
+          className: classNames.optionRowHead,
+        },
+        DragHandle(),
+        ExpandCollapseButton({
+          visible: showChildren,
+          type: "choice",
+          controlledContainerId: optionContainerId,
+        }),
+      ),
+      div(
+        { className: classNames.optionRowInputs },
+        SimpleStateInput({
+          className: classNames.optionRowInput,
+          labelId: textLabelId,
+          value: text,
+        }),
+        SimpleStateInput({
+          className: classNames.optionRowInput,
+          labelId: valueLabelId,
+          value,
+        }),
+      ),
       button(
-        { onclick: () => props.onRemoveClick({ element, choice }) },
+        {
+          className: classNames.optionRowFoot,
+          onclick: () => props.onRemoveClick({ element, choice }),
+        },
         "Remove choice",
       ),
     ),
     div(
-      { id: optionContainerId, className: childCls },
+      {
+        id: optionContainerId,
+        className: childCls,
+        style: "margin-left: 2rem",
+      },
 
       h4("Commands"),
       p(
@@ -107,14 +132,7 @@ const Choices = (props: {
   };
   const textLabelId = genId("option-text-label");
   const valueLabelId = genId("option-value-label");
-  const optionsDiv = div(
-    {
-      className: classNames.optionsList,
-    },
-    div(),
-    label({ id: textLabelId }, "Text"),
-    label({ id: valueLabelId }, "Value"),
-    div(),
+  const optionsDiv = OptionsContainer(
     options.val.map((choice, i) => {
       return Choice({
         choice,
@@ -124,6 +142,31 @@ const Choices = (props: {
         editorConfiguration,
       });
     }),
+  );
+  initSortable(optionsDiv, options);
+  const result = div(
+    { className: classNames.optionsList },
+    div(
+      {
+        className: classNames.optionRow,
+      },
+      div({ className: classNames.optionRowHead }),
+      div(
+        {
+          className: classNames.optionRowInputs,
+        },
+        label(
+          { id: textLabelId, className: classNames.optionRowInput },
+          "Text",
+        ),
+        label(
+          { id: valueLabelId, className: classNames.optionRowInput },
+          "Value",
+        ),
+      ),
+      div({ className: classNames.optionRowFoot }),
+    ),
+    optionsDiv,
   );
   return [
     HeadingWithButton({
@@ -150,6 +193,6 @@ const Choices = (props: {
         "Add choice",
       ),
     }),
-    ChildGroup(optionsDiv),
+    ChildGroup(result),
   ];
 };

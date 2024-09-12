@@ -1,3 +1,11 @@
 .drag-handle {
   display: block;
 }
+
+.options-container {
+  display: contents;
+}
+
+.ghost {
+  background: #8882;
+}

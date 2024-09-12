@@ -9,13 +9,38 @@
 }
 
 .options-list {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: var(--grid-gap);
-  grid-template-columns: auto 1fr 1fr auto;
+}
+
+.option-row {
+  display: flex;
+  gap: var(--grid-gap);
+}
+
+.option-row-head {
+  display: flex;
+  width: 2rem;
+}
+
+.option-row-inputs {
+  display: flex;
+  flex-grow: 1;
+  gap: var(--grid-gap);
+}
+
+.option-row-input {
+  display: block;
+  width: 50%;
+}
+
+.option-row-foot {
+  width: 10rem;
 }
 
 .choice-commands {
-  grid-column: 2/5;
+  grid-column: 3/5;
 }
 
 .hidden {

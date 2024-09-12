@@ -1,4 +1,4 @@
-import van, { State } from "vanjs-core";
+import van, { State, Props } from "vanjs-core";
 import { button, input } from "./tags";
 
 export const ExpandCollapseButton = (props: {
@@ -29,7 +29,7 @@ export const ExpandCollapseButton = (props: {
   );
 };
 
-export type StateInputProps = {
+export type StateInputProps = Props & {
   /**
    * id of the <label> element that describes this input field
    */
@@ -43,8 +43,13 @@ export type StateInputProps = {
 /**
  * Renders an input field that automatically updates a van state field.
  */
-export const SimpleStateInput = ({ labelId, value }: StateInputProps) =>
+export const SimpleStateInput = ({
+  labelId,
+  value,
+  ...rest
+}: StateInputProps) =>
   input({
+    ...rest,
     type: "text",
     "aria-labelledBy": labelId,
     value: value.val,
