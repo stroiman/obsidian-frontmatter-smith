@@ -7,12 +7,7 @@ import { deepState, stateArray } from "./helpers";
 import { PluginConfiguration } from "src/plugin-configuration";
 import { ForgeConfiguration } from "src/smith-configuration-schema";
 import { wrapEditorConfig } from "./types";
-import Sortable from "sortablejs";
-import {
-  createDragEndHandler,
-  handleClassName,
-  initSortable,
-} from "./sortable";
+import { initSortable } from "./sortable";
 
 const { div, button } = van.tags;
 
