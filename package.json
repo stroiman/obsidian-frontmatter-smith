@@ -1,6 +1,6 @@
 {
   "name": "frontmatter-smith",
-  "version": "0.10.2",
+  "version": "0.11.0",
   "description": "Frontmatter smith plugin for Obsidian",
   "main": "main.js",
   "scripts": {
