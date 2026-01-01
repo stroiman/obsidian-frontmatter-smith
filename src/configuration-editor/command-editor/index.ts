@@ -119,7 +119,7 @@ const AddPropertyEditor = (props: {
   onRemoveClick: () => void;
   editorConfiguration: EditorConfigWrapper;
 }) => {
-  const { headingId, onRemoveClick, command, editorConfiguration } = props;
+  const { headingId, onRemoveClick, command } = props;
   const { key } = deepState(command);
   return [
     CommandNameAndDesc({
