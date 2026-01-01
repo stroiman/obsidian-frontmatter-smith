@@ -6,6 +6,7 @@ import { orElse } from "fp-ts/lib/Either";
 import { nanoid } from "nanoid";
 import { AddPropertyCommand } from "./add-property";
 import { SetValueCommand } from "./set-value";
+import { SetTagCommand } from "./set-tag-command";
 
 const withFallbackFn = <C extends t.Any>(
   codec: C,
@@ -33,7 +34,11 @@ export type AddToArrayCommand = {
   value: Value;
 };
 
-export type Command = AddPropertyCommand | AddToArrayCommand | SetValueCommand;
+export type Command =
+  | AddPropertyCommand
+  | AddToArrayCommand
+  | SetValueCommand
+  | SetTagCommand;
 
 export type StringInputValue = {
   $type: "string-input" | "number-input";

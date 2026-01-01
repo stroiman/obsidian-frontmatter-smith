@@ -18,6 +18,7 @@ import { migrateCommandToType } from "../defaults";
 import { EditorConfigWrapper } from "../types";
 import { AddPropertyCommand, CommandTypeAddProperty } from "src/add-property";
 import { SetValueCommand } from "src/set-value";
+import { CommandTypeSetTag, SetTagCommand } from "src/set-tag-command";
 
 export type OnRemoveCommandClick = (x: {
   element: HTMLElement;
@@ -56,6 +57,7 @@ const CommandNameAndDesc = (props: {
     commandOption(CommandTypeAddToArray, "Add to array", command),
     commandOption(CommandTypeSetValue, "Set value", command),
     commandOption(CommandTypeAddProperty, "Add property", command),
+    commandOption(CommandTypeSetTag, "Set tag", command),
   );
   return div(
     { className: classNames.commandBlock },
@@ -139,6 +141,30 @@ const AddPropertyEditor = (props: {
   ];
 };
 
+const SetTagEditor = (props: {
+  headingId: string;
+  command: State<SetTagCommand>;
+  onRemoveClick: () => void;
+  editorConfiguration: EditorConfigWrapper;
+}) => {
+  const { headingId, onRemoveClick, command } = props;
+  const { tag } = deepState(command);
+  return [
+    CommandNameAndDesc({
+      command,
+      headingId,
+      name: "Set tag",
+      description: "Sets a tag (sorts the tag list alphabetically)",
+      onRemoveClick,
+    }),
+    Setting({
+      name: "Key",
+      description: "The tag ",
+      control: StateInput({ type: "text", value: tag, ["aria-label"]: "Tag" }),
+    }),
+  ];
+};
+
 const AddArrayElementEditor = (props: {
   headingId: string;
   command: State<AddToArrayCommand>;
@@ -186,32 +212,34 @@ const renderEditor = (
   const commandType = van.derive(() => command.val.$command);
   const createCommand = () => {
     const tmp = command.val;
+    const data = { headingId, onRemoveClick, editorConfiguration };
     switch (tmp.$command) {
-      case "set-value": {
+      case CommandTypeSetValue: {
         const result = wrapState(tmp, command);
         return SetValueEditor({
           command: result,
-          headingId,
-          onRemoveClick,
-          editorConfiguration,
+          ...data,
         });
       }
-      case "add-array-element": {
+      case CommandTypeAddToArray: {
         const result = wrapState(tmp, command);
         return AddArrayElementEditor({
           command: result,
-          headingId,
-          onRemoveClick,
-          editorConfiguration,
+          ...data,
         });
       }
-      case "add-property": {
+      case CommandTypeAddProperty: {
         const result = wrapState(tmp, command);
         return AddPropertyEditor({
           command: result,
-          headingId,
-          onRemoveClick,
-          editorConfiguration,
+          ...data,
+        });
+      }
+      case CommandTypeSetTag: {
+        const result = wrapState(tmp, command);
+        return SetTagEditor({
+          command: result,
+          ...data,
         });
       }
       default:
