@@ -1,15 +1,14 @@
 import { pipe } from "fp-ts/lib/function";
-import {
-  andThen,
-  map,
-  FrontMatter,
-  MetadataOperation,
-  ValueResolverResult,
-  MetadataCommand,
-} from "./ForgeConfiguration";
+import { andThen, map } from "./ForgeConfiguration";
 import { Modals } from "./modals";
 import { createOperations } from "./ConfigurationFactory";
 import { Command } from "./smith-configuration-schema";
+import {
+  FrontMatter,
+  MetadataCommand,
+  MetadataOperation,
+  ValueResolverResult,
+} from "./metadata-command";
 
 export interface TestFileManager<TFile> {
   processFrontMatter(

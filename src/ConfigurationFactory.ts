@@ -8,8 +8,8 @@ import {
   PromtResolver,
   SetValue,
   AddProperty,
-  ValueResolver,
 } from "./ForgeConfiguration";
+import { ValueResolver } from "./metadata-command";
 import { Modals } from "./modals";
 import * as schema from "./smith-configuration-schema";
 

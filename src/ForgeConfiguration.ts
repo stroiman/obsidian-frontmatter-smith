@@ -1,17 +1,15 @@
+import {
+  FrontMatter,
+  MetadataCommand,
+  MetadataOperation,
+  ValueResolver,
+  ValueResolverResult,
+} from "./metadata-command";
 import { Modals } from "./modals";
 import { pipe } from "fp-ts/function";
 
-export type FrontMatter = { [key: string]: unknown };
-
 type ObjectData = { [key: string]: Data };
 export type Data = string | number | boolean | null | Array<Data> | ObjectData;
-
-export type ValueResolverResult<T> = {
-  /** The operation to run as a result of this being resolved */
-  value: T;
-  /** New commands that need to be resolved, eventually returning new results */
-  commands: MetadataCommand<Modals>[];
-};
 
 export const andThen =
   <T, U>(
@@ -44,15 +42,6 @@ export const addCommands =
       andThen((value) => ({ value, commands })),
     );
 
-/**
- * Lazily resolves the commands to be executed for a specific configuration
- * rule. Argument deps contain anything unknown at configuration time, e.g.,
- * mostly a component to open modals.
- */
-export interface ValueResolver<T, TDeps> {
-  run(deps: TDeps): Promise<ValueResolverResult<T>>;
-}
-
 export const resolveResult = {
   ret: <T>(value: T): Promise<ValueResolverResult<T>> =>
     Promise.resolve({ value, commands: [] }),
@@ -75,7 +64,7 @@ export class PromtResolver implements ValueResolver<string | null, Prompt> {
   constructor(private options: { prompt: string }) {}
 
   run(deps: Prompt) {
-    return deps.prompt(this.options).then((x) => resolveResult.ret(x));
+    return deps.prompt(this.options).then(resolveResult.ret);
   }
 }
 
@@ -138,12 +127,6 @@ export class ObjectResolver implements ValueResolver<Data, Modals> {
       resolveResult.ret({}),
     );
   }
-}
-
-export type MetadataOperation = (input: FrontMatter) => void;
-
-export interface MetadataCommand<TDeps> {
-  run(deps: TDeps): Promise<ValueResolverResult<MetadataOperation[]>>;
 }
 
 export class AddProperty<TDeps> implements MetadataCommand<TDeps> {

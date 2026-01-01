@@ -1,6 +1,6 @@
+import { FrontMatter } from "src/metadata-command";
 import { TestFileManager } from "../../src/Forge";
 import { randomUUID } from "crypto";
-import { FrontMatter } from "src/ForgeConfiguration";
 
 export default class FakeMetaDataFileManager
   implements TestFileManager<string>
