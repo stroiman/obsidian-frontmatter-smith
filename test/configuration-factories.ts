@@ -4,7 +4,6 @@ import {
 } from "src/plugin-configuration";
 import {
   ChoiceValue,
-  SetValueCommand,
   StringInputValue,
   ChoiceValueItem,
   Command,
@@ -21,6 +20,7 @@ import {
   AddPropertyCommand,
   createDefaultAddPropertyCommand,
 } from "src/add-property";
+import { SetValueCommand } from "src/set-value";
 
 const id = <T>(x: T): T => x;
 

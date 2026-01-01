@@ -4,16 +4,16 @@ import {
   ChoiceValueItem,
   Command,
   CommandType,
-  ConstantValue,
   ForgeConfiguration,
   createId,
   ObjectValue,
   ObjectValueItem,
   StringInputValue,
-  Value,
   GetCommand,
   AddToArrayCommand,
 } from "../smith-configuration-schema";
+import { createDefaultValue } from "./value";
+import { createDefaultSetValueCommand } from "src/set-value";
 
 export const createDefaultObjectValueItem = (): ObjectValueItem => ({
   $id: createId(),
@@ -32,11 +32,6 @@ export const createDefaultForgeConfiguration = (): ForgeConfiguration => ({
   $id: createId(),
   name: "Forge name ...",
   commands: [createDefaultSetValueCommand()],
-});
-
-export const createDefaultConstantValue = (): ConstantValue => ({
-  $type: "constant" as const,
-  value: "value",
 });
 
 export const createDefaultChoiceValue = (): ChoiceValue => ({
@@ -60,18 +55,9 @@ export const createDefaultObjectValue = (): ObjectValue => ({
   values: [],
 });
 
-export const createDefaultValue = (): Value => createDefaultConstantValue();
-
 export const createAddToArrayCommand = (): AddToArrayCommand => ({
   $id: createId(),
   $command: "add-array-element" as const,
-  key: "Key",
-  value: createDefaultValue(),
-});
-
-export const createDefaultSetValueCommand = (): Command => ({
-  $id: createId(),
-  $command: "set-value",
   key: "Key",
   value: createDefaultValue(),
 });

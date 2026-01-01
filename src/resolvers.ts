@@ -1,11 +1,7 @@
 import { pipe } from "fp-ts/lib/function";
+import { addCommands, Data, resolveResult } from "./ForgeConfiguration";
 import {
-  addCommands,
   andThen,
-  Data,
-  resolveResult,
-} from "./ForgeConfiguration";
-import {
   MetadataCommand,
   ValueResolver,
   ValueResolverResult,

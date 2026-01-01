@@ -2,7 +2,6 @@ import van, { State } from "vanjs-core";
 import * as classNames from "./index.module.css";
 import {
   Command,
-  SetValueCommand,
   AddToArrayCommand,
   CommandType,
   CommandTypeAddToArray,
@@ -18,6 +17,7 @@ import { StateInput } from "../components";
 import { migrateCommandToType } from "../defaults";
 import { EditorConfigWrapper } from "../types";
 import { AddPropertyCommand, CommandTypeAddProperty } from "src/add-property";
+import { SetValueCommand } from "src/set-value";
 
 export type OnRemoveCommandClick = (x: {
   element: HTMLElement;

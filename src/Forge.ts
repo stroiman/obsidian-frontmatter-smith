@@ -1,10 +1,11 @@
 import { pipe } from "fp-ts/lib/function";
-import { andThen, map } from "./ForgeConfiguration";
 import { Modals } from "./modals";
 import { createOperations } from "./ConfigurationFactory";
 import { Command } from "./smith-configuration-schema";
 import {
+  andThen,
   FrontMatter,
+  map,
   MetadataCommand,
   MetadataOperation,
   ValueResolverResult,

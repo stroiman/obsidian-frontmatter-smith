@@ -5,6 +5,7 @@ import { withValidate } from "io-ts-types";
 import { orElse } from "fp-ts/lib/Either";
 import { nanoid } from "nanoid";
 import { AddPropertyCommand } from "./add-property";
+import { SetValueCommand } from "./set-value";
 
 const withFallbackFn = <C extends t.Any>(
   codec: C,
@@ -28,13 +29,6 @@ export const CommandTypeAddToArray = "add-array-element";
 export type AddToArrayCommand = {
   $id: string;
   $command: typeof CommandTypeAddToArray;
-  key: string;
-  value: Value;
-};
-
-export type SetValueCommand = {
-  $id: string;
-  $command: typeof CommandTypeSetValue;
   key: string;
   value: Value;
 };
