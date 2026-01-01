@@ -6,6 +6,9 @@ import {
   AddToArrayCommand,
   CommandTypeAddProperty,
   AddPropertyCommand,
+  CommandType,
+  CommandTypeAddToArray,
+  CommandTypeSetValue,
 } from "../../smith-configuration-schema";
 
 import { Setting } from "../obsidian-controls";
@@ -21,6 +24,19 @@ export type OnRemoveCommandClick = (x: {
   element: HTMLElement;
   command: State<Command>;
 }) => void;
+
+const commandOption = (
+  type: CommandType,
+  name: string,
+  command: State<Command>,
+) =>
+  option(
+    {
+      value: type,
+      selected: command.val.$command === type,
+    },
+    name,
+  );
 
 const CommandNameAndDesc = (props: {
   command: State<Command>;
@@ -38,24 +54,9 @@ const CommandNameAndDesc = (props: {
         command.val = migrateCommandToType(command.val, e.target.value);
       },
     },
-    option(
-      {
-        value: "add-array-element",
-        selected: command.val.$command === "add-array-element",
-      },
-      "Add to array",
-    ),
-    option(
-      { value: "set-value", selected: command.val.$command === "set-value" },
-      "Set value",
-    ),
-    option(
-      {
-        value: CommandTypeAddProperty,
-        selected: command.val.$command === "set-value",
-      },
-      "Set value",
-    ),
+    commandOption(CommandTypeAddToArray, "Add to array", command),
+    commandOption(CommandTypeSetValue, "Set value", command),
+    commandOption(CommandTypeAddProperty, "Add property", command),
   );
   return div(
     { className: classNames.commandBlock },
@@ -119,8 +120,24 @@ const AddPropertyEditor = (props: {
   onRemoveClick: () => void;
   editorConfiguration: EditorConfigWrapper;
 }) => {
-  // TODO: Implement
-  return [];
+  const { headingId, onRemoveClick, command, editorConfiguration } = props;
+  const { key } = deepState(command);
+  return [
+    CommandNameAndDesc({
+      command,
+      headingId,
+      name: "Add property",
+      description:
+        "Adds an empty property to the frontmatter. Does nothing if the property already exists.",
+      onRemoveClick,
+    }),
+    Setting({
+      name: "Key",
+      description:
+        "This is the name of the frontmatter field that will be added to",
+      control: StateInput({ type: "text", value: key, ["aria-label"]: "Key" }),
+    }),
+  ];
 };
 
 const AddArrayElementEditor = (props: {
@@ -135,7 +152,7 @@ const AddArrayElementEditor = (props: {
     CommandNameAndDesc({
       command,
       headingId,
-      name: "Add element to array",
+      name: "Add property",
       description:
         "Assumes the element is an array. The generated value will be added to the array.",
       onRemoveClick,
