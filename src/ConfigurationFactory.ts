@@ -1,5 +1,5 @@
-import { AddProperty } from "./add-property";
-import { AddToArray } from "./add-to-array";
+import { AddProperty } from "./commands/add-property";
+import { AddToArray } from "./commands/add-to-array";
 import { Data } from "./ForgeConfiguration";
 import { ValueResolver } from "./metadata-command";
 import { Modals } from "./modals";
@@ -10,8 +10,8 @@ import {
   ObjectResolver,
   PromtResolver,
 } from "./resolvers";
-import { CommandTypeSetTag, SetTag } from "./set-tag-command";
-import { SetValue } from "./set-value";
+import { CommandTypeSetTag, SetTag } from "./commands/set-tag";
+import { SetValue } from "./commands/set-value";
 import * as schema from "./smith-configuration-schema";
 
 export const getResolver = (

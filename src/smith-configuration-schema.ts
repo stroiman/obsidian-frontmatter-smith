@@ -4,10 +4,13 @@ import { withFallback } from "io-ts-types";
 import { withValidate } from "io-ts-types";
 import { orElse } from "fp-ts/lib/Either";
 import { nanoid } from "nanoid";
-import { AddPropertyCommand, CommandTypeAddProperty } from "./add-property";
-import { SetValueCommand } from "./set-value";
-import { CommandTypeSetTag, SetTagCommand } from "./set-tag-command";
-import { AddToArrayCommand } from "./add-to-array";
+import {
+  AddPropertyCommand,
+  CommandTypeAddProperty,
+} from "./commands/add-property";
+import { SetValueCommand } from "./commands/set-value";
+import { CommandTypeSetTag, SetTagCommand } from "./commands/set-tag";
+import { AddToArrayCommand } from "./commands/add-to-array";
 
 const withFallbackFn = <C extends t.Any>(
   codec: C,

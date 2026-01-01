@@ -18,10 +18,13 @@ import { deepFreeze } from "./configuration-editor/helpers";
 import {
   AddPropertyCommand,
   createDefaultAddPropertyCommand,
-} from "src/add-property";
-import { SetValueCommand } from "src/set-value";
-import { createDefaultSetTagCommand, SetTagCommand } from "src/set-tag-command";
-import { AddToArrayCommand } from "src/add-to-array";
+} from "src/commands/add-property";
+import { SetValueCommand } from "src/commands/set-value";
+import {
+  createDefaultSetTagCommand,
+  SetTagCommand,
+} from "src/commands/set-tag";
+import { AddToArrayCommand } from "src/commands/add-to-array";
 
 const id = <T>(x: T): T => x;
 

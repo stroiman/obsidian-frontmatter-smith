@@ -10,10 +10,16 @@ import { ChildGroup } from "../containers";
 import { StateInput } from "../components";
 import { migrateCommandToType } from "../defaults";
 import { EditorConfigWrapper } from "../types";
-import { AddPropertyCommand, CommandTypeAddProperty } from "src/add-property";
-import { CommandTypeSetValue, SetValueCommand } from "src/set-value";
-import { CommandTypeSetTag, SetTagCommand } from "src/set-tag-command";
-import { AddToArrayCommand, CommandTypeAddToArray } from "src/add-to-array";
+import {
+  AddPropertyCommand,
+  CommandTypeAddProperty,
+} from "src/commands/add-property";
+import { CommandTypeSetValue, SetValueCommand } from "src/commands/set-value";
+import { CommandTypeSetTag, SetTagCommand } from "src/commands/set-tag";
+import {
+  AddToArrayCommand,
+  CommandTypeAddToArray,
+} from "src/commands/add-to-array";
 
 export type OnRemoveCommandClick = (x: {
   element: HTMLElement;

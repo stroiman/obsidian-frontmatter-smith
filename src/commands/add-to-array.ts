@@ -1,5 +1,5 @@
 import { pipe } from "fp-ts/lib/function";
-import { Data } from "./ForgeConfiguration";
+import { Data } from "../ForgeConfiguration";
 import {
   FrontMatter,
   MetadataCommand,
@@ -8,9 +8,9 @@ import {
   ValueResolverResult,
   createId,
   map,
-} from "./metadata-command";
-import { Value } from "./smith-configuration-schema";
-import { createDefaultValue } from "./configuration-editor/value";
+} from "../metadata-command";
+import { Value } from "../smith-configuration-schema";
+import { createDefaultValue } from "../configuration-editor/value";
 
 export const CommandTypeAddToArray = "add-array-element";
 

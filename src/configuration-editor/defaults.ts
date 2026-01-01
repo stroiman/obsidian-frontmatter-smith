@@ -1,4 +1,4 @@
-import { createDefaultAddPropertyCommand } from "src/add-property";
+import { createDefaultAddPropertyCommand } from "src/commands/add-property";
 import {
   ChoiceValue,
   ChoiceValueItem,
@@ -12,13 +12,9 @@ import {
   GetCommand,
 } from "../smith-configuration-schema";
 import { createDefaultValue } from "./value";
-import { createDefaultSetValueCommand } from "src/set-value";
-import { createDefaultSetTagCommand } from "src/set-tag-command";
-import {
-  AddToArrayCommand,
-  CommandTypeAddToArray,
-  createDefaultAddToArrayCommand,
-} from "src/add-to-array";
+import { createDefaultSetValueCommand } from "src/commands/set-value";
+import { createDefaultSetTagCommand } from "src/commands/set-tag";
+import { createDefaultAddToArrayCommand } from "src/commands/add-to-array";
 
 export const createDefaultObjectValueItem = (): ObjectValueItem => ({
   $id: createId(),

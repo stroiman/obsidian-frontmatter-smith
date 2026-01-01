@@ -3,7 +3,7 @@ import {
   MetadataCommand,
   MetadataOperation,
   ValueResolverResult,
-} from "./metadata-command";
+} from "../metadata-command";
 
 export const CommandTypeAddProperty = "add-property";
 
