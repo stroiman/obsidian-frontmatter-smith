@@ -1,16 +1,14 @@
 import { AddProperty } from "./add-property";
+import { AddToArray, Data, SetValue } from "./ForgeConfiguration";
+import { ValueResolver } from "./metadata-command";
+import { Modals } from "./modals";
 import {
-  AddToArray,
   ChoiceResolver,
   ConstResolver,
-  Data,
   NumberResolver,
   ObjectResolver,
   PromtResolver,
-  SetValue,
-} from "./ForgeConfiguration";
-import { ValueResolver } from "./metadata-command";
-import { Modals } from "./modals";
+} from "./resolvers";
 import * as schema from "./smith-configuration-schema";
 
 export const getResolver = (
