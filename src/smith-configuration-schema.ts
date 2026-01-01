@@ -21,16 +21,19 @@ export const createId = nanoid;
 
 const $id = withFallbackFn(t.string, createId);
 
+export const CommandTypeSetValue = "set-value";
+export const CommandTypeAddToArray = "add-array-element";
+
 export type AddToArrayCommand = {
   $id: string;
-  $command: "add-array-element";
+  $command: typeof CommandTypeAddToArray;
   key: string;
   value: Value;
 };
 
 export type SetValueCommand = {
   $id: string;
-  $command: "set-value";
+  $command: typeof CommandTypeSetValue;
   key: string;
   value: Value;
 };
