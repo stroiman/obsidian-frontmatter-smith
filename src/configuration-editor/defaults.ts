@@ -2,7 +2,9 @@ import {
   ChoiceValue,
   ChoiceValueItem,
   Command,
+  KeyValueCommand,
   CommandType,
+  KeyValueCommandType,
   ConstantValue,
   ForgeConfiguration,
   createId,
@@ -77,8 +79,8 @@ export const createDefaultSetValueCommand = (): Command => ({
 export const createDefaultCommand = createAddToArrayCommand;
 
 export const migrateCommandToType = (
-  command: Command,
-  type: CommandType,
+  command: KeyValueCommand,
+  type: KeyValueCommandType
 ): Command => {
   return {
     $id: genId(),

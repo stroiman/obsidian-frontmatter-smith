@@ -142,7 +142,11 @@ const forgeConfiguration = t.strict({
 
 export type ForgeConfiguration = t.TypeOf<typeof forgeConfiguration>;
 export type Commands = ForgeConfiguration["commands"];
+
+export type KeyValueCommand = AddToArrayCommand | SetValueCommand;
+
 export type CommandType = Command["$command"];
+export type KeyValueCommandType = KeyValueCommand["$command"];
 
 export const smithConfiguration = t.strict({
   version: t.literal("1"),
