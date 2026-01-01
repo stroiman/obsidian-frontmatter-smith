@@ -80,14 +80,16 @@ export const createDefaultCommand = createAddToArrayCommand;
 
 export const migrateCommandToType = (
   command: KeyValueCommand,
-  type: KeyValueCommandType
+  type: KeyValueCommandType,
 ): Command => {
-  return {
-    $id: genId(),
-    $command: type,
-    key: command.key,
-    value: command.value,
-  };
+  const res = createDefaultCommandByType(type);
+  if ("key" in command && "key" in res) {
+    res.key = command.key;
+  }
+  if ("value" in command && "value" in res) {
+    res.value = command.value;
+  }
+  return res;
 };
 
 export const createDefaultCommandByType = (type: CommandType): Command => {
