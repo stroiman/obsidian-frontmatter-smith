@@ -6,8 +6,20 @@ import {
   MetadataOperation,
   ValueResolver,
   ValueResolverResult,
+  createId,
   map,
 } from "./metadata-command";
+import { Value } from "./smith-configuration-schema";
+import { createDefaultValue } from "./configuration-editor/value";
+
+export const CommandTypeAddToArray = "add-array-element";
+
+export type AddToArrayCommand = {
+  $id: string;
+  $command: typeof CommandTypeAddToArray;
+  key: string;
+  value: Value;
+};
 
 export class AddToArray<TDeps> implements MetadataCommand<TDeps> {
   constructor(
@@ -35,3 +47,10 @@ export class AddToArray<TDeps> implements MetadataCommand<TDeps> {
     );
   }
 }
+
+export const createDefaultAddToArrayCommand = (): AddToArrayCommand => ({
+  $id: createId(),
+  $command: CommandTypeAddToArray,
+  key: "Key",
+  value: createDefaultValue(),
+});

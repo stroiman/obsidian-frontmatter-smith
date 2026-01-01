@@ -7,6 +7,7 @@ import { nanoid } from "nanoid";
 import { AddPropertyCommand } from "./add-property";
 import { SetValueCommand } from "./set-value";
 import { SetTagCommand } from "./set-tag-command";
+import { AddToArrayCommand } from "./add-to-array";
 
 const withFallbackFn = <C extends t.Any>(
   codec: C,
@@ -23,16 +24,6 @@ const withFallbackFn = <C extends t.Any>(
 export const createId = nanoid;
 
 const $id = withFallbackFn(t.string, createId);
-
-export const CommandTypeSetValue = "set-value";
-export const CommandTypeAddToArray = "add-array-element";
-
-export type AddToArrayCommand = {
-  $id: string;
-  $command: typeof CommandTypeAddToArray;
-  key: string;
-  value: Value;
-};
 
 export type Command =
   | AddPropertyCommand

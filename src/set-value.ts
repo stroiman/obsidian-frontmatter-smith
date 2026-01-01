@@ -8,8 +8,10 @@ import {
   createId,
   map,
 } from "./metadata-command";
-import { CommandTypeSetValue, Value } from "./smith-configuration-schema";
+import { Value } from "./smith-configuration-schema";
 import { createDefaultValue } from "./configuration-editor/value";
+
+export const CommandTypeSetValue = "set-value";
 
 export class SetValue<TDeps> implements MetadataCommand<TDeps> {
   constructor(

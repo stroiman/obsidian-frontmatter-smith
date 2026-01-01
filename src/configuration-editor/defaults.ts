@@ -10,11 +10,15 @@ import {
   ObjectValueItem,
   StringInputValue,
   GetCommand,
-  AddToArrayCommand,
 } from "../smith-configuration-schema";
 import { createDefaultValue } from "./value";
 import { createDefaultSetValueCommand } from "src/set-value";
 import { createDefaultSetTagCommand } from "src/set-tag-command";
+import {
+  AddToArrayCommand,
+  CommandTypeAddToArray,
+  createDefaultAddToArrayCommand,
+} from "src/add-to-array";
 
 export const createDefaultObjectValueItem = (): ObjectValueItem => ({
   $id: createId(),
@@ -56,14 +60,7 @@ export const createDefaultObjectValue = (): ObjectValue => ({
   values: [],
 });
 
-export const createAddToArrayCommand = (): AddToArrayCommand => ({
-  $id: createId(),
-  $command: "add-array-element" as const,
-  key: "Key",
-  value: createDefaultValue(),
-});
-
-export const createDefaultCommand = createAddToArrayCommand;
+export const createDefaultCommand = createDefaultAddToArrayCommand;
 
 export const migrateCommandToType = (
   command: Command,
@@ -85,7 +82,7 @@ export const createDefaultCommandByType = <T extends CommandType>(
   // TODO: Figure out why the type cast is necessary
   switch (type) {
     case "add-array-element":
-      return createAddToArrayCommand() as GetCommand<T>;
+      return createDefaultAddToArrayCommand() as GetCommand<T>;
     case "set-value":
       return createDefaultSetValueCommand() as GetCommand<T>;
     case "add-property":

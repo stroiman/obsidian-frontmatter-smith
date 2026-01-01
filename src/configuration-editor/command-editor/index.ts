@@ -1,12 +1,6 @@
 import van, { State } from "vanjs-core";
 import * as classNames from "./index.module.css";
-import {
-  Command,
-  AddToArrayCommand,
-  CommandType,
-  CommandTypeAddToArray,
-  CommandTypeSetValue,
-} from "../../smith-configuration-schema";
+import { Command, CommandType } from "../../smith-configuration-schema";
 
 import { Setting } from "../obsidian-controls";
 import { deepState, genId, wrapState } from "../helpers";
@@ -17,8 +11,9 @@ import { StateInput } from "../components";
 import { migrateCommandToType } from "../defaults";
 import { EditorConfigWrapper } from "../types";
 import { AddPropertyCommand, CommandTypeAddProperty } from "src/add-property";
-import { SetValueCommand } from "src/set-value";
+import { CommandTypeSetValue, SetValueCommand } from "src/set-value";
 import { CommandTypeSetTag, SetTagCommand } from "src/set-tag-command";
+import { AddToArrayCommand, CommandTypeAddToArray } from "src/add-to-array";
 
 export type OnRemoveCommandClick = (x: {
   element: HTMLElement;
