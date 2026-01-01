@@ -143,11 +143,8 @@ const forgeConfiguration = t.strict({
 export type ForgeConfiguration = t.TypeOf<typeof forgeConfiguration>;
 export type Commands = ForgeConfiguration["commands"];
 
-export type KeyValueCommand = AddToArrayCommand | SetValueCommand;
-
 export type CommandType = Command["$command"];
 export type CommandOf<T extends CommandType> = Command & { $command: T };
-export type KeyValueCommandType = KeyValueCommand["$command"];
 
 export type GetCommand<T extends CommandType> =
   CommandOf<T> extends infer U ? U : never;
