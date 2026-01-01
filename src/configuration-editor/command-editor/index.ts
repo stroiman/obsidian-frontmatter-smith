@@ -197,42 +197,34 @@ const renderEditor = (
   const commandType = van.derive(() => command.val.$command);
   const createCommand = () => {
     const tmp = command.val;
+    const data = { headingId, onRemoveClick, editorConfiguration };
     switch (tmp.$command) {
-      case "set-value": {
+      case CommandTypeSetValue: {
         const result = wrapState(tmp, command);
         return SetValueEditor({
           command: result,
-          headingId,
-          onRemoveClick,
-          editorConfiguration,
+          ...data,
         });
       }
-      case "add-array-element": {
+      case CommandTypeAddToArray: {
         const result = wrapState(tmp, command);
         return AddArrayElementEditor({
           command: result,
-          headingId,
-          onRemoveClick,
-          editorConfiguration,
+          ...data,
         });
       }
-
-      case "add-property": {
+      case CommandTypeAddProperty: {
         const result = wrapState(tmp, command);
         return AddPropertyEditor({
           command: result,
-          headingId,
-          onRemoveClick,
-          editorConfiguration,
+          ...data,
         });
       }
       case CommandTypeSetTag: {
         const result = wrapState(tmp, command);
         return SetTagEditor({
           command: result,
-          headingId,
-          onRemoveClick,
-          editorConfiguration,
+          ...data,
         });
       }
       default:
