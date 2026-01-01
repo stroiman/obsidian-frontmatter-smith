@@ -42,6 +42,11 @@ export const addCommands =
       andThen((value) => ({ value, commands })),
     );
 
+/**
+ * Lazily resolves the commands to be executed for a specific configuration
+ * rule. Argument deps contain anything unknown at configuration time, e.g.,
+ * mostly a component to open modals.
+ */
 export interface ValueResolver<T, TDeps> {
   run(deps: TDeps): Promise<ValueResolverResult<T>>;
 }
@@ -137,6 +142,14 @@ export type MetadataOperation = (input: FrontMatter) => void;
 
 export interface MetadataCommand<TDeps> {
   run(deps: TDeps): Promise<ValueResolverResult<MetadataOperation[]>>;
+}
+
+export class AddProperty<TDeps> implements MetadataCommand<TDeps> {
+  constructor(private key: string) {}
+
+  run(deps: TDeps): Promise<ValueResolverResult<MetadataOperation[]>> {
+    return Promise.resolve({ value: [], commands: [] });
+  }
 }
 
 export class SetValue<TDeps> implements MetadataCommand<TDeps> {

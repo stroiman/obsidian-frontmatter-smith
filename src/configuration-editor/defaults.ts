@@ -2,9 +2,7 @@ import {
   ChoiceValue,
   ChoiceValueItem,
   Command,
-  KeyValueCommand,
   CommandType,
-  KeyValueCommandType,
   ConstantValue,
   ForgeConfiguration,
   createId,
@@ -12,6 +10,10 @@ import {
   ObjectValueItem,
   StringInputValue,
   Value,
+  AddPropertyCommand,
+  CommandTypeAddProperty,
+  GetCommand,
+  AddToArrayCommand,
 } from "../smith-configuration-schema";
 import { genId } from "./helpers";
 
@@ -62,9 +64,9 @@ export const createDefaultObjectValue = (): ObjectValue => ({
 
 export const createDefaultValue = (): Value => createDefaultConstantValue();
 
-export const createAddToArrayCommand = (): Command => ({
+export const createAddToArrayCommand = (): AddToArrayCommand => ({
   $id: createId(),
-  $command: "add-array-element",
+  $command: "add-array-element" as const,
   key: "Key",
   value: createDefaultValue(),
 });
@@ -76,11 +78,17 @@ export const createDefaultSetValueCommand = (): Command => ({
   value: createDefaultValue(),
 });
 
+export const createDefaultAddPropertyCommand = (): AddPropertyCommand => ({
+  $id: createId(),
+  $command: CommandTypeAddProperty,
+  key: "key",
+});
+
 export const createDefaultCommand = createAddToArrayCommand;
 
 export const migrateCommandToType = (
-  command: KeyValueCommand,
-  type: KeyValueCommandType,
+  command: Command,
+  type: CommandType,
 ): Command => {
   const res = createDefaultCommandByType(type);
   if ("key" in command && "key" in res) {
@@ -92,11 +100,18 @@ export const migrateCommandToType = (
   return res;
 };
 
-export const createDefaultCommandByType = (type: CommandType): Command => {
+export const createDefaultCommandByType = <T extends CommandType>(
+  type: T,
+): GetCommand<T> => {
+  // TODO: Figure out why the type cast is necessary
   switch (type) {
     case "add-array-element":
-      return createAddToArrayCommand();
+      return createAddToArrayCommand() as GetCommand<T>;
     case "set-value":
-      return createDefaultSetValueCommand();
+      return createDefaultSetValueCommand() as GetCommand<T>;
+    case "add-property":
+      return createDefaultAddPropertyCommand() as GetCommand<T>;
+    default:
+      throw new Error("Impossible value");
   }
 };

@@ -4,6 +4,8 @@ import {
   Command,
   SetValueCommand,
   AddToArrayCommand,
+  CommandTypeAddProperty,
+  AddPropertyCommand,
 } from "../../smith-configuration-schema";
 
 import { Setting } from "../obsidian-controls";
@@ -45,6 +47,13 @@ const CommandNameAndDesc = (props: {
     ),
     option(
       { value: "set-value", selected: command.val.$command === "set-value" },
+      "Set value",
+    ),
+    option(
+      {
+        value: CommandTypeAddProperty,
+        selected: command.val.$command === "set-value",
+      },
       "Set value",
     ),
   );
@@ -102,6 +111,16 @@ const SetValueEditor = (props: {
     }),
     renderValueEditor(ChildGroup(), value, editorConfiguration),
   ];
+};
+
+const AddPropertyEditor = (props: {
+  headingId: string;
+  command: State<AddPropertyCommand>;
+  onRemoveClick: () => void;
+  editorConfiguration: EditorConfigWrapper;
+}) => {
+  // TODO: Implement
+  return [];
 };
 
 const AddArrayElementEditor = (props: {
@@ -164,6 +183,15 @@ const renderEditor = (
       case "add-array-element": {
         const result = wrapState(tmp, command);
         return AddArrayElementEditor({
+          command: result,
+          headingId,
+          onRemoveClick,
+          editorConfiguration,
+        });
+      }
+      case "add-property": {
+        const result = wrapState(tmp, command);
+        return AddPropertyEditor({
           command: result,
           headingId,
           onRemoveClick,

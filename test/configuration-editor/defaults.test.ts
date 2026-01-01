@@ -13,7 +13,7 @@ describe("migrateCommandToType", () => {
     };
     const migrated = migrateCommandToType(command, "set-value");
     migrated.key.should.equal("some-key");
-    migrated.value.should.be.like({
+    migrated.should.haveOwnProperty("value").like({
       $type: "constant",
       value: "some-value",
     });

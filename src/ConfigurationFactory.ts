@@ -7,6 +7,7 @@ import {
   ObjectResolver,
   PromtResolver,
   SetValue,
+  AddProperty,
   ValueResolver,
 } from "./ForgeConfiguration";
 import { Modals } from "./modals";
@@ -46,6 +47,8 @@ export const createOperations = (options: schema.Command[]) => {
         return new AddToArray(option.key, getResolver(option.value));
       case "set-value":
         return new SetValue(option.key, getResolver(option.value));
+      case "add-property":
+        return new AddProperty(option.key);
     }
   });
 };
