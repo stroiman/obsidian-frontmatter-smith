@@ -21,21 +21,35 @@ export const createId = nanoid;
 
 const $id = withFallbackFn(t.string, createId);
 
+export const CommandTypeSetValue = "set-value";
+export const CommandTypeAddToArray = "add-array-element";
+export const CommandTypeAddProperty = "add-property";
+
 export type AddToArrayCommand = {
   $id: string;
-  $command: "add-array-element";
+  $command: typeof CommandTypeAddToArray;
   key: string;
   value: Value;
 };
 
 export type SetValueCommand = {
   $id: string;
-  $command: "set-value";
+  $command: typeof CommandTypeSetValue;
   key: string;
   value: Value;
 };
 
-export type Command = AddToArrayCommand | SetValueCommand;
+/**
+ * Adds a new empty field to the frontmatter. Does nothing if the field already
+ * exists.
+ */
+export type AddPropertyCommand = {
+  $id: string;
+  $command: typeof CommandTypeAddProperty;
+  key: string;
+};
+
+export type Command = AddPropertyCommand | AddToArrayCommand | SetValueCommand;
 
 export type StringInputValue = {
   $type: "string-input" | "number-input";
@@ -139,7 +153,15 @@ const forgeConfiguration = t.strict({
 
 export type ForgeConfiguration = t.TypeOf<typeof forgeConfiguration>;
 export type Commands = ForgeConfiguration["commands"];
+
+export type KeyValueCommand = AddToArrayCommand | SetValueCommand;
+
 export type CommandType = Command["$command"];
+export type CommandOf<T extends CommandType> = Command & { $command: T };
+export type KeyValueCommandType = KeyValueCommand["$command"];
+
+export type GetCommand<T extends CommandType> =
+  CommandOf<T> extends infer U ? U : never;
 
 export const smithConfiguration = t.strict({
   version: t.literal("1"),
