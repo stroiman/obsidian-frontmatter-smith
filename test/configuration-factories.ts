@@ -15,8 +15,10 @@ import {
   Value,
   ForgeConfiguration,
   SmithConfiguration,
+  AddPropertyCommand,
 } from "src/smith-configuration-schema";
 import { deepFreeze } from "./configuration-editor/helpers";
+import { createDefaultAddPropertyCommand } from "src/configuration-editor/defaults";
 
 const id = <T>(x: T): T => x;
 
@@ -86,6 +88,11 @@ export const createAddToArrayCommand = (
     ...input,
   };
 };
+
+export const createAddPropertyCommand = (
+  input?: Partial<AddPropertyCommand>,
+) => ({ ...createDefaultAddPropertyCommand(), ...input });
+
 type BuildAction<T, U = T> = (x: T) => U;
 
 export class ConstantValueBuilder {

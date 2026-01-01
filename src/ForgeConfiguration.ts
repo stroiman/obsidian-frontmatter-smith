@@ -7,7 +7,9 @@ type ObjectData = { [key: string]: Data };
 export type Data = string | number | boolean | null | Array<Data> | ObjectData;
 
 export type ValueResolverResult<T> = {
+  /** The operation to run as a result of this being resolved */
   value: T;
+  /** New commands that need to be resolved, eventually returning new results */
   commands: MetadataCommand<Modals>[];
 };
 
@@ -148,7 +150,16 @@ export class AddProperty<TDeps> implements MetadataCommand<TDeps> {
   constructor(private key: string) {}
 
   run(deps: TDeps): Promise<ValueResolverResult<MetadataOperation[]>> {
-    return Promise.resolve({ value: [], commands: [] });
+    return Promise.resolve({
+      value: [
+        (metadata) => {
+          if (!(this.key in metadata)) {
+            metadata[this.key] = null;
+          }
+        },
+      ],
+      commands: [],
+    });
   }
 }
 
