@@ -147,7 +147,22 @@ const SetTagEditor = (props: {
   onRemoveClick: () => void;
   editorConfiguration: EditorConfigWrapper;
 }) => {
-  return [];
+  const { headingId, onRemoveClick, command } = props;
+  const { tag } = deepState(command);
+  return [
+    CommandNameAndDesc({
+      command,
+      headingId,
+      name: "Set tag",
+      description: "Sets a tag (sorts the tag list alphabetically)",
+      onRemoveClick,
+    }),
+    Setting({
+      name: "Key",
+      description: "The tag ",
+      control: StateInput({ type: "text", value: tag, ["aria-label"]: "Tag" }),
+    }),
+  ];
 };
 
 const AddArrayElementEditor = (props: {
