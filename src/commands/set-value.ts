@@ -12,6 +12,7 @@ import { Value } from "../smith-configuration-schema";
 import { createDefaultValue } from "../configuration-editor/value";
 
 export const CommandTypeSetValue = "set-value";
+export type CommandTypeSetValue = typeof CommandTypeSetValue;
 
 export class SetValue<TDeps> implements MetadataCommand<TDeps> {
   constructor(

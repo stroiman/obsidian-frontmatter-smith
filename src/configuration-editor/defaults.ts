@@ -72,20 +72,21 @@ export const migrateCommandToType = (
   return res;
 };
 
+type Map = {
+  [key in CommandType]: {
+    createDefault: () => GetCommand<key>;
+  };
+};
+
+const map: Map = {
+  "set-value": { createDefault: createDefaultSetValueCommand },
+  "add-array-element": { createDefault: createDefaultAddToArrayCommand },
+  "add-property": { createDefault: createDefaultAddPropertyCommand },
+  "set-tag": { createDefault: createDefaultSetTagCommand },
+};
+
 export const createDefaultCommandByType = <T extends CommandType>(
   type: T,
 ): GetCommand<T> => {
-  // TODO: Figure out why the type cast is necessary
-  switch (type) {
-    case "add-array-element":
-      return createDefaultAddToArrayCommand() as GetCommand<T>;
-    case "set-value":
-      return createDefaultSetValueCommand() as GetCommand<T>;
-    case "add-property":
-      return createDefaultAddPropertyCommand() as GetCommand<T>;
-    case "set-tag":
-      return createDefaultSetTagCommand() as GetCommand<T>;
-    default:
-      throw new Error("Impossible value");
-  }
+  return map[type].createDefault();
 };
