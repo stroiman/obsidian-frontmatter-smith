@@ -1,3 +1,4 @@
+import { createDefaultAddPropertyCommand } from "src/add-property";
 import {
   ChoiceValue,
   ChoiceValueItem,
@@ -10,12 +11,9 @@ import {
   ObjectValueItem,
   StringInputValue,
   Value,
-  AddPropertyCommand,
-  CommandTypeAddProperty,
   GetCommand,
   AddToArrayCommand,
 } from "../smith-configuration-schema";
-import { genId } from "./helpers";
 
 export const createDefaultObjectValueItem = (): ObjectValueItem => ({
   $id: createId(),
@@ -76,12 +74,6 @@ export const createDefaultSetValueCommand = (): Command => ({
   $command: "set-value",
   key: "Key",
   value: createDefaultValue(),
-});
-
-export const createDefaultAddPropertyCommand = (): AddPropertyCommand => ({
-  $id: createId(),
-  $command: CommandTypeAddProperty,
-  key: "key",
 });
 
 export const createDefaultCommand = createAddToArrayCommand;

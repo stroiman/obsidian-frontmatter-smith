@@ -129,23 +129,6 @@ export class ObjectResolver implements ValueResolver<Data, Modals> {
   }
 }
 
-export class AddProperty<TDeps> implements MetadataCommand<TDeps> {
-  constructor(private key: string) {}
-
-  run(deps: TDeps): Promise<ValueResolverResult<MetadataOperation[]>> {
-    return Promise.resolve({
-      value: [
-        (metadata) => {
-          if (!(this.key in metadata)) {
-            metadata[this.key] = null;
-          }
-        },
-      ],
-      commands: [],
-    });
-  }
-}
-
 export class SetValue<TDeps> implements MetadataCommand<TDeps> {
   constructor(
     private key: string,

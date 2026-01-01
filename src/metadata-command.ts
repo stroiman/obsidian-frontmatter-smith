@@ -1,4 +1,5 @@
 import { Modals } from "./modals";
+import { nanoid } from "nanoid";
 
 export type FrontMatter = { [key: string]: unknown };
 export type MetadataOperation = (input: FrontMatter) => void;
@@ -22,3 +23,5 @@ export type ValueResolverResult<T> = {
 export interface MetadataCommand<TDeps> {
   run(deps: TDeps): Promise<ValueResolverResult<MetadataOperation[]>>;
 }
+
+export const createId = nanoid;

@@ -4,8 +4,6 @@ import {
   Command,
   SetValueCommand,
   AddToArrayCommand,
-  CommandTypeAddProperty,
-  AddPropertyCommand,
   CommandType,
   CommandTypeAddToArray,
   CommandTypeSetValue,
@@ -19,6 +17,7 @@ import { ChildGroup } from "../containers";
 import { StateInput } from "../components";
 import { migrateCommandToType } from "../defaults";
 import { EditorConfigWrapper } from "../types";
+import { AddPropertyCommand, CommandTypeAddProperty } from "src/add-property";
 
 export type OnRemoveCommandClick = (x: {
   element: HTMLElement;

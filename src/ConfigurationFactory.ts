@@ -1,3 +1,4 @@
+import { AddProperty } from "./add-property";
 import {
   AddToArray,
   ChoiceResolver,
@@ -7,7 +8,6 @@ import {
   ObjectResolver,
   PromtResolver,
   SetValue,
-  AddProperty,
 } from "./ForgeConfiguration";
 import { ValueResolver } from "./metadata-command";
 import { Modals } from "./modals";

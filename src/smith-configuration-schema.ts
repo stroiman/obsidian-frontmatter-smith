@@ -4,6 +4,7 @@ import { withFallback } from "io-ts-types";
 import { withValidate } from "io-ts-types";
 import { orElse } from "fp-ts/lib/Either";
 import { nanoid } from "nanoid";
+import { AddPropertyCommand } from "./add-property";
 
 const withFallbackFn = <C extends t.Any>(
   codec: C,
@@ -23,7 +24,6 @@ const $id = withFallbackFn(t.string, createId);
 
 export const CommandTypeSetValue = "set-value";
 export const CommandTypeAddToArray = "add-array-element";
-export const CommandTypeAddProperty = "add-property";
 
 export type AddToArrayCommand = {
   $id: string;
@@ -37,16 +37,6 @@ export type SetValueCommand = {
   $command: typeof CommandTypeSetValue;
   key: string;
   value: Value;
-};
-
-/**
- * Adds a new empty field to the frontmatter. Does nothing if the field already
- * exists.
- */
-export type AddPropertyCommand = {
-  $id: string;
-  $command: typeof CommandTypeAddProperty;
-  key: string;
 };
 
 export type Command = AddPropertyCommand | AddToArrayCommand | SetValueCommand;

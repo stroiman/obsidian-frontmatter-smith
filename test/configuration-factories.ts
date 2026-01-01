@@ -15,10 +15,12 @@ import {
   Value,
   ForgeConfiguration,
   SmithConfiguration,
-  AddPropertyCommand,
 } from "src/smith-configuration-schema";
 import { deepFreeze } from "./configuration-editor/helpers";
-import { createDefaultAddPropertyCommand } from "src/configuration-editor/defaults";
+import {
+  AddPropertyCommand,
+  createDefaultAddPropertyCommand,
+} from "src/add-property";
 
 const id = <T>(x: T): T => x;
 
