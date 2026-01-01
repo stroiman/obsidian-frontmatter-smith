@@ -10,6 +10,7 @@ import {
   ObjectResolver,
   PromtResolver,
 } from "./resolvers";
+import { CommandTypeSetTag, SetTag } from "./set-tag-command";
 import { SetValue } from "./set-value";
 import * as schema from "./smith-configuration-schema";
 
@@ -49,6 +50,8 @@ export const createOperations = (options: schema.Command[]) => {
         return new SetValue(option.key, getResolver(option.value));
       case "add-property":
         return new AddProperty(option.key);
+      case CommandTypeSetTag:
+        return new SetTag(option.tag);
     }
   });
 };

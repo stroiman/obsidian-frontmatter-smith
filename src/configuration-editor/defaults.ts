@@ -14,6 +14,7 @@ import {
 } from "../smith-configuration-schema";
 import { createDefaultValue } from "./value";
 import { createDefaultSetValueCommand } from "src/set-value";
+import { createDefaultSetTagCommand } from "src/set-tag-command";
 
 export const createDefaultObjectValueItem = (): ObjectValueItem => ({
   $id: createId(),
@@ -89,6 +90,8 @@ export const createDefaultCommandByType = <T extends CommandType>(
       return createDefaultSetValueCommand() as GetCommand<T>;
     case "add-property":
       return createDefaultAddPropertyCommand() as GetCommand<T>;
+    case "set-tag":
+      return createDefaultSetTagCommand() as GetCommand<T>;
     default:
       throw new Error("Impossible value");
   }

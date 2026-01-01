@@ -18,6 +18,7 @@ import { migrateCommandToType } from "../defaults";
 import { EditorConfigWrapper } from "../types";
 import { AddPropertyCommand, CommandTypeAddProperty } from "src/add-property";
 import { SetValueCommand } from "src/set-value";
+import { CommandTypeSetTag, SetTagCommand } from "src/set-tag-command";
 
 export type OnRemoveCommandClick = (x: {
   element: HTMLElement;
@@ -56,6 +57,7 @@ const CommandNameAndDesc = (props: {
     commandOption(CommandTypeAddToArray, "Add to array", command),
     commandOption(CommandTypeSetValue, "Set value", command),
     commandOption(CommandTypeAddProperty, "Add property", command),
+    commandOption(CommandTypeSetTag, "Set tag", command),
   );
   return div(
     { className: classNames.commandBlock },
@@ -139,6 +141,15 @@ const AddPropertyEditor = (props: {
   ];
 };
 
+const SetTagEditor = (props: {
+  headingId: string;
+  command: State<SetTagCommand>;
+  onRemoveClick: () => void;
+  editorConfiguration: EditorConfigWrapper;
+}) => {
+  return [];
+};
+
 const AddArrayElementEditor = (props: {
   headingId: string;
   command: State<AddToArrayCommand>;
@@ -205,9 +216,19 @@ const renderEditor = (
           editorConfiguration,
         });
       }
+
       case "add-property": {
         const result = wrapState(tmp, command);
         return AddPropertyEditor({
+          command: result,
+          headingId,
+          onRemoveClick,
+          editorConfiguration,
+        });
+      }
+      case CommandTypeSetTag: {
+        const result = wrapState(tmp, command);
+        return SetTagEditor({
           command: result,
           headingId,
           onRemoveClick,
