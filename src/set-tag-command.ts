@@ -12,7 +12,17 @@ export class SetTag<TDeps> implements MetadataCommand<TDeps> {
 
   run(deps: TDeps): Promise<ValueResolverResult<MetadataOperation[]>> {
     return Promise.resolve({
-      value: [],
+      value: [
+        (metadata) => {
+          const orgTags = metadata.tags || [];
+          const tags = Array.isArray(orgTags) ? orgTags : [];
+          if (!tags.includes(this.tag)) {
+            tags.push(this.tag);
+            tags.sort();
+            metadata.tags = tags;
+          }
+        },
+      ],
       commands: [],
     });
   }

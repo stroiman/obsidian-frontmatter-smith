@@ -21,6 +21,7 @@ import {
   createDefaultAddPropertyCommand,
 } from "src/add-property";
 import { SetValueCommand } from "src/set-value";
+import { createDefaultSetTagCommand, SetTagCommand } from "src/set-tag-command";
 
 const id = <T>(x: T): T => x;
 
@@ -94,6 +95,11 @@ export const createAddToArrayCommand = (
 export const createAddPropertyCommand = (
   input?: Partial<AddPropertyCommand>,
 ) => ({ ...createDefaultAddPropertyCommand(), ...input });
+
+export const createSetTagCommand = (input?: Partial<SetTagCommand>) => ({
+  ...createDefaultSetTagCommand(),
+  ...input,
+});
 
 type BuildAction<T, U = T> = (x: T) => U;
 
