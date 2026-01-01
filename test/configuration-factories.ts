@@ -6,7 +6,6 @@ import {
   ChoiceValue,
   StringInputValue,
   ChoiceValueItem,
-  Command,
   ObjectValue,
   ObjectValueItem,
   ConstantValue,
@@ -25,6 +24,7 @@ import {
   SetTagCommand,
 } from "src/commands/set-tag";
 import { AddToArrayCommand } from "src/commands/add-to-array";
+import { Command } from "src/commands";
 
 const id = <T>(x: T): T => x;
 

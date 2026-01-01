@@ -4,6 +4,7 @@ import {
   MetadataOperation,
   ValueResolverResult,
 } from "../metadata-command";
+import { CommandConfig } from "./command";
 
 export const CommandTypeAddProperty = "add-property";
 
@@ -38,4 +39,11 @@ export type AddPropertyCommand = {
   $id: string;
   $command: typeof CommandTypeAddProperty;
   key: string;
+};
+
+export const addPropertyConfig: CommandConfig<
+  typeof CommandTypeAddProperty,
+  AddPropertyCommand
+> = {
+  createDefault: createDefaultAddPropertyCommand,
 };

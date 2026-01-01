@@ -1,8 +1,6 @@
-import { createDefaultAddPropertyCommand } from "src/commands/add-property";
 import {
   ChoiceValue,
   ChoiceValueItem,
-  Command,
   CommandType,
   ForgeConfiguration,
   createId,
@@ -13,8 +11,8 @@ import {
 } from "../smith-configuration-schema";
 import { createDefaultValue } from "./value";
 import { createDefaultSetValueCommand } from "src/commands/set-value";
-import { createDefaultSetTagCommand } from "src/commands/set-tag";
 import { createDefaultAddToArrayCommand } from "src/commands/add-to-array";
+import { Command, commands } from "src/commands";
 
 export const createDefaultObjectValueItem = (): ObjectValueItem => ({
   $id: createId(),
@@ -78,15 +76,8 @@ type Map = {
   };
 };
 
-const map: Map = {
-  "set-value": { createDefault: createDefaultSetValueCommand },
-  "add-array-element": { createDefault: createDefaultAddToArrayCommand },
-  "add-property": { createDefault: createDefaultAddPropertyCommand },
-  "set-tag": { createDefault: createDefaultSetTagCommand },
-};
-
 export const createDefaultCommandByType = <T extends CommandType>(
   type: T,
 ): GetCommand<T> => {
-  return map[type].createDefault();
+  return commands[type].createDefault();
 };

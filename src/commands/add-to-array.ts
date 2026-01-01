@@ -11,6 +11,7 @@ import {
 } from "../metadata-command";
 import { Value } from "../smith-configuration-schema";
 import { createDefaultValue } from "../configuration-editor/value";
+import { CommandConfig } from "./command";
 
 export const CommandTypeAddToArray = "add-array-element";
 
@@ -54,3 +55,10 @@ export const createDefaultAddToArrayCommand = (): AddToArrayCommand => ({
   key: "Key",
   value: createDefaultValue(),
 });
+
+export const addArrayElementConfig: CommandConfig<
+  typeof CommandTypeAddToArray,
+  AddToArrayCommand
+> = {
+  createDefault: createDefaultAddToArrayCommand,
+};

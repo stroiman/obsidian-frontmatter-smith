@@ -1,7 +1,6 @@
 import { pipe } from "fp-ts/lib/function";
 import { Modals } from "./modals";
 import { createOperations } from "./ConfigurationFactory";
-import { Command } from "./smith-configuration-schema";
 import {
   andThen,
   FrontMatter,
@@ -10,6 +9,7 @@ import {
   MetadataOperation,
   ValueResolverResult,
 } from "./metadata-command";
+import { Command } from "./commands";
 
 export interface TestFileManager<TFile> {
   processFrontMatter(

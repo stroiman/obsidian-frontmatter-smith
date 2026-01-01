@@ -5,8 +5,8 @@ import { Forge } from "../src/Forge";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
 import { createOperations } from "src/ConfigurationFactory";
 import { TFile } from "./types";
-import { Command } from "src/smith-configuration-schema";
 import * as factories from "./configuration-factories";
+import { Command } from "src/commands";
 
 const { match } = sinon;
 

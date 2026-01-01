@@ -1,4 +1,5 @@
 import { pipe } from "fp-ts/lib/function";
+import { CommandConfig } from "./command";
 import { Data } from "../ForgeConfiguration";
 import {
   MetadataCommand,
@@ -49,3 +50,10 @@ export const createDefaultSetValueCommand = (): SetValueCommand => ({
   key: "Key",
   value: createDefaultValue(),
 });
+
+export const setValueConfig: CommandConfig<
+  CommandTypeSetValue,
+  SetValueCommand
+> = {
+  createDefault: createDefaultSetValueCommand,
+};

@@ -1,3 +1,4 @@
+import { CommandConfig } from "./command";
 import {
   createId,
   MetadataCommand,
@@ -6,6 +7,7 @@ import {
 } from "../metadata-command";
 
 export const CommandTypeSetTag = "set-tag";
+export type CommandTypeSetTag = typeof CommandTypeSetTag;
 
 export class SetTag<TDeps> implements MetadataCommand<TDeps> {
   constructor(private tag: string) {}
@@ -39,3 +41,7 @@ export const createDefaultSetTagCommand = (): SetTagCommand => ({
   $command: "set-tag",
   tag: "",
 });
+
+export const setTagConfig: CommandConfig<CommandTypeSetTag, SetTagCommand> = {
+  createDefault: createDefaultSetTagCommand,
+};

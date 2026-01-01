@@ -4,8 +4,8 @@ import { Modals } from "../src/modals";
 import { createForgeFromConfig, Forge } from "../src/Forge";
 import FakeMetadataFileManager from "./fakes/FakeMetadataFileManager";
 import { TFile } from "./types";
-import { Command } from "src/smith-configuration-schema";
 import * as factories from "./configuration-factories";
+import { Command } from "src/commands";
 
 describe("'dependent choices' case", () => {
   let fileManager: FakeMetadataFileManager;

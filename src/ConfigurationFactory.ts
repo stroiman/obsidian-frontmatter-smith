@@ -13,6 +13,7 @@ import {
 import { CommandTypeSetTag, SetTag } from "./commands/set-tag";
 import { SetValue } from "./commands/set-value";
 import * as schema from "./smith-configuration-schema";
+import { Command } from "./commands";
 
 export const getResolver = (
   option: schema.Value,
@@ -41,7 +42,7 @@ export const getResolver = (
   }
 };
 
-export const createOperations = (options: schema.Command[]) => {
+export const createOperations = (options: Command[]) => {
   return options.map((option) => {
     switch (option.$command) {
       case "add-array-element":

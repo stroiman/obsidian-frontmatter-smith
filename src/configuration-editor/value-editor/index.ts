@@ -1,7 +1,6 @@
 import van, { State } from "vanjs-core";
 import * as classNames from "./index.module.css";
 import {
-  Command,
   Value,
   ValueType,
   ConstantValue,
@@ -23,6 +22,7 @@ import {
 import { CommandEditor, OnRemoveCommandClick } from "../command-editor";
 import { button, div, input, option, p, select } from "../tags";
 import { EditorConfigWrapper } from "../types";
+import { Command } from "src/commands";
 
 const Option = ({
   type,
