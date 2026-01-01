@@ -109,5 +109,25 @@ export const fullConfiguration = {
         },
       ],
     },
+    {
+      name: "Add property string",
+      commands: [
+        {
+          $id: "Fd_MLqgDxXKuRx2o4ivM9",
+          $command: "add-property",
+          key: "prop",
+        },
+      ],
+    },
+    {
+      name: "Set tag",
+      commands: [
+        {
+          $id: "EPlDTRBkeXPJopV29081E",
+          $command: "set-tag",
+          tag: "obs/data",
+        },
+      ],
+    },
   ],
 };

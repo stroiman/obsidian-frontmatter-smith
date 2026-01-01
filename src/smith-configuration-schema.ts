@@ -4,9 +4,9 @@ import { withFallback } from "io-ts-types";
 import { withValidate } from "io-ts-types";
 import { orElse } from "fp-ts/lib/Either";
 import { nanoid } from "nanoid";
-import { AddPropertyCommand } from "./add-property";
+import { AddPropertyCommand, CommandTypeAddProperty } from "./add-property";
 import { SetValueCommand } from "./set-value";
-import { SetTagCommand } from "./set-tag-command";
+import { CommandTypeSetTag, SetTagCommand } from "./set-tag-command";
 import { AddToArrayCommand } from "./add-to-array";
 
 const withFallbackFn = <C extends t.Any>(
@@ -61,6 +61,10 @@ export type ConstantValue = {
   value: any;
 };
 
+/**
+ * Represents a "value" that can be evaluated. E.g., the value of a "SetValue",
+ * or "AddToArray".
+ */
 export type Value =
   | ObjectValue
   | ChoiceValue
@@ -122,7 +126,24 @@ const command: t.Type<Command> = t.recursion("Command", () => {
     value: value,
   });
 
-  return t.union([addToArrayCommand, setValueCommand]);
+  const addPropertyCommand = t.strict({
+    $id,
+    $command: t.literal(CommandTypeAddProperty),
+    key: t.string,
+  });
+
+  const setTagCommand = t.strict({
+    $id,
+    $command: t.literal(CommandTypeSetTag),
+    tag: t.string,
+  });
+
+  return t.union([
+    addToArrayCommand,
+    setValueCommand,
+    addPropertyCommand,
+    setTagCommand,
+  ]);
 });
 
 const forgeConfiguration = t.strict({
