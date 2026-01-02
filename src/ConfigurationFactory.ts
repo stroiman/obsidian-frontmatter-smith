@@ -42,17 +42,17 @@ export const getResolver = (
   }
 };
 
-export const createOperations = (options: Command[]) => {
-  return options.map((option) => {
-    switch (option.$command) {
+export const createOperations = (commands: Command[]) => {
+  return commands.map((cmd) => {
+    switch (cmd.$command) {
       case "add-array-element":
-        return new AddToArray(option.key, getResolver(option.value));
+        return new AddToArray(cmd.key, getResolver(cmd.value));
       case "set-value":
-        return new SetValue(option.key, getResolver(option.value));
+        return new SetValue(cmd.key, getResolver(cmd.value));
       case "add-property":
-        return new AddProperty(option.key);
+        return new AddProperty(cmd.key);
       case CommandTypeSetTag:
-        return new SetTag(option.tag);
+        return new SetTag(cmd.tag);
     }
   });
 };
