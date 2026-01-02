@@ -70,12 +70,6 @@ export const migrateCommandToType = (
   return res;
 };
 
-type Map = {
-  [key in CommandType]: {
-    createDefault: () => GetCommand<key>;
-  };
-};
-
 export const createDefaultCommandByType = <T extends CommandType>(
   type: T,
 ): GetCommand<T> => {
