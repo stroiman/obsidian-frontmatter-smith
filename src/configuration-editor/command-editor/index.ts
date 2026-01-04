@@ -13,14 +13,14 @@ import { EditorConfigWrapper } from "../types";
 import {
   AddPropertyCommand,
   CommandTypeAddProperty,
-} from "src/commands/add-property";
-import { CommandTypeSetValue, SetValueCommand } from "src/commands/set-value";
-import { CommandTypeSetTag, SetTagCommand } from "src/commands/set-tag";
+} from "../../commands/add-property";
+import { CommandTypeSetValue, SetValueCommand } from "../../commands/set-value";
+import { CommandTypeSetTag, SetTagCommand } from "../../commands/set-tag";
 import {
   AddToArrayCommand,
   CommandTypeAddToArray,
-} from "src/commands/add-to-array";
-import { Command } from "src/commands";
+} from "../../commands/add-to-array";
+import { Command } from "../../commands";
 
 export type OnRemoveCommandClick = (x: {
   element: HTMLElement;

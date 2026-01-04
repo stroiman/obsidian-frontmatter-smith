@@ -10,9 +10,9 @@ import {
   GetCommand,
 } from "../smith-configuration-schema";
 import { createDefaultValue } from "./value";
-import { createDefaultSetValueCommand } from "src/commands/set-value";
-import { createDefaultAddToArrayCommand } from "src/commands/add-to-array";
-import { Command, commands } from "src/commands";
+import { createDefaultSetValueCommand } from "../commands/set-value";
+import { createDefaultAddToArrayCommand } from "../commands/add-to-array";
+import { Command, commands } from "../commands";
 
 export const createDefaultObjectValueItem = (): ObjectValueItem => ({
   $id: createId(),
