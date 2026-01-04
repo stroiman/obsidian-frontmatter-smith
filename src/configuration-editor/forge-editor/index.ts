@@ -30,16 +30,8 @@ export function ForgeEditor(props: {
   const id = genId("forge-config-heading");
   const $id = forgeConfig.val.$id;
   const { name, commands } = deepState(forgeConfig);
-  const defaultVisible =
-    expand || editorConfiguration.getExpanded($id) || false;
-  const visible = van.state(defaultVisible);
+  const visible = editorConfiguration.visible($id, expand);
   const forgeContainerId = genId("forge-container");
-  van.derive(() => {
-    const newVal = visible.val;
-    if (newVal != visible.oldVal) {
-      editorConfiguration.setExpanded($id, newVal);
-    }
-  });
   const elm = section(
     {
       className: classNames.forgeConfigBlock,

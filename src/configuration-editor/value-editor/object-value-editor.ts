@@ -25,15 +25,12 @@ const ValueEditor = (props: {
   const { onRemoveClick, keyLabelId, expanded, editorConfiguration } = props;
   const id = props.value.val.$id;
   const { key, value } = deepState(props.value);
-  const visible = van.state(
-    expanded || editorConfiguration.getExpanded(id) || false,
-  );
+  const visible = editorConfiguration.visible(id, expanded);
   const valueType = van.derive(() => value.val.$type);
   van.derive(() => {
     const val = valueType.val;
     if (val !== valueType.oldVal) {
       visible.val = true;
-      editorConfiguration.setExpanded(id, true);
     }
   });
   const style = van.derive(() => {
