@@ -29,7 +29,7 @@ const Choice = (props: {
   editorConfiguration: EditorConfigWrapper;
 }) => {
   const { choice, textLabelId, valueLabelId, editorConfiguration } = props;
-  const showChildren = van.state(false);
+  const showChildren = editorConfiguration.visible(choice.val.$id);
   const childCls = van.derive(() =>
     showChildren.val
       ? classNames.choiceCommands
